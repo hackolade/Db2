@@ -1,0 +1,46 @@
+{
+    "name": "DB2",
+    "version": "0.0.1",
+    "versionDate": "2024-03-06",
+    "author": "hackolade",
+    "engines": {
+        "hackolade": "7.3.2",
+        "hackoladePlugin": "1.2.0"
+    },
+    "contributes": {
+        "target": {
+            "applicationTarget": "DB2",
+            "title": "DB2",
+            "versions": [
+                "v11.5"
+            ]
+        },
+        "features": {
+            "nestedCollections": false,
+            "disablePatternField": true,
+            "disableMultipleTypes": true,
+            "enableForwardEngineering": true,
+            "disableReverseEngineering": false,
+            "disableChoices": true,
+            "enableJsonType": true,
+            "useJsonTypesWithComplexTypes": true,
+            "reverseSchemaIntoOneColumn": true,
+			"disableDenormalization": true,
+			"enableComplexTypesNormalization": true,
+            "views": {
+                "enabled": true,
+                "viewLevel": "model",
+                "disablePipelines": true
+            },
+            "relationships": {
+                "compositeRelationships": true
+            },
+            "FEScriptCommentsSupported": true,
+            "enableFetchSystemEntitiesCheckbox": true,
+            "discoverRelationships": true
+        }
+    },
+    "description": "Hackolade plugin for IBM DB2",
+    "icon_url": "logo.jpg",
+    "disabled": false
+}
