@@ -1,0 +1,85 @@
+{
+	"name": "datetime",
+	"erdAbbreviation": "<dt>",
+	"dtdAbbreviation": "{dt}",
+	"parentType": "string",
+	"useSample": true,
+	"sample": "2018-03-22 08:30:58.000000000005",
+	"hiddenOnEntity": "view",
+	"defaultValues": {
+		"primaryKey": false,
+		"default": "",
+		"enum": [],
+		"format": "",
+		"mode": "date",
+		"scale": 7
+	},
+	"descriptor": [
+		{
+			"schema": {
+				"mode": "date"
+			},
+			"format": "YYYY-MM-DD"
+		},
+		{
+			"schema": {
+				"mode": "time"
+			},
+			"format": "hh:mm:ss"
+		},
+		{
+			"schema": {
+				"mode": "time"
+			},
+			"format": "hh:mm:ss.nnn"
+		},
+		{
+			"schema": {
+				"mode": "time"
+			},
+			"format": "hh:mm:ss.nnnnnn"
+		},
+		{
+			"schema": {
+				"mode": "time"
+			},
+			"format": "hh:mm:ss.nnnnnnnnn"
+		},
+		{
+			"schema": {
+				"mode": "timestamp"
+			},
+			"format": "YYYY-MM-DD hh:mm:ss"
+		},
+		{
+			"schema": {
+				"mode": "timestamp"
+			},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnZ"
+		},
+		{
+			"schema": {
+				"mode": "timestamp"
+			},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnnnnZ"
+		},
+		{
+			"schema": {
+				"mode": "timestamp"
+			},
+			"format": "YYYY-MM-DD hh:mm:ss.nnn"
+		},
+		{
+			"schema": {
+				"mode": "timestamp"
+			},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnnnn"
+		},
+		{
+			"schema": {
+				"mode": "timestamp"
+			},
+			"format": "YYYY-MM-DD hh:mm:ss.nnnnnnnnn"
+		}
+	]
+}
