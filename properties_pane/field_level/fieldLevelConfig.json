@@ -317,6 +317,54 @@ making sure that you maintain a proper JSON format.
 				"defaultValue": "",
 				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
 			},
+			{
+				"propertyName": "Logged clause",
+				"propertyKeyword": "loggedClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "LOGGED", "NOT LOGGED"],
+				"dependency": {
+					"type": "or",
+					"values": [
+						{
+							"key": "mode",
+							"value": "clob"
+						},
+						{
+							"key": "mode",
+							"value": "nclob"
+						},
+						{
+							"key": "mode",
+							"value": "dbclob"
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "Compact clause",
+				"propertyKeyword": "compactClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "COMPACT", "NOT COMPACT"],
+				"dependency": {
+					"type": "or",
+					"values": [
+						{
+							"key": "mode",
+							"value": "clob"
+						},
+						{
+							"key": "mode",
+							"value": "nclob"
+						},
+						{
+							"key": "mode",
+							"value": "dbclob"
+						}
+					]
+				}
+			},
 			"default",
 			{
 				"propertyName": "Comments",
@@ -1323,6 +1371,28 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "select",
 				"defaultValue": "",
 				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
+			},
+			{
+				"propertyName": "Logged clause",
+				"propertyKeyword": "loggedClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "LOGGED", "NOT LOGGED"],
+				"dependency": {
+					"key": "mode",
+					"value": "blob"
+				}
+			},
+			{
+				"propertyName": "Compact clause",
+				"propertyKeyword": "compactClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "COMPACT", "NOT COMPACT"],
+				"dependency": {
+					"key": "mode",
+					"value": "blob"
+				}
 			},
 			{
 				"propertyName": "Primary key",
