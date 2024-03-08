@@ -310,6 +310,13 @@ making sure that you maintain a proper JSON format.
 				},
 				"defaultValue": false
 			},
+			{
+				"propertyName": "Hidden clause",
+				"propertyKeyword": "hiddenClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
+			},
 			"default",
 			{
 				"propertyName": "Comments",
@@ -791,6 +798,13 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "required",
 				"enableForReference": true,
 				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Hidden clause",
+				"propertyKeyword": "hiddenClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
 			},
 			"default",
 			{
@@ -1304,6 +1318,13 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox"
 			},
 			{
+				"propertyName": "Hidden clause",
+				"propertyKeyword": "hiddenClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
+			},
+			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyType": "checkbox",
@@ -1775,6 +1796,13 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox"
 			},
+			{
+				"propertyName": "Hidden clause",
+				"propertyKeyword": "hiddenClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
+			},
 			"default",
 			{
 				"propertyName": "Primary key",
@@ -2204,6 +2232,13 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox"
 			},
+			{
+				"propertyName": "Hidden clause",
+				"propertyKeyword": "hiddenClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
+			},
 			"default",
 			"sample",
 			{
@@ -2316,6 +2351,13 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "required",
 				"enableForReference": true,
 				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Hidden clause",
+				"propertyKeyword": "hiddenClause",
+				"propertyType": "select",
+				"defaultValue": "",
+				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
 			},
 			"pattern",
 			"enum",
