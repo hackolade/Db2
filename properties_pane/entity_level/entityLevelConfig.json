@@ -1,0 +1,691 @@
+/*
+* Copyright © 2016-2020 by IntegrIT S.A. dba Hackolade.  All rights reserved.
+*
+* The copyright to the computer software herein is the property of IntegrIT S.A.
+* The software may be used and/or copied only with the written permission of
+* IntegrIT S.A. or in accordance with the terms and conditions stipulated in
+* the agreement/contract under which the software has been supplied.
+
+In order to define custom properties for any object's properties pane, you may copy/paste from the following,
+making sure that you maintain a proper JSON format.
+
+			{
+				"propertyName": "Simple text",
+				"propertyKeyword": "simpletextProp",
+				"propertyType": "text",
+				"sampleGen": "&containerName|&entityName|&random|<value>"
+			},
+			{
+				"propertyName": "Text area",
+				"propertyKeyword": "textareaProp",
+				"propertyTooltip": "Popup for multi-line text entry",
+				"propertyType": "details",
+				"template": "textarea"
+			},
+			{
+				"propertyName": "Dropdown selection",
+				"propertyKeyword": "dropdownProp",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Option 1",
+					"Option 2",
+					"Option 3",
+					"Option 4"
+				]
+			},
+			{
+				"propertyName": "Numeric",
+				"propertyKeyword": "numericProp",
+				"propertyValidate": true,
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"sampleGen": "&containerName|&entityName|&random|<value>"
+			},
+			{
+				"propertyName": "Checkbox",
+				"propertyKeyword": "checkboxProp",
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Group",
+				"propertyKeyword": "grpProp",
+				"propertyType": "group",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Simple Grp Text",
+						"propertyKeyword": "simpleGrpText",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Group Number",
+						"propertyKeyword": "grpNumber",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false
+					}
+				]
+			},
+// “groupInput” can have the following states - 0 items, 1 item, and many items.
+// “blockInput” has only 2 states - 0 items or 1 item.
+// This gives us an easy way to represent it as an object and not as an array internally which is beneficial for processing
+// and forward-engineering in particular.
+			{
+				"propertyName": "Block",
+				"propertyKeyword": "grpProp",
+				"propertyType": "block",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Simple Grp Text",
+						"propertyKeyword": "simpleGrpText",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Group Number",
+						"propertyKeyword": "grpNumber",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false
+					}
+				]
+			},
+			{
+				"propertyName": "Field List",
+				"propertyKeyword": "keyList",
+				"propertyType": "fieldList",
+				"template": "orderedList"
+			},
+			{
+				"propertyName": "List with attribute",
+				"propertyKeyword": "keyListOrder",
+				"propertyType": "fieldList",
+				"template": "orderedList",
+				"attributeList": [
+					"ascending",
+					"descending"
+				]
+			}
+
+*/
+[
+	{
+		"lowerTab": "Details",
+		"structure": [
+			{
+				"propertyName": "Comments",
+				"propertyKeyword": "description",
+				"shouldValidate": false,
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				}
+			},
+			{
+				"propertyName": "Temporary",
+				"propertyKeyword": "temporary",
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "If not exists",
+				"propertyKeyword": "ifNotExist",
+				"propertyTooltip": "Specifies that no error message is shown when the table cannot be created because a table with the specified name already exists in the current database and schema.",
+				"propertyType": "checkbox",
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Under super table",
+				"propertyKeyword": "underSuperTable",
+				"propertyType": "group",
+				"propertyTooltip": "Indicates that the table is a subtable of supertable-name.",
+				"structure": [
+					{
+						"propertyName": "Table name",
+						"propertyKeyword": "parentTable",
+						"propertyTooltip": "",
+						"propertyType": "selecthashed",
+						"template": "entities",
+						"withEmptyOption": true,
+						"excludeCurrent": true
+					}
+				]
+			},
+			{
+				"propertyName": "Partitioning",
+				"propertyKeyword": "partitioning",
+				"propertyType": "group",
+				"groupItemLimit": 1,
+				"propertyTooltip": "Determines how a partitioned table's rows are distributed across partitions",
+				"structure": [
+					{
+						"propertyName": "Partition method",
+						"propertyKeyword": "partitionMethod",
+						"propertyTooltip": "Choose the desired partition method",
+						"propertyType": "select",
+						"defaultValue": "",
+						"options": ["", "RANGE"]
+					},
+					{
+						"propertyName": "Expression",
+						"propertyKeyword": "partitioning_expression",
+						"propertyTooltip": "A SQL expression that returns a value from each row. In the simplest cases, it is a column name. This value is used to determine which partition should contain a row.",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "pgsql"
+						},
+						"markdown": false
+					}
+				]
+			},
+			{
+				"propertyName": "Tablespace",
+				"propertyKeyword": "table_tablespace_name",
+				"propertyTooltip": "Enter the name of an existing tablespace location for the table",
+				"propertyType": "text"
+			},
+			{
+				"propertyName": "Remarks",
+				"propertyKeyword": "comments",
+				"propertyTooltip": "remarks",
+				"addTimestampButton": true,
+				"propertyType": "details",
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				},
+				"valueType": "string"
+			}
+		],
+		"columnsRatio": [3.7, 5]
+	},
+	{
+		"lowerTab": "Composite keys",
+		"structure": [
+			{
+				"propertyName": "Primary key",
+				"propertyType": "group",
+				"groupItemLimit": 1,
+				"propertyKeyword": "primaryKey",
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "Remove the existing single column primary key definition prior to unlock the possibility to create a composite primary key definition for this table",
+							"dependency": {
+								"type": "and",
+								"values": [
+									{
+										"level": "children",
+										"key": "primaryKey",
+										"value": true
+									},
+									{
+										"type": "not",
+										"values": {
+											"level": "children",
+											"key": "compositePrimaryKey",
+											"value": true
+										}
+									}
+								]
+							}
+						},
+						{
+							"tooltip": "Remove or update the existing composite primary key definition prior to unlock the possibility to create a new composite primary key definition for this table",
+							"dependency": {
+								"key": "primaryKey",
+								"minLength": 1
+							}
+						}
+					]
+				},
+				"structure": [
+					{
+						"propertyName": "Constraint name",
+						"propertyKeyword": "constraintName",
+						"propertyTooltip": "",
+						"propertyType": "text",
+						"validation": {
+							"indexKey": "compositePrimaryKey",
+							"message": "A primary key constraint cannot be created without any primary key selected"
+						}
+					},
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "compositePrimaryKey",
+						"propertyType": "primaryKeySetter",
+						"requiredProperty": true,
+						"abbr": "pk"
+					},
+					{
+						"propertyName": "Comment",
+						"propertyKeyword": "indexComment",
+						"propertyTooltip": "comment",
+						"addTimestampButton": false,
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					}
+				],
+				"disabledOnCondition": [
+					{
+						"level": "children",
+						"value": {
+							"type": "and",
+							"values": [
+								{
+									"key": "primaryKey",
+									"value": true
+								},
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositePrimaryKey",
+											"value": false
+										},
+										{
+											"key": "compositePrimaryKey",
+											"exist": false
+										}
+									]
+								},
+								{
+									"type": "or",
+									"values": [
+										{
+											"key": "compositeUniqueKey",
+											"value": false
+										},
+										{
+											"key": "compositeUniqueKey",
+											"exist": false
+										}
+									]
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"propertyName": "Unique key",
+				"propertyType": "group",
+				"propertyKeyword": "uniqueKey",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Constraint name",
+						"propertyKeyword": "constraintName",
+						"propertyTooltip": "",
+						"propertyType": "text",
+						"validation": {
+							"indexKey": "compositeUniqueKey",
+							"message": "A unique key constraint cannot be created without any unique key selected"
+						}
+					},
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "compositeUniqueKey",
+						"propertyType": "compositeKeySetter",
+						"disabledItemStrategy": "default",
+						"setPrimaryKey": false,
+						"template": "collectiontree",
+						"requiredProperty": true,
+						"isCompositeKey": true,
+						"abbr": "uk"
+					},
+					{
+						"propertyName": "Comment",
+						"propertyKeyword": "indexComment",
+						"propertyTooltip": "comment",
+						"addTimestampButton": false,
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"lowerTab": "Indexes",
+		"structure": [
+			{
+				"propertyName": "Index",
+				"propertyType": "group",
+				"propertyKeyword": "Indxs",
+				"propertyTooltip": "In general you should only add indexes to match the queries your application uses. Any extra will waste resources.",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "indxName",
+						"propertyTooltip": "Names the index or index specification. The name, including the implicit or explicit qualifier, must not identify an index or index specification that is described in the catalog, or an existing index on a declared temporary table",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Activated",
+						"propertyKeyword": "isActivated",
+						"propertyTooltip": "Deactivated item will be not included in FE script",
+						"propertyType": "checkbox",
+						"defaultValue": true
+					},
+					{
+						"propertyName": "Unique",
+						"propertyKeyword": "unique",
+						"propertyTooltip": "If ON table-name is specified, UNIQUE prevents the table from containing two or more rows with the same value of the index key.",
+						"defaultValue": false,
+						"propertyType": "checkbox"
+					},
+					{
+						"propertyName": "Columns",
+						"propertyKeyword": "columns",
+						"propertyType": "fieldList",
+						"template": "orderedList",
+						"propertyTooltip": "The name of a column of the table.",
+						"attributeList": {
+							"sortOrder": {
+								"propertyType": "select",
+								"options": ["ASC", "DESC", "RANDOM"],
+								"propertyTooltip": "Specifies sort order"
+							}
+						}
+					},
+					{
+						"propertyName": "Include non-key columns",
+						"propertyKeyword": "include",
+						"propertyType": "fieldList",
+						"template": "orderedList",
+						"propertyTooltip": "The optional INCLUDE clause specifies a list of columns which will be included in the index as non-key columns."
+					},
+					{
+						"propertyName": "Tablespace",
+						"propertyKeyword": "index_tablespace_name",
+						"propertyTooltip": "Specifies the table space in which the nonpartitioned index on a partitioned table is created.",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Comment",
+						"propertyKeyword": "indexComment",
+						"propertyTooltip": "comment",
+						"addTimestampButton": false,
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"lowerTab": "Check Constraints",
+		"structure": [
+			{
+				"propertyName": "Check Constraint",
+				"propertyType": "group",
+				"propertyKeyword": "chkConstr",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "chkConstrName",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Description",
+						"propertyKeyword": "constrDescription",
+						"propertyTooltip": "description",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					},
+					{
+						"propertyName": "Expression",
+						"propertyKeyword": "constrExpression",
+						"propertyTooltip": "Expression",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "pgsql"
+						},
+						"markdown": false
+					},
+					{
+						"propertyName": "Enforced",
+						"propertyKeyword": "enforced",
+						"propertyTooltip": "",
+						"propertyType": "select",
+						"options": [
+							"",
+							"ENFORCED",
+							"NOT ENFORCED"
+						]
+					},
+					{
+						"propertyName": "Trusted",
+						"propertyKeyword": "trusted",
+						"propertyTooltip": "",
+						"propertyType": "select",
+						"options": [
+							"",
+							"TRUSTED",
+							"NOT TRUSTED"
+						],
+						"dependency": {
+							"key": "enforced",
+							"value": "NOT ENFORCED"
+						}
+					},
+					{
+						"propertyName": "Query optimization",
+						"propertyKeyword": "queryOptimization",
+						"propertyTooltip": "",
+						"propertyType": "select",
+						"options": [
+							"",
+							"ENABLE QUERY OPTIMIZATION",
+							"DISABLE QUERY OPTIMIZATION"
+						]
+					},
+					{
+						"propertyName": "Comments",
+						"propertyKeyword": "constrComments",
+						"propertyTooltip": "comments",
+						"addTimestampButton": false,
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		"lowerTab": "Triggers",
+		"structure": [
+			{
+				"propertyName": "Triggers",
+				"propertyType": "group",
+				"propertyKeyword": "triggers",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Description",
+						"propertyKeyword": "triggerDescription",
+						"propertyTooltip": "description",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					},
+					{
+						"propertyName": "Or replace",
+						"propertyKeyword": "triggerOrReplace",
+						"propertyType": "checkbox",
+						"propertyTooltip": ""
+					},
+					{
+						"propertyName": "Trigger type",
+						"propertyKeyword": "triggerType",
+						"propertyTooltip": "Determines whether the function is called before, after, or instead of the event.",
+						"propertyType": "select",
+						"options": [
+							"BEFORE",
+							"AFTER",
+							"INSTEAD OF"
+						],
+						"defaultValue": "AFTER"
+					},
+					{
+						"propertyName": "No cascade",
+						"propertyKeyword": "triggerNoCascade",
+						"propertyType": "checkbox",
+						"propertyTooltip": "",
+						"dependency": {
+							"key": "triggerType",
+							"value": "BEFORE"
+						}
+					},
+					{
+						"propertyName": "Trigger events",
+						"propertyKeyword": "triggerEvents",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "pgsql"
+						},
+						"markdown": false
+					},
+					{
+						"propertyName": "Referencing",
+						"propertyKeyword": "triggerReferencing",
+						"propertyType": "checkbox",
+						"propertyTooltip": "Specifies the correlation names for the transition variables and the table names for the transition tables."
+					},
+					{
+						"propertyName": "Old as",
+						"propertyKeyword": "triggerOldAs",
+						"propertyType": "text",
+						"propertyTooltip": "Specifies a correlation name which identifies the row state before the triggering SQL operation.",
+						"dependency": {
+							"key": "triggerReferencing",
+							"value": true
+						}
+					},
+					{
+						"propertyName": "New as",
+						"propertyKeyword": "triggerNewAs",
+						"propertyType": "text",
+						"propertyTooltip": "Specifies a correlation name which identifies the row state as modified by the triggering SQL operation and by any SET statement in a BEFORE trigger that has already executed.",
+						"dependency": {
+							"key": "triggerReferencing",
+							"value": true
+						}
+					},
+					{
+						"propertyName": "Old table as",
+						"propertyKeyword": "triggerOldTableAs",
+						"propertyType": "text",
+						"propertyTooltip": "Specifies the name of a temporary table that identifies the values in the complete set of affected rows prior to the triggering SQL operation.",
+						"dependency": {
+							"key": "triggerReferencing",
+							"value": true
+						}
+					},
+					{
+						"propertyName": "New table as",
+						"propertyKeyword": "triggerNewTableAs",
+						"propertyType": "text",
+						"propertyTooltip": "Specifies the name of a temporary table that identifies the state of the complete set of affected rows as modified by the triggering SQL operation and by any SET statement in a before trigger that has already been executed.",
+						"dependency": {
+							"key": "triggerReferencing",
+							"value": true
+						}
+					},
+					{
+						"propertyName": "Trigger for each row",
+						"propertyKeyword": "triggerEachRow",
+						"propertyType": "checkbox",
+						"propertyTooltip": "Specifies that the triggered action is to be applied once for each row of the subject table or subject view that is affected by the triggering SQL operation."
+					},
+					{
+						"propertyName": "Trigger for each statement",
+						"propertyKeyword": "triggerEachStatement",
+						"propertyType": "checkbox",
+						"propertyTooltip": "Specifies that the triggered action is to be applied only once for the whole statement.",
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "triggerType",
+									"value": "UPDATE"
+								},
+								{
+									"key": "triggerType",
+									"value": "DELETE"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Trigger WHEN condition",
+						"propertyKeyword": "triggerCondition",
+						"propertyTooltip": "A Boolean expression that determines whether the trigger function will actually be executed.",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "pgsql"
+						},
+						"markdown": false
+					},
+					{
+						"propertyName": "Function",
+						"propertyKeyword": "triggerFunction",
+						"propertyTooltip": "description",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "pgsql"
+						},
+						"markdown": false
+					},
+					{
+						"propertyName": "Remarks",
+						"propertyKeyword": "triggerComments",
+						"propertyTooltip": "comments",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					}
+				]
+			}
+		]
+	}
+]
