@@ -157,6 +157,120 @@ making sure that you maintain a proper JSON format.
 		"containerLevelKeys": []
 	},
 	{
+		"lowerTab": "Sequences",
+		"structure": [
+			{
+				"propertyName": "Sequences",
+				"propertyType": "group",
+				"propertyKeyword": "sequences",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Sequence name",
+						"propertyKeyword": "sequenceName",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Or replace",
+						"propertyKeyword": "orReplace",
+						"propertyType": "checkbox",
+						"propertyTooltip": "Specifies that if a procedure with the same name and input argument data types, or signature, as this one already exists, the existing function is replaced. You can only replace a function with a new function that defines an identical set of data types."
+					},
+					{
+						"propertyName": "Data type",
+						"propertyKeyword": "dataType",
+						"propertyTooltip": "The data type determines the default minimum and maximum values of the sequence.",
+						"propertyType": "select",
+						"defaultValue": "bigint",
+						"options": [
+							"smallint",
+							"integer",
+							"bigint",
+							"decimal"
+						]
+					},
+					{
+						"propertyName": "Precision",
+						"propertyKeyword": "precision",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false,
+						"typeDecorator": true,
+						"dependency": {
+							"key": "dataType",
+							"value": [
+								"decimal"
+							]
+						}
+					},
+					{
+						"propertyName": "Scale",
+						"propertyKeyword": "scale",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false,
+						"typeDecorator": true,
+						"dependency": {
+							"key": "dataType",
+							"value": [
+								"decimal"
+							]
+						}
+					},
+					{
+						"propertyName": "Start",
+						"propertyKeyword": "start",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"propertyTooltip": "Allows the sequence to begin anywhere. The default starting value is minvalue for ascending sequences and maxvalue for descending ones.",
+						"maxValue": 999999999999999
+					},
+					{
+						"propertyName": "Increment",
+						"propertyKeyword": "increment",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"propertyTooltip": "The data type determines the default minimum and maximum values of the sequence.",
+						"maxValue": 999999999999999
+					},
+					{
+						"propertyName": "Min value",
+						"propertyKeyword": "minValue",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"propertyTooltip": "Determines the minimum value a sequence can generate. If this clause is not supplied is specified, then defaults will be used. The default for an ascending sequence is 1. The default for a descending sequence is the minimum value of the data type.",
+						"maxValue": 999999999999999
+					},
+					{
+						"propertyName": "Max value",
+						"propertyKeyword": "maxValue",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"propertyTooltip": "Determines the maximum value for the sequence. If this clause is not supplied is specified, then default values will be used. The default for an ascending sequence is the maximum value of the data type. The default for a descending sequence is -1.",
+						"maxValue": 999999999999999
+					},
+					{
+						"propertyName": "Cache",
+						"propertyKeyword": "cache",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"propertyTooltip": "specifies how many sequence numbers are to be preallocated and stored in memory for faster access. The minimum value is 1 (only one value can be generated at a time, i.e., no cache), and this is also the default",
+						"minValue": 1,
+						"maxValue": 999999999999999
+					},
+					{
+						"propertyName": "Cycle",
+						"propertyKeyword": "cycle",
+						"propertyTooltip": "Allows the sequence to wrap around when the maxvalue or minvalue has been reached by an ascending or descending sequence respectively. If the limit is reached, the next number generated will be the minvalue or maxvalue, respectively.",
+						"defaultValue": false,
+						"propertyType": "checkbox"
+					}
+				]
+			}
+		]
+	},
+	{
 		"lowerTab": "Procedures",
 		"structure": [
 			{

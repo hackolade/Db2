@@ -122,7 +122,10 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "comments",
 				"propertyType": "details",
 				"addTimestampButton": false,
-				"template": "textarea"
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				}
 			},
 			{
 				"propertyName": "Or replace",
@@ -169,7 +172,10 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "details",
 				"addTimestampButton": true,
 				"markdown": true,
-				"template": "textarea"
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				}
 			},
 			{
 				"propertyKeyword": "pipeline",

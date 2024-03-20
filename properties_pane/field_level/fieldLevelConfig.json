@@ -2338,7 +2338,10 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "comments",
 				"addTimestampButton": false,
 				"propertyType": "details",
-				"template": "textarea"
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				}
 			},
 			{
 				"propertyName": "Array type",
@@ -2386,7 +2389,10 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "columnGenerationExpression",
 				"propertyTooltip": "An SQL statement for computing values for this column",
 				"propertyType": "details",
-				"template": "textarea",
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "pgsql"
+				},
 				"markdown": false,
 				"dependency": {
 					"type": "and",
@@ -2439,7 +2445,10 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "remarks",
 				"addTimestampButton": true,
 				"propertyType": "details",
-				"template": "textarea"
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				}
 			}
 		]
 	}
