@@ -1,6 +1,6 @@
 /**
  * @typedef {'bigint' | 'integer' | 'smallint'} DataType
- * 
+ *
  * @typedef {{
  * cache?: number;
  * cycle: boolean;
@@ -9,14 +9,12 @@
  * increment?: number;
  * maxValue?: number;
  * minValue?: number;
- * ownedByColumn: object[];
- * ownedByNone: boolean;
  * sequenceName: string;
  * start?: number;
  * temporary: boolean;
  * unlogged: boolean;
  * }} Sequence
- * 
+ *
  * @typedef {{
  * key: keyof Sequence;
  * clause: string;
@@ -31,8 +29,8 @@ module.exports = ({
 	getNamePrefixedWithSchemaName,
 }) => {
 	/**
-	 * @param {string} schemaName 
-	 * @param {Sequence[]} sequences 
+	 * @param {string} schemaName
+	 * @param {Sequence[]} sequences
 	 * @returns {string}
 	 */
 	const getSequencesScript = (schemaName, sequences) => {
@@ -55,7 +53,7 @@ module.exports = ({
 	};
 
 	/**
-	 * @param {Sequence} sequence 
+	 * @param {Sequence} sequence
 	 * @returns {string}
 	 */
 	const getSequenceOptions = (sequence) => {
@@ -70,7 +68,6 @@ module.exports = ({
 			{ getOption, key: 'maxValue', clause: 'MAXVALUE', },
 			{ getOption, key: 'cache', clause: 'CACHE', },
 			{ getOption: getCycle, key: 'cycle' },
-			{ getOption: getOwnedBy, key: 'ownedByColumn' },
 		];
 
 		const options = optionConfigs
@@ -82,7 +79,7 @@ module.exports = ({
 	};
 
 	/**
-	 * @param {{ sequence: Sequence; config: OptionConfig }} param0 
+	 * @param {{ sequence: Sequence; config: OptionConfig }} param0
 	 * @returns {string}
 	 */
 	const getOption = ({ sequence, config }) => {
@@ -91,7 +88,7 @@ module.exports = ({
 	};
 
 	/**
-	 * @param {string} option 
+	 * @param {string} option
 	 * @returns {string}
 	 */
 	const wrapOption = (option) => {
@@ -99,7 +96,7 @@ module.exports = ({
 	};
 
 	/**
-	 * @param {string} option 
+	 * @param {string} option
 	 * @returns {string}
 	 */
 	const wrapOptionsBlock = (option) => {
@@ -107,7 +104,7 @@ module.exports = ({
 	};
 
 	/**
-	 * @param {Sequence} sequence 
+	 * @param {Sequence} sequence
 	 * @returns {string}
 	 */
 	const getIfNotExists = (sequence) => {
@@ -115,7 +112,7 @@ module.exports = ({
 	};
 
 	/**
-	 * @param {Sequence} sequence 
+	 * @param {Sequence} sequence
 	 * @returns {string}
 	 */
 	const getSequenceType = (sequence) => {
@@ -141,29 +138,6 @@ module.exports = ({
 
 		if (sequence.cycle === false) {
 			return 'NO CYCLE';
-		}
-
-		return '';
-	};
-
-	/**
-	 * @param {{ sequence: Sequence }} param0 
-	 * @returns {string}
-	 */
-	const getOwnedBy = ({ sequence }) => {
-		if (sequence.ownedByNone) {
-			return 'OWNED BY NONE';
-		}
-
-		const ownedColumn = sequence.ownedByColumn?.[0];
-
-		if (ownedColumn) {
-			const [tableName, columnName] = ownedColumn.name?.split('.') || [];
-			const ownedColumnName = getNamePrefixedWithSchemaName(
-				columnName,
-				tableName
-			);
-			return `OWNED BY ${ownedColumnName}`;
 		}
 
 		return '';
