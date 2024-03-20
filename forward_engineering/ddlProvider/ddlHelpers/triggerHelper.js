@@ -60,12 +60,6 @@ module.exports = ({ _, assignTemplates, templates, getNamePrefixedWithSchemaName
 			if (trigger.triggerReferencedTable) {
 				options += wrap(`FROM ${trigger.triggerReferencedTable}`, '\t', '\n');
 			}
-
-			options += wrap(trigger.triggerDeferrable ? 'DEFERRABLE' : 'NOT DEFERRABLE', '\t', '\n');
-
-			if (trigger.triggerDeferrable && trigger.triggerTimeConstraintCheck) {
-				options += wrap(trigger.triggerTimeConstraintCheck, '\t', '\n');
-			}
 		}
 
 		if (trigger.triggerReferencing) {
