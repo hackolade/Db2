@@ -105,23 +105,17 @@ module.exports = (baseProvider, options, app) => {
 		commentIfDeactivated,
 	});
 
-	const { getLocaleProperties } = require('./ddlHelpers/databaseHelper')();
-
 	return {
 		createDatabase(modelData) {
 			if (!modelData.databaseName) {
 				return '';
 			}
 
-			const { locale, collate, characterClassification } = getLocaleProperties(modelData);
 
 			return assignTemplates(templates.createDatabase, {
 				name: wrapInQuotes(modelData.databaseName),
 				template: modelData.template ? `\n\tTEMPLATE ${modelData.template}` : '',
 				encoding: modelData.encoding ? `\n\tENCODING ${modelData.encoding}` : '',
-				locale: locale ? `\n\tLOCALE '${modelData.locale}'` : '',
-				collate: collate ? `\n\tLC_COLLATE '${modelData.collate}'` : '',
-				characterClassification: characterClassification ? `\n\tLC_CTYPE '${characterClassification}'` : '',
 				tablespace: modelData.tablespace ? `\n\tTABLESPACE '${modelData.tablespace}'` : '',
 			});
 		},
