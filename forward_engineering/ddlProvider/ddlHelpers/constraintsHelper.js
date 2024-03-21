@@ -61,7 +61,6 @@ module.exports = ({
      *              isActivated: boolean,
      *              name: string,
      *         }>,
-     *         storageParameters: string,
      *         tablespace: string,
      *     }
      * ) => {
@@ -78,7 +77,6 @@ module.exports = ({
         const includeNonKey = keyData.include.length
             ? ` INCLUDE${getColumnsList(keyData.include, isAllColumnsDeactivated, isParentActivated)}`
             : '';
-        const storageParameters = keyData.storageParameters ? ` WITH (${keyData.storageParameters})` : '';
         const tablespace = keyData.tablespace ? ` USING INDEX TABLESPACE ${wrapInQuotes(keyData.tablespace)}` : '';
 
         return {
@@ -87,7 +85,6 @@ module.exports = ({
                 keyType: keyData.keyType,
                 columns,
                 includeNonKey,
-                storageParameters,
                 tablespace,
             }),
             isActivated: !isAllColumnsDeactivated,

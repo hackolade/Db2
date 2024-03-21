@@ -166,7 +166,6 @@ module.exports = (baseProvider, options, app) => {
 				selectStatement,
 				triggers,
 				partitionOf,
-				partitionBounds,
 			},
 			isActivated,
 		) {
@@ -225,7 +224,6 @@ module.exports = (baseProvider, options, app) => {
 					storage_parameter,
 					table_tablespace_name,
 					selectStatement,
-					partitionBounds,
 				}),
 				comment: description ? comment : '',
 				partitionOf: partitionOf ? ` PARTITION OF ${partitionOf} ` : '',
@@ -780,7 +778,6 @@ module.exports = (baseProvider, options, app) => {
 					'on_commit',
 					'storage_parameter',
 					'table_tablespace_name',
-					'partitionBounds',
 				),
 			};
 		},

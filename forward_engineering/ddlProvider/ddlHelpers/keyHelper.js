@@ -55,7 +55,6 @@ module.exports = (_, clean) => {
 				},
 			],
 			include: getKeys(options['indexInclude'] || [], jsonSchema),
-			storageParameters: options['indexStorageParameters'],
 			comment: options['indexComment'],
 			tablespace: options['indexTablespace'],
 			nullsDistinct: options['nullsDistinct'],
@@ -72,7 +71,6 @@ module.exports = (_, clean) => {
 				},
 			],
 			include: getKeys(options['indexInclude'] || [], jsonSchema),
-			storageParameters: options['indexStorageParameters'],
 			comment: options['indexComment'],
 			tablespace: options['indexTablespace'],
 		});
