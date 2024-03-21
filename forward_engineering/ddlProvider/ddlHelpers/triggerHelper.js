@@ -9,9 +9,8 @@ module.exports = ({ _, assignTemplates, templates, getNamePrefixedWithSchemaName
 
 		return assignTemplates(templates.createTrigger, {
 			orReplace: trigger.triggerOrReplace ? ' OR REPLACE' : '',
-			constraint: trigger.triggerConstraint ? ' CONSTRAINT' : '',
 			actionTiming: trigger.triggerType ?? '',
-			functionKey: dbVersion === 'v10.x' ? 'PROCEDURE' : 'FUNCTION',
+			functionKey: 'FUNCTION',
 			functionName: trigger.triggerFunction,
 			name: trigger.name,
 			tableName,
@@ -56,12 +55,6 @@ module.exports = ({ _, assignTemplates, templates, getNamePrefixedWithSchemaName
 	const getTriggerOptions = trigger => {
 		let options = '';
 
-		if (trigger.triggerConstraint) {
-			if (trigger.triggerReferencedTable) {
-				options += wrap(`FROM ${trigger.triggerReferencedTable}`, '\t', '\n');
-			}
-		}
-
 		if (trigger.triggerReferencing) {
 			let triggerReferencingStatement = 'REFERENCING';
 
@@ -75,14 +68,6 @@ module.exports = ({ _, assignTemplates, templates, getNamePrefixedWithSchemaName
 			options += wrap(triggerReferencingStatement, '\t', '\n');
 		}
 
-		options += wrap(
-			trigger.triggerConstraint || trigger.triggerType === 'INSTEAD OF'
-				? 'FOR EACH ROW'
-				: trigger.triggerEachRowStatement || 'FOR EACH STATEMENT',
-			'\t',
-			'\n',
-		);
-
 		if (trigger.triggerCondition) {
 			options += wrap(`WHEN ${trigger.triggerCondition}`, '\t', '\n');
 		}
@@ -91,20 +76,7 @@ module.exports = ({ _, assignTemplates, templates, getNamePrefixedWithSchemaName
 	};
 
 	const hydrateTriggers = (entityData, relatedSchemas = {}) => {
-		return (_.find(entityData, 'triggers')?.triggers || []).map(trigger => {
-			const referencedTable = relatedSchemas[trigger.triggerReferencedTable];
-
-			if (!referencedTable) {
-				return { ...trigger, triggerReferencedTable: '' };
-			}
-
-			const triggerReferencedTable = getNamePrefixedWithSchemaName(
-				referencedTable.code || referencedTable.collectionName,
-				referencedTable.bucketName,
-			);
-
-			return { ...trigger, triggerReferencedTable };
-		});
+		return (_.find(entityData, 'triggers')?.triggers || []);
 	};
 
 	return { getTriggersScript, hydrateTriggers };
