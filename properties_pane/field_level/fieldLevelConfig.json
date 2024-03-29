@@ -792,10 +792,12 @@ making sure that you maintain a proper JSON format.
 				}
 			}
 		],
-		"numeric": [
+		"number": [
 			"name",
 			"code",
 			"schemaId",
+			"isActivated",
+			"reference",
 			"type",
 			{
 				"propertyName": "Subtype",
@@ -810,11 +812,27 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "precision",
 				"propertyType": "numeric",
 				"valueType": "number",
-				"allowNegative": false,
+				"propertyTooltip": "Setting for Precision must be between 1 and 39",
+				"minValue": 1,
+				"maxValue": 39,
 				"typeDecorator": true,
 				"dependency": {
-					"key": "mode",
-					"value": ["decimal", "float", "decfloat"]
+					"type": "and",
+					"values": [
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "mode",
+									"value": "decfloat"
+								},
+								{
+									"key": "mode",
+									"value": "float"
+								}
+							]
+						}
+					]
 				}
 			},
 			{
@@ -822,50 +840,60 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "scale",
 				"propertyType": "numeric",
 				"valueType": "number",
-				"allowNegative": false,
+				"propertyTooltip": "Setting for Scale must be between -84 and 127",
+				"minValue": -84,
+				"maxValue": 127,
+				"allowNegative": true,
 				"typeDecorator": true,
 				"dependency": {
-					"key": "mode",
-					"value": ["decimal"]
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": [
+								{
+									"key": "synonym",
+									"value": ["int", "integer", "smallint"]
+								}
+							]
+						}
+					]
 				}
 			},
 			{
-				"propertyName": "Array type",
-				"propertyType": "group",
-				"propertyKeyword": "array_type",
-				"propertyTooltip": "Declaring the array number of dimensions is simply for documentation; it does not affect run-time behavior.",
-				"structure": [
-					{
-						"propertyName": "Size limit",
-						"propertyKeyword": "array_size_limit",
-						"propertyTooltip": "Declaring the array size is simply for documentation; it does not affect run-time behavior.",
-						"propertyType": "numeric",
-						"valueType": "number",
-						"minValue": 0,
-						"step": 1
-					}
-				]
-			},
-			{
-				"propertyName": "Computed column",
-				"propertyKeyword": "generatedColumn",
-				"propertyTooltip": "A computed column is a special column that is always computed from other columns",
-				"propertyType": "checkbox"
-			},
-			{
-				"propertyName": "Computed column expression",
-				"propertyKeyword": "columnGenerationExpression",
-				"propertyTooltip": "An SQL statement for computing values for this column",
-				"propertyType": "details",
-				"template": "codeEditor",
-				"templateOptions": {
-					"editorDialect": "pgsql"
-				},
-				"markdown": false,
+				"propertyName": "Default",
+				"propertyKeyword": "default",
+				"shouldValidate": true,
+				"fieldType": "dynamicField",
+				"changeAction": "changeDefaultValueOfField",
+				"shadowState": true,
+				"valueType": "asFieldType",
 				"dependency": {
-					"key": "generatedColumn",
-					"value": true
+					"type": "and",
+					"values": [
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "now",
+									"value": false
+								},
+								{
+									"key": "now",
+									"exist": false
+								}
+							]
+						}
+					]
 				}
+			},
+			{
+				"propertyName": "Comments",
+				"propertyKeyword": "description",
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
 			},
 			{
 				"propertyName": "Not null",
@@ -874,23 +902,129 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox"
 			},
 			{
-				"propertyName": "Hidden clause",
-				"propertyKeyword": "hiddenClause",
-				"propertyType": "select",
-				"defaultValue": "",
-				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
-			},
-			"default",
-			{
-				"propertyName": "Comments",
-				"propertyKeyword": "description",
-				"propertyTooltip": "comments",
-				"addTimestampButton": false,
-				"propertyType": "details",
-				"template": "codeEditor",
-				"templateOptions": {
-					"editorDialect": "markdown"
+				"propertyName": "Identity",
+				"propertyType": "block",
+				"propertyKeyword": "identity",
+				"propertyTooltip": "Creates an identity column in a table",
+				"structure": [
+					{
+						"propertyName": "Generated",
+						"propertyKeyword": "generated",
+						"propertyTooltip": "Select type of value generation",
+						"propertyType": "select",
+						"options": ["", "ALWAYS", "BY DEFAULT"]
+					},
+					{
+						"propertyName": "On null",
+						"propertyKeyword": "generatedOnNull",
+						"propertyTooltip": "Generate a value for the identity column only if a NULL value provided",
+						"propertyType": "checkbox",
+						"dependency": {
+							"key": "generated",
+							"value": "BY DEFAULT"
+						}
+					},
+					{
+						"propertyName": "Start",
+						"propertyKeyword": "identityStart",
+						"propertyTooltip": "Is the value that is used for the very first row loaded into the table",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"minValue": 1,
+						"step": 1,
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					},
+					{
+						"propertyName": "Increment",
+						"propertyKeyword": "identityIncrement",
+						"propertyTooltip": "Is the incremental value that is added to the identity value of the previous row that was loaded.",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"minValue": 1,
+						"step": 1,
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					},
+					{
+						"propertyName": "Cache",
+						"propertyKeyword": "numberToCache",
+						"propertyTooltip": "Is a number of values that Oracle should generate beforehand to improve the performance.",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"minValue": 1,
+						"step": 1,
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					}
+				],
+				"dependency": {
+					"type": "or",
+					"values": [
+						{
+							"key": "mode",
+							"value": "integer"
+						},
+						{
+							"key": "mode",
+							"value": "smallint"
+						},
+						{
+							"key": "mode",
+							"value": "bigint"
+						}
+					]
 				}
+			},
+			{
+				"propertyName": "Masked with function",
+				"propertyKeyword": "maskedWithFunction",
+				"propertyTooltip": "Limit exposure of sensitive data with this function",
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			{
 				"propertyName": "Primary key",
@@ -924,41 +1058,46 @@ making sure that you maintain a proper JSON format.
 					]
 				},
 				"dependency": {
-					"type": "or",
+					"type": "and",
 					"values": [
 						{
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"value": {
-								"type": "and",
-								"values": [
-									{
-										"key": "primaryKey",
-										"value": true
-									},
-									{
-										"type": "or",
+							"type": "or",
+							"values": [
+								{
+									"key": "compositePrimaryKey",
+									"value": true
+								},
+								{
+									"level": "siblings",
+									"key": "compositePrimaryKey",
+									"value": true
+								},
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
 										"values": [
 											{
-												"key": "compositeUniqueKey",
-												"value": false
+												"key": "primaryKey",
+												"value": true
 											},
 											{
-												"key": "compositeUniqueKey",
-												"exist": false
+												"type": "or",
+												"values": [
+													{
+														"key": "compositeUniqueKey",
+														"value": false
+													},
+													{
+														"key": "compositeUniqueKey",
+														"exist": false
+													}
+												]
 											}
 										]
 									}
-								]
-							}
+								}
+							]
 						}
 					]
 				},
@@ -1042,12 +1181,24 @@ making sure that you maintain a proper JSON format.
 							]
 						}
 					]
+				},
+				"disabledOnCondition": {
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"level": "parent",
+								"key": "type",
+								"value": "object"
+							}
+						}
+					]
 				}
 			},
 			{
 				"propertyName": "Primary key options",
-				"propertyType": "group",
-				"groupItemLimit": 1,
+				"propertyType": "block",
 				"propertyKeyword": "primaryKeyOptions",
 				"enableForReference": true,
 				"propertyTooltip": "Primary key options",
@@ -1093,33 +1244,37 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text"
 					},
 					{
-						"propertyName": "Include non-key columns",
-						"propertyKeyword": "indexInclude",
-						"propertyType": "fieldList",
-						"template": "orderedList",
-						"propertyTooltip": "The optional INCLUDE clause specifies a list of columns which will be included in the constraint as non-key columns."
-					},
-					{
-						"propertyName": "With storage parameters",
-						"propertyKeyword": "indexStorageParameters",
+						"propertyName": "Defer clause",
+						"propertyKeyword": "deferClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "pgsql"
-						},
-						"valueType": "string",
+						"template": "textarea",
 						"markdown": false
 					},
 					{
-						"propertyName": "Comment",
-						"propertyKeyword": "indexComment",
-						"propertyTooltip": "comment",
-						"addTimestampButton": false,
+						"propertyName": "Rely option",
+						"propertyKeyword": "rely",
+						"propertyType": "select",
+						"options": ["", "RELY", "NORELY"]
+					},
+					{
+						"propertyName": "Validate option",
+						"propertyKeyword": "validate",
+						"propertyType": "select",
+						"options": ["", "VALIDATE", "NOVALIDATE"]
+					},
+					{
+						"propertyName": "Index clause",
+						"propertyKeyword": "indexClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "markdown"
-						}
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Exception clause",
+						"propertyKeyword": "exceptionClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
 					}
 				]
 			},
@@ -1128,8 +1283,13 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "compositeUniqueKey",
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
+					"type": "and",
+					"values": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true
 			},
@@ -1172,7 +1332,7 @@ making sure that you maintain a proper JSON format.
 			},
 			{
 				"propertyName": "Unique key options",
-				"propertyType": "group",
+				"propertyType": "block",
 				"propertyKeyword": "uniqueKeyOptions",
 				"enableForReference": true,
 				"propertyTooltip": "Unique key options",
@@ -1218,49 +1378,99 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text"
 					},
 					{
-						"propertyName": "Include non-key columns",
-						"propertyKeyword": "indexInclude",
-						"propertyType": "fieldList",
-						"template": "orderedList",
-						"propertyTooltip": "The optional INCLUDE clause specifies a list of columns which will be included in the constraint as non-key columns."
-					},
-					{
-						"propertyName": "With storage parameters",
-						"propertyKeyword": "indexStorageParameters",
+						"propertyName": "Defer clause",
+						"propertyKeyword": "deferClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "pgsql"
-						},
-						"valueType": "string",
+						"template": "textarea",
 						"markdown": false
 					},
 					{
-						"propertyName": "Comment",
-						"propertyKeyword": "indexComment",
-						"propertyTooltip": "comment",
-						"addTimestampButton": false,
+						"propertyName": "Rely option",
+						"propertyKeyword": "rely",
+						"propertyType": "select",
+						"options": ["", "RELY", "NORELY"]
+					},
+					{
+						"propertyName": "Validate option",
+						"propertyKeyword": "validate",
+						"propertyType": "select",
+						"options": ["", "VALIDATE", "NOVALIDATE"]
+					},
+					{
+						"propertyName": "Index clause",
+						"propertyKeyword": "indexClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "markdown"
-						}
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Exception clause",
+						"propertyKeyword": "exceptionClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
 					}
 				]
 			},
 			"foreignCollection",
 			"foreignField",
 			"relationshipType",
+			"relationshipName",
+			"cardinality",
 			"unit",
 			"minimum",
-			"exclusiveMinimum",
+			{
+				"fieldKeyword": "exclusiveMinimum",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "jsonSchemaSpec",
+							"value": "draft-04"
+						}
+					]
+				}
+			},
 			"maximum",
-			"exclusiveMaximum",
+			{
+				"fieldKeyword": "exclusiveMaximum",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "jsonSchemaSpec",
+							"value": "draft-04"
+						}
+					]
+				}
+			},
 			"multipleOf",
 			"divisibleBy",
 			"pattern",
 			"enum",
-			"sample",
+			{
+				"fieldKeyword": "sample",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "jsonSchemaSpec",
+							"value": "draft-04"
+						}
+					]
+				}
+			},
+			"fakerFunction",
+			{
+				"propertyName": "JSON key",
+				"propertyKeyword": "name",
+				"shouldValidate": true,
+				"propertyType": "coupled",
+				"coupledBy": "namingConvention",
+				"changeAction": "changeFieldBusinessName",
+				"onCoupleAction": "onCoupleBusinessName",
+				"enableForReference": true
+			},
 			{
 				"propertyName": "Remarks",
 				"propertyKeyword": "comments",
