@@ -1988,6 +1988,95 @@ making sure that you maintain a proper JSON format.
 				}
 			}
 		],
+		"lobs": [
+			"name",
+			"code",
+			"isActivated",
+			"reference",
+			"sampleName",
+			"schemaId",
+			"refPath",
+			"type",
+			{
+				"propertyName": "Subtype",
+				"propertyKeyword": "mode",
+				"propertyType": "select",
+				"options": ["blob", "clob", "dbclob"],
+				"data": "options",
+				"valueType": "string"
+			},
+			{
+				"propertyName": "JSON Type",
+				"propertyKeyword": "physicalType",
+				"propertyType": "select",
+				"hidden": true
+			},
+			{
+				"propertyName": "JSON Types",
+				"propertyKeyword": "subtype",
+				"propertyType": "select",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "mode",
+									"value": "blob"
+								},
+								{
+									"key": "mode",
+									"value": "clob"
+								},
+								{
+									"key": "mode",
+									"value": "dbclob"
+								}
+							]
+						}
+					]
+				},
+				"options": [
+					{
+						"name": " ",
+						"value": "string"
+					},
+					{
+						"name": "object",
+						"value": "object"
+					},
+					{
+						"name": "array",
+						"value": "array"
+					}
+				],
+				"defaultValue": "string"
+			},
+			{
+				"propertyName": "Comments",
+				"propertyKeyword": "description",
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Remarks",
+				"propertyKeyword": "comments",
+				"shouldValidate": false,
+				"propertyTooltip": "remarks",
+				"addTimestampButton": true,
+				"propertyType": "details",
+				"template": "textarea"
+			}
+		],
 		"binary": [
 			"name",
 			"code",
