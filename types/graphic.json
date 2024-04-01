@@ -1,0 +1,48 @@
+{
+	"name": "graphic",
+	"erdAbbreviation": "<graph>",
+	"dtdAbbreviation": "{ABC}",
+	"parentType": "string",
+	"useSample": true,
+	"sample": "",
+	"default": true,
+	"hiddenOnEntity": "view",
+	"jsonType": {
+		"order": 1,
+		"jsonRoot": true,
+		"source": {
+			"key": "mode",
+			"value": "graphic"
+		}
+	},
+	"defaultValues": {
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"default": "",
+		"minLength": "",
+		"maxLength": "",
+		"pattern": "",
+		"enum": [],
+		"sample": "",
+		"comments": "",
+		"mode": "graphic",
+		"length": 10
+	},
+	"subtypes": {
+		"object": {
+			"parentType": "jsonObject",
+			"childValueType": ["jsonString", "jsonNumber", "jsonObject", "jsonArray", "jsonBoolean", "jsonNull"]
+		},
+		"array": {
+			"parentType": "jsonArray",
+			"childValueType": ["jsonString", "jsonNumber", "jsonObject", "jsonArray", "jsonBoolean", "jsonNull"]
+		},
+		"string": {
+			"parentType": "string"
+		}
+	}
+}
