@@ -2,7 +2,7 @@
 	"name": "binary",
 	"erdAbbreviation": "<bin>",
 	"dtdAbbreviation": "{BIN}",
-	"parentType": "binary",
+	"parentType": "string",
 	"useSample": false,
 	"hiddenOnEntity": "view",
 	"defaultValues": {

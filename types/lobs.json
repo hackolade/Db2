@@ -2,7 +2,7 @@
 	"name": "lobs",
 	"erdAbbreviation": "<lob>",
 	"dtdAbbreviation": "{LOB}",
-	"parentType": "binary",
+	"parentType": "string",
 	"useSample": false,
 	"hiddenOnEntity": "view",
 	"jsonType": {
@@ -18,17 +18,14 @@
 				{
 					"key": "mode",
 					"value": "clob"
-				},
-				{
-					"key": "mode",
-					"value": "dbclob"
 				}
 			]
 		}
 	},
 	"defaultValues": {
 		"primaryKey": false,
-		"mode": "blob"
+		"mode": "blob",
+		"length": 1000000
 	},
 	"subtypes": {
 		"object": {
