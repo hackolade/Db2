@@ -770,16 +770,6 @@ making sure that you maintain a proper JSON format.
 			"sample",
 			"fakerFunction",
 			{
-				"propertyName": "JSON key",
-				"propertyKeyword": "name",
-				"shouldValidate": true,
-				"propertyType": "coupled",
-				"coupledBy": "namingConvention",
-				"changeAction": "changeFieldBusinessName",
-				"onCoupleAction": "onCoupleBusinessName",
-				"enableForReference": true
-			},
-			{
 				"propertyName": "Remarks",
 				"propertyKeyword": "comments",
 				"shouldValidate": false,
@@ -1462,16 +1452,6 @@ making sure that you maintain a proper JSON format.
 			},
 			"fakerFunction",
 			{
-				"propertyName": "JSON key",
-				"propertyKeyword": "name",
-				"shouldValidate": true,
-				"propertyType": "coupled",
-				"coupledBy": "namingConvention",
-				"changeAction": "changeFieldBusinessName",
-				"onCoupleAction": "onCoupleBusinessName",
-				"enableForReference": true
-			},
-			{
 				"propertyName": "Remarks",
 				"propertyKeyword": "comments",
 				"shouldValidate": false,
@@ -2082,56 +2062,18 @@ making sure that you maintain a proper JSON format.
 			"code",
 			"sampleName",
 			"schemaId",
+			"isActivated",
+			"reference",
 			"refPath",
 			"type",
 			{
 				"propertyName": "Subtype",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": ["binary", "varbinary", "blob"],
+				"defaultValue": "long",
+				"options": ["binary", "varbinary"],
 				"data": "options",
 				"valueType": "string"
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"propertyTooltip": "Setting for Length must be between 1 and 255",
-				"minValue": 1,
-				"maxValue": 255,
-				"step": 1,
-				"typeDecorator": true,
-				"dependency": {
-					"key": "mode",
-					"value": ["binary"]
-				}
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"propertyTooltip": "Setting for Length must be between 1 and 32672",
-				"minValue": 1,
-				"maxValue": 32672,
-				"step": 1,
-				"typeDecorator": true,
-				"dependency": {
-					"key": "mode",
-					"value": ["varbinary"]
-				}
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "text",
-				"propertyTooltip": "Setting for Length must be more than 1",
-				"typeDecorator": true,
-				"dependency": {
-					"key": "mode",
-					"value": ["blob"]
-				}
 			},
 			{
 				"propertyName": "Comments",
@@ -2139,83 +2081,13 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "comments",
 				"addTimestampButton": false,
 				"propertyType": "details",
-				"template": "codeEditor",
-				"templateOptions": {
-					"editorDialect": "markdown"
-				}
-			},
-			{
-				"propertyName": "Array type",
-				"propertyType": "group",
-				"propertyKeyword": "array_type",
-				"propertyTooltip": "Declaring the array number of dimensions is simply for documentation; it does not affect run-time behavior.",
-				"structure": [
-					{
-						"propertyName": "Size limit",
-						"propertyKeyword": "array_size_limit",
-						"propertyTooltip": "Declaring the array size is simply for documentation; it does not affect run-time behavior.",
-						"propertyType": "numeric",
-						"valueType": "number",
-						"minValue": 0,
-						"step": 1
-					}
-				]
-			},
-			{
-				"propertyName": "Generated column",
-				"propertyKeyword": "generatedColumn",
-				"propertyTooltip": "A generated column is a special column that is always computed from other columns",
-				"propertyType": "checkbox"
-			},
-			{
-				"propertyName": "Generation expression",
-				"propertyKeyword": "columnGenerationExpression",
-				"propertyTooltip": "An SQL statement for computing values for this column",
-				"propertyType": "details",
-				"template": "codeEditor",
-				"templateOptions": {
-					"editorDialect": "pgsql"
-				},
-				"markdown": false,
-				"dependency": {
-					"key": "generatedColumn",
-					"value": true
-				}
+				"template": "textarea"
 			},
 			{
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
 				"propertyType": "checkbox"
-			},
-			{
-				"propertyName": "Hidden clause",
-				"propertyKeyword": "hiddenClause",
-				"propertyType": "select",
-				"defaultValue": "",
-				"options": ["", "NOT HIDDEN", "IMPLICITLY HIDDEN"]
-			},
-			{
-				"propertyName": "Logged clause",
-				"propertyKeyword": "loggedClause",
-				"propertyType": "select",
-				"defaultValue": "",
-				"options": ["", "LOGGED", "NOT LOGGED"],
-				"dependency": {
-					"key": "mode",
-					"value": "blob"
-				}
-			},
-			{
-				"propertyName": "Compact clause",
-				"propertyKeyword": "compactClause",
-				"propertyType": "select",
-				"defaultValue": "",
-				"options": ["", "COMPACT", "NOT COMPACT"],
-				"dependency": {
-					"key": "mode",
-					"value": "blob"
-				}
 			},
 			{
 				"propertyName": "Primary key",
@@ -2249,41 +2121,46 @@ making sure that you maintain a proper JSON format.
 					]
 				},
 				"dependency": {
-					"type": "or",
+					"type": "and",
 					"values": [
 						{
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"key": "compositePrimaryKey",
-							"value": true
-						},
-						{
-							"level": "siblings",
-							"value": {
-								"type": "and",
-								"values": [
-									{
-										"key": "primaryKey",
-										"value": true
-									},
-									{
-										"type": "or",
+							"type": "or",
+							"values": [
+								{
+									"key": "compositePrimaryKey",
+									"value": true
+								},
+								{
+									"level": "siblings",
+									"key": "compositePrimaryKey",
+									"value": true
+								},
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
 										"values": [
 											{
-												"key": "compositeUniqueKey",
-												"value": false
+												"key": "primaryKey",
+												"value": true
 											},
 											{
-												"key": "compositeUniqueKey",
-												"exist": false
+												"type": "or",
+												"values": [
+													{
+														"key": "compositeUniqueKey",
+														"value": false
+													},
+													{
+														"key": "compositeUniqueKey",
+														"exist": false
+													}
+												]
 											}
 										]
 									}
-								]
-							}
+								}
+							]
 						}
 					]
 				},
@@ -2371,8 +2248,7 @@ making sure that you maintain a proper JSON format.
 			},
 			{
 				"propertyName": "Primary key options",
-				"propertyType": "group",
-				"groupItemLimit": 1,
+				"propertyType": "block",
 				"propertyKeyword": "primaryKeyOptions",
 				"enableForReference": true,
 				"propertyTooltip": "Primary key options",
@@ -2418,33 +2294,37 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text"
 					},
 					{
-						"propertyName": "Include non-key columns",
-						"propertyKeyword": "indexInclude",
-						"propertyType": "fieldList",
-						"template": "orderedList",
-						"propertyTooltip": "The optional INCLUDE clause specifies a list of columns which will be included in the constraint as non-key columns."
-					},
-					{
-						"propertyName": "With storage parameters",
-						"propertyKeyword": "indexStorageParameters",
+						"propertyName": "Defer clause",
+						"propertyKeyword": "deferClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "pgsql"
-						},
-						"valueType": "string",
+						"template": "textarea",
 						"markdown": false
 					},
 					{
-						"propertyName": "Comment",
-						"propertyKeyword": "indexComment",
-						"propertyTooltip": "comment",
-						"addTimestampButton": false,
+						"propertyName": "Rely option",
+						"propertyKeyword": "rely",
+						"propertyType": "select",
+						"options": ["", "RELY", "NORELY"]
+					},
+					{
+						"propertyName": "Validate option",
+						"propertyKeyword": "validate",
+						"propertyType": "select",
+						"options": ["", "VALIDATE", "NOVALIDATE"]
+					},
+					{
+						"propertyName": "Index clause",
+						"propertyKeyword": "indexClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "markdown"
-						}
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Exception clause",
+						"propertyKeyword": "exceptionClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
 					}
 				]
 			},
@@ -2453,8 +2333,13 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "compositeUniqueKey",
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "compositeUniqueKey",
-					"value": true
+					"type": "and",
+					"values": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true
 			},
@@ -2497,7 +2382,7 @@ making sure that you maintain a proper JSON format.
 			},
 			{
 				"propertyName": "Unique key options",
-				"propertyType": "group",
+				"propertyType": "block",
 				"propertyKeyword": "uniqueKeyOptions",
 				"enableForReference": true,
 				"propertyTooltip": "Unique key options",
@@ -2543,33 +2428,37 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "text"
 					},
 					{
-						"propertyName": "Include non-key columns",
-						"propertyKeyword": "indexInclude",
-						"propertyType": "fieldList",
-						"template": "orderedList",
-						"propertyTooltip": "The optional INCLUDE clause specifies a list of columns which will be included in the constraint as non-key columns."
-					},
-					{
-						"propertyName": "With storage parameters",
-						"propertyKeyword": "indexStorageParameters",
+						"propertyName": "Defer clause",
+						"propertyKeyword": "deferClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "pgsql"
-						},
-						"valueType": "string",
+						"template": "textarea",
 						"markdown": false
 					},
 					{
-						"propertyName": "Comment",
-						"propertyKeyword": "indexComment",
-						"propertyTooltip": "comment",
-						"addTimestampButton": false,
+						"propertyName": "Rely option",
+						"propertyKeyword": "rely",
+						"propertyType": "select",
+						"options": ["", "RELY", "NORELY"]
+					},
+					{
+						"propertyName": "Validate option",
+						"propertyKeyword": "validate",
+						"propertyType": "select",
+						"options": ["", "VALIDATE", "NOVALIDATE"]
+					},
+					{
+						"propertyName": "Index clause",
+						"propertyKeyword": "indexClause",
 						"propertyType": "details",
-						"template": "codeEditor",
-						"templateOptions": {
-							"editorDialect": "markdown"
-						}
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Exception clause",
+						"propertyKeyword": "exceptionClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
 					}
 				]
 			},
@@ -2927,16 +2816,6 @@ making sure that you maintain a proper JSON format.
 						}
 					]
 				}
-			},
-			{
-				"propertyName": "JSON key",
-				"propertyKeyword": "name",
-				"shouldValidate": true,
-				"propertyType": "coupled",
-				"coupledBy": "namingConvention",
-				"changeAction": "changeFieldBusinessName",
-				"onCoupleAction": "onCoupleBusinessName",
-				"enableForReference": true
 			},
 			{
 				"fieldKeyword": "code",
