@@ -3,7 +3,6 @@
 	"erdAbbreviation": "<json>",
 	"dtdAbbreviation": "{...}",
 	"parentType": "jsonObject",
-	"default": true,
 	"jsonType": {
 		"order": 1,
 		"jsonRoot": true,
