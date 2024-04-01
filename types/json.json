@@ -1,0 +1,58 @@
+{
+	"name": "json",
+	"erdAbbreviation": "<json>",
+	"dtdAbbreviation": "{...}",
+	"parentType": "jsonObject",
+	"default": true,
+	"jsonType": {
+		"order": 1,
+		"jsonRoot": true,
+		"source": true
+	},
+	"compatibleWith": {
+		"type": "lobs",
+		"parentType": "jsonObject",
+		"mode": "clob",
+		"subtype": "object",
+		"properties": []
+	},
+	"defaultValues": {
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"enabled": true,
+		"mode": "json",
+		"properties": [],
+		"dependencies": [],
+		"minProperties": "",
+		"maxProperties": "",
+		"additionalProperties": false,
+		"enum": [],
+		"subtype": "object"
+	},
+	"subtypes": {
+		"object": {
+			"parentType": "jsonObject",
+			"childValueType": ["jsonString", "jsonNumber", "jsonObject", "jsonArray", "jsonBoolean", "jsonNull"]
+		},
+		"array": {
+			"parentType": "jsonArray",
+			"childValueType": ["jsonString", "jsonNumber", "jsonObject", "jsonArray", "jsonBoolean", "jsonNull"]
+		},
+		"string": {
+			"parentType": "jsonString"
+		},
+		"number": {
+			"parentType": "jsonNumber"
+		},
+		"boolean": {
+			"parentType": "jsonBoolean"
+		},
+		"null": {
+			"parentType": "jsonNull"
+		}
+	}
+}

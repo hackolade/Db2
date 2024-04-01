@@ -2558,104 +2558,8 @@ making sure that you maintain a proper JSON format.
 			}
 		],
 		"json": [
-			{
-				"fieldKeyword": "name",
-				"dependency": [
-					{
-						"type": "and",
-						"values": [
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "arrayItem",
-										"value": false
-									},
-									{
-										"key": "arrayItem",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "subschema",
-										"value": false
-									},
-									{
-										"key": "subschema",
-										"exist": false
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"fieldKeyword": "code",
-				"dependency": [
-					{
-						"type": "and",
-						"values": [
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "arrayItem",
-										"value": false
-									},
-									{
-										"key": "arrayItem",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "subschema",
-										"value": false
-									},
-									{
-										"key": "subschema",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "isPatternField",
-										"value": false
-									},
-									{
-										"key": "isPatternField",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "containerLevelKey",
-										"value": false
-									},
-									{
-										"key": "containerLevelKey",
-										"exist": false
-									}
-								]
-							}
-						]
-					}
-				]
-			},
+			"name",
+			"code",
 			"additionalProperties",
 			"minProperties",
 			"maxProperties",
@@ -2685,62 +2589,10 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			"isActivated",
-			{
-				"propertyName": "reference",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "refPath",
-							"exist": true,
-							"value": ""
-						},
-						{
-							"key": "refType",
-							"value": "collectionReference"
-						}
-					]
-				}
-			},
-			{
-				"fieldKeyword": "sampleName",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "isPatternField",
-							"value": true
-						}
-					]
-				}
-			},
+			"reference",
+			"sampleName",
 			"schemaId",
-			{
-				"fieldKeyword": "refPath",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "refPath",
-							"exist": true,
-							"value": ""
-						},
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "refType",
-									"value": "external"
-								},
-								{
-									"key": "refType",
-									"value": "polyglot"
-								}
-							]
-						}
-					]
-				}
-			},
+			"refPath",
 			"type",
 			{
 				"propertyName": "Subtype",
@@ -2782,7 +2634,27 @@ making sure that you maintain a proper JSON format.
 						"name": "null",
 						"value": "null"
 					}
-				]
+				],
+				"dependency": {
+					"type": "not",
+					"values": [
+						{
+							"type": "and",
+							"values": [
+								{
+									"level": "root",
+									"key": "viewOn",
+									"exist": true
+								},
+								{
+									"level": "root",
+									"key": "duality",
+									"value": true
+								}
+							]
+						}
+					]
+				}
 			},
 			{
 				"propertyName": "JSON Type",
@@ -2804,7 +2676,58 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "details",
 				"template": "textarea"
 			},
-			"required",
+			{
+				"propertyKeyword": "required",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"type": "or",
+							"values": [
+								{
+									"type": "and",
+									"values": [
+										{
+											"key": "isPatternField",
+											"value": false
+										},
+										{
+											"key": "isPatternField",
+											"exists": false
+										}
+									]
+								},
+								{
+									"type": "and",
+									"values": [
+										{
+											"key": "arrayItem",
+											"value": false
+										},
+										{
+											"key": "arrayItem",
+											"exists": false
+										}
+									]
+								},
+								{
+									"type": "and",
+									"values": [
+										{
+											"key": "subschema",
+											"value": false
+										},
+										{
+											"key": "subschema",
+											"exists": false
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			},
 			{
 				"fieldKeyword": "sample",
 				"dependency": {
@@ -2816,119 +2739,6 @@ making sure that you maintain a proper JSON format.
 						}
 					]
 				}
-			},
-			{
-				"fieldKeyword": "code",
-				"dependency": [
-					{
-						"type": "and",
-						"values": [
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "arrayItem",
-										"value": false
-									},
-									{
-										"key": "arrayItem",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "subschema",
-										"value": false
-									},
-									{
-										"key": "subschema",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "isPatternField",
-										"value": false
-									},
-									{
-										"key": "isPatternField",
-										"exist": false
-									}
-								]
-							},
-							{
-								"type": "or",
-								"values": [
-									{
-										"key": "containerLevelKey",
-										"value": false
-									},
-									{
-										"key": "containerLevelKey",
-										"exist": false
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"propertyName": "Column name",
-				"propertyKeyword": "referencedColumnName",
-				"propertyType": "text",
-				"customElement": true,
-				"disabled": true
-			},
-			{
-				"propertyName": "Activated",
-				"propertyKeyword": "isActivated",
-				"fieldType": "checkbox",
-				"shouldValidate": false,
-				"propertyTooltip": "Deactivated item will be not included in FE script",
-				"changeAction": "changeFieldProperty",
-				"enableForReference": true
-			},
-			{
-				"propertyName": "Key",
-				"propertyKeyword": "primaryKey",
-				"propertyType": "checkbox",
-				"defaultValue": false
-			},
-			{
-				"propertyName": "Column tags clause",
-				"propertyKeyword": "columnTagsClause",
-				"propertyType": "block",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Check",
-						"propertyKeyword": "check",
-						"propertyType": "select",
-						"options": ["", "check", "nocheck"]
-					},
-					{
-						"propertyName": "Etag",
-						"propertyKeyword": "etag",
-						"propertyType": "checkbox",
-						"dependency": {
-							"key": "check",
-							"value": ["check", "nocheck"]
-						}
-					},
-					{
-						"propertyName": "Update",
-						"propertyKeyword": "update",
-						"propertyType": "select",
-						"options": ["", "update", "noupdate"]
-					}
-				]
 			},
 			{
 				"propertyName": "Remarks",
