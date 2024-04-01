@@ -88,7 +88,6 @@
 			"capacity": 8,
 			"mode": "floating"
 		},
-		/* "Serial" type descriptors are added to allow RE of these types from Postgres DDL */
 		{
 			"schema": {
 				"mode": "smallint"
