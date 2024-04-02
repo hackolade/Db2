@@ -814,6 +814,10 @@ making sure that you maintain a proper JSON format.
 							"values": [
 								{
 									"key": "mode",
+									"value": "decimal"
+								},
+								{
+									"key": "mode",
 									"value": "decfloat"
 								},
 								{
