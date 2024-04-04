@@ -877,36 +877,15 @@ making sure that you maintain a proper JSON format.
 							"values": [
 								{
 									"key": "mode",
+									"value": "real"
+								},
+								{
+									"key": "mode",
 									"value": "decimal"
 								},
 								{
 									"key": "mode",
 									"value": "decfloat"
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Scale",
-				"propertyKeyword": "scale",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"propertyTooltip": "Setting for Scale must be between -84 and 127",
-				"minValue": -84,
-				"maxValue": 127,
-				"allowNegative": true,
-				"typeDecorator": true,
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "not",
-							"values": [
-								{
-									"key": "synonym",
-									"value": ["int", "integer", "smallint"]
 								}
 							]
 						}
