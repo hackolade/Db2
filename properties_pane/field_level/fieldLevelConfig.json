@@ -128,7 +128,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Subtype",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": ["char", "varchar", "nchar", "nvarchar"],
+				"options": ["char", "varchar", "nchar", "nvarchar", "clob", "graphic", "vargraphic", "dbclob"],
 				"data": "options",
 				"valueType": "string"
 			},
@@ -237,6 +237,82 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"propertyTooltip": "Setting for Length must be between 1 and 2147483647",
+				"minValue": 1,
+				"maxValue": 2147483647,
+				"step": 1,
+				"typeDecorator": true,
+				"dependency": {
+					"key": "mode",
+					"value": "clob"
+				}
+			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"propertyTooltip": "Setting for Length must be between 1 and 128",
+				"minValue": 1,
+				"maxValue": 128,
+				"step": 1,
+				"defaultValue": 1,
+				"typeDecorator": true,
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "mode",
+							"value": "graphic"
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"propertyTooltip": "Setting for Length must be between 1 and 16352",
+				"minValue": 1,
+				"maxValue": 16352,
+				"step": 1,
+				"typeDecorator": true,
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "mode",
+							"value": "vargraphic"
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"propertyTooltip": "Setting for Length must be between 1 and 1073741824",
+				"minValue": 1,
+				"maxValue": 1073741824,
+				"step": 1,
+				"typeDecorator": true,
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "mode",
+							"value": "dbclob"
+						}
+					]
+				}
+			},
+			{
 				"propertyName": "Length semantics",
 				"propertyKeyword": "lengthSemantics",
 				"propertyType": "select",
@@ -262,13 +338,8 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "subtype",
 				"propertyType": "select",
 				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "mode",
-							"value": "nvarchar"
-						}
-					]
+					"key": "mode",
+					"value": "clob"
 				},
 				"options": [
 					{
@@ -340,14 +411,6 @@ making sure that you maintain a proper JSON format.
 						}
 					]
 				}
-			},
-			{
-				"propertyName": "Masked with function",
-				"propertyKeyword": "maskedWithFunction",
-				"propertyTooltip": "Limit exposure of sensitive data with this function",
-				"propertyType": "details",
-				"template": "textarea",
-				"markdown": false
 			},
 			{
 				"propertyName": "Encryption",
@@ -1011,14 +1074,6 @@ making sure that you maintain a proper JSON format.
 						}
 					]
 				}
-			},
-			{
-				"propertyName": "Masked with function",
-				"propertyKeyword": "maskedWithFunction",
-				"propertyTooltip": "Limit exposure of sensitive data with this function",
-				"propertyType": "details",
-				"template": "textarea",
-				"markdown": false
 			},
 			{
 				"propertyName": "Primary key",
@@ -1972,102 +2027,6 @@ making sure that you maintain a proper JSON format.
 				}
 			}
 		],
-		"lobs": [
-			"name",
-			"code",
-			"isActivated",
-			"reference",
-			"sampleName",
-			"schemaId",
-			"refPath",
-			"type",
-			{
-				"propertyName": "Subtype",
-				"propertyKeyword": "mode",
-				"propertyType": "select",
-				"options": ["blob", "clob"],
-				"data": "options",
-				"valueType": "string"
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"propertyTooltip": "Setting for Length must be between 1 and 2147483647",
-				"minValue": 1,
-				"maxValue": 2147483647,
-				"step": 1,
-				"typeDecorator": true
-			},
-			{
-				"propertyName": "JSON Type",
-				"propertyKeyword": "physicalType",
-				"propertyType": "select",
-				"hidden": true
-			},
-			{
-				"propertyName": "JSON Types",
-				"propertyKeyword": "subtype",
-				"propertyType": "select",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"type": "or",
-							"values": [
-								{
-									"key": "mode",
-									"value": "blob"
-								},
-								{
-									"key": "mode",
-									"value": "clob"
-								}
-							]
-						}
-					]
-				},
-				"options": [
-					{
-						"name": " ",
-						"value": "string"
-					},
-					{
-						"name": "object",
-						"value": "object"
-					},
-					{
-						"name": "array",
-						"value": "array"
-					}
-				],
-				"defaultValue": "string"
-			},
-			{
-				"propertyName": "Comments",
-				"propertyKeyword": "description",
-				"propertyTooltip": "comments",
-				"addTimestampButton": false,
-				"propertyType": "details",
-				"template": "textarea"
-			},
-			{
-				"propertyName": "Not null",
-				"propertyKeyword": "required",
-				"enableForReference": true,
-				"propertyType": "checkbox"
-			},
-			{
-				"propertyName": "Remarks",
-				"propertyKeyword": "comments",
-				"shouldValidate": false,
-				"propertyTooltip": "remarks",
-				"addTimestampButton": true,
-				"propertyType": "details",
-				"template": "textarea"
-			}
-		],
 		"binary": [
 			"name",
 			"code",
@@ -2082,7 +2041,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "mode",
 				"propertyType": "select",
 				"defaultValue": "binary",
-				"options": ["binary", "varbinary"],
+				"options": ["binary", "varbinary", "blob"],
 				"data": "options",
 				"valueType": "string"
 			},
@@ -2102,7 +2061,7 @@ making sure that you maintain a proper JSON format.
 					"values": [
 						{
 							"key": "mode",
-							"value": ["binary"]
+							"value": "binary"
 						}
 					]
 				}
@@ -2122,9 +2081,24 @@ making sure that you maintain a proper JSON format.
 					"values": [
 						{
 							"key": "mode",
-							"value": ["varbinary"]
+							"value": "varbinary"
 						}
 					]
+				}
+			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"propertyTooltip": "Setting for Length must be between 1 and 2147483647",
+				"minValue": 1,
+				"maxValue": 2147483647,
+				"step": 1,
+				"typeDecorator": true,
+				"dependency": {
+					"key": "mode",
+					"value": "blob"
 				}
 			},
 			{
@@ -2564,81 +2538,225 @@ making sure that you maintain a proper JSON format.
 				}
 			}
 		],
-		"graphic": [
+		"json": [
 			"name",
 			"code",
-			"schemaId",
+			"additionalProperties",
+			"minProperties",
+			"maxProperties",
+			{
+				"fieldKeyword": "dependencies",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "jsonSchemaSpec",
+									"value": "draft-04"
+								},
+								{
+									"key": "jsonSchemaSpec",
+									"value": "draft-06"
+								},
+								{
+									"key": "jsonSchemaSpec",
+									"value": "draft-07"
+								}
+							]
+						}
+					]
+				}
+			},
 			"isActivated",
 			"reference",
+			"sampleName",
+			"schemaId",
+			"refPath",
 			"type",
 			{
 				"propertyName": "Subtype",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": ["graphic", "vargraphic", "dbclob"],
+				"hidden": true,
+				"options": ["json"],
 				"data": "options",
+				"defaultValue": "json",
 				"valueType": "string"
 			},
 			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"propertyTooltip": "Setting for Length must be between 1 and 128",
-				"minValue": 1,
-				"maxValue": 128,
-				"step": 1,
-				"defaultValue": 1,
-				"typeDecorator": true,
+				"propertyName": "JSON Types",
+				"propertyKeyword": "subtype",
+				"propertyTooltip": "needs for configuration of json types",
+				"propertyType": "select",
+				"options": [
+					{
+						"name": "object",
+						"value": "object"
+					},
+					{
+						"name": "array",
+						"value": "array"
+					},
+					{
+						"name": "string",
+						"value": "string"
+					},
+					{
+						"name": "number",
+						"value": "number"
+					},
+					{
+						"name": "boolean",
+						"value": "boolean"
+					},
+					{
+						"name": "null",
+						"value": "null"
+					}
+				],
+				"dependency": {
+					"type": "not",
+					"values": [
+						{
+							"type": "and",
+							"values": [
+								{
+									"level": "root",
+									"key": "viewOn",
+									"exist": true
+								},
+								{
+									"level": "root",
+									"key": "duality",
+									"value": true
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "JSON Type",
+				"propertyKeyword": "physicalType",
+				"propertyType": "select",
+				"hidden": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Comments",
+				"propertyKeyword": "description",
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
 				"dependency": {
 					"type": "and",
 					"values": [
 						{
-							"key": "mode",
-							"value": ["graphic"]
+							"type": "or",
+							"values": [
+								{
+									"type": "and",
+									"values": [
+										{
+											"key": "isPatternField",
+											"value": false
+										},
+										{
+											"key": "isPatternField",
+											"exists": false
+										}
+									]
+								},
+								{
+									"type": "and",
+									"values": [
+										{
+											"key": "arrayItem",
+											"value": false
+										},
+										{
+											"key": "arrayItem",
+											"exists": false
+										}
+									]
+								},
+								{
+									"type": "and",
+									"values": [
+										{
+											"key": "subschema",
+											"value": false
+										},
+										{
+											"key": "subschema",
+											"exists": false
+										}
+									]
+								}
+							]
 						}
 					]
 				}
+			},
+			{
+				"fieldKeyword": "sample",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "jsonSchemaSpec",
+							"value": "draft-04"
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "Remarks",
+				"propertyKeyword": "comments",
+				"shouldValidate": false,
+				"propertyTooltip": "remarks",
+				"addTimestampButton": true,
+				"propertyType": "details",
+				"template": "textarea"
+			}
+		],
+		"___0": [],
+		"array": [
+			"name",
+			"code",
+			"sampleName",
+			"schemaId",
+			"refPath",
+			"type",
+			{
+				"propertyName": "Comments",
+				"propertyKeyword": "description",
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
 			},
 			{
 				"propertyName": "Length",
 				"propertyKeyword": "length",
 				"propertyType": "numeric",
 				"valueType": "number",
-				"propertyTooltip": "Setting for Length must be between 1 and 16352",
 				"minValue": 1,
-				"maxValue": 16352,
+				"maxValue": 2147483647,
 				"step": 1,
-				"typeDecorator": true,
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "mode",
-							"value": ["vargraphic"]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "Length",
-				"propertyKeyword": "length",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"propertyTooltip": "Setting for Length must be between 1 and 1073741824",
-				"minValue": 1,
-				"maxValue": 1073741824,
-				"step": 1,
-				"typeDecorator": true,
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "mode",
-							"value": ["dbclob"]
-						}
-					]
-				}
+				"typeDecorator": true
 			},
 			{
 				"propertyName": "Default",
@@ -2694,14 +2812,6 @@ making sure that you maintain a proper JSON format.
 						}
 					]
 				}
-			},
-			{
-				"propertyName": "Masked with function",
-				"propertyKeyword": "maskedWithFunction",
-				"propertyTooltip": "Limit exposure of sensitive data with this function",
-				"propertyType": "details",
-				"template": "textarea",
-				"markdown": false
 			},
 			{
 				"propertyName": "Encryption",
@@ -3136,14 +3246,47 @@ making sure that you maintain a proper JSON format.
 				}
 			}
 		],
-		"json": [
+		"multiset": [
 			"name",
 			"code",
-			"additionalProperties",
-			"minProperties",
-			"maxProperties",
+			"sampleName",
+			"schemaId",
+			"refPath",
+			"description",
+			"type",
 			{
-				"fieldKeyword": "dependencies",
+				"propertyName": "Subtype",
+				"propertyKeyword": "subtype",
+				"shouldValidate": false,
+				"propertyType": "select",
+				"options": ["set<char>", "set<num>", "set<bin>", "set<date>", "set<bool>", "set<xml>"]
+			},
+			{
+				"propertyName": "Comments",
+				"propertyKeyword": "description",
+				"propertyTooltip": "comments",
+				"addTimestampButton": false,
+				"propertyType": "details",
+				"template": "textarea"
+			},
+			{
+				"propertyName": "Length",
+				"propertyKeyword": "length",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"minValue": 1,
+				"maxValue": 2147483647,
+				"step": 1,
+				"typeDecorator": true
+			},
+			{
+				"propertyName": "Default",
+				"propertyKeyword": "default",
+				"shouldValidate": true,
+				"fieldType": "dynamicField",
+				"changeAction": "changeDefaultValueOfField",
+				"shadowState": true,
+				"valueType": "asFieldType",
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -3151,101 +3294,17 @@ making sure that you maintain a proper JSON format.
 							"type": "or",
 							"values": [
 								{
-									"key": "jsonSchemaSpec",
-									"value": "draft-04"
+									"key": "now",
+									"value": false
 								},
 								{
-									"key": "jsonSchemaSpec",
-									"value": "draft-06"
-								},
-								{
-									"key": "jsonSchemaSpec",
-									"value": "draft-07"
+									"key": "now",
+									"exist": false
 								}
 							]
 						}
 					]
 				}
-			},
-			"isActivated",
-			"reference",
-			"sampleName",
-			"schemaId",
-			"refPath",
-			"type",
-			{
-				"propertyName": "Subtype",
-				"propertyKeyword": "mode",
-				"propertyType": "select",
-				"hidden": true,
-				"options": ["json"],
-				"data": "options",
-				"defaultValue": "json",
-				"valueType": "string"
-			},
-			{
-				"propertyName": "JSON Types",
-				"propertyKeyword": "subtype",
-				"propertyTooltip": "needs for configuration of json types",
-				"propertyType": "select",
-				"options": [
-					{
-						"name": "object",
-						"value": "object"
-					},
-					{
-						"name": "array",
-						"value": "array"
-					},
-					{
-						"name": "string",
-						"value": "string"
-					},
-					{
-						"name": "number",
-						"value": "number"
-					},
-					{
-						"name": "boolean",
-						"value": "boolean"
-					},
-					{
-						"name": "null",
-						"value": "null"
-					}
-				],
-				"dependency": {
-					"type": "not",
-					"values": [
-						{
-							"type": "and",
-							"values": [
-								{
-									"level": "root",
-									"key": "viewOn",
-									"exist": true
-								},
-								{
-									"level": "root",
-									"key": "duality",
-									"value": true
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"propertyName": "JSON Type",
-				"propertyKeyword": "physicalType",
-				"propertyType": "select",
-				"hidden": true
-			},
-			{
-				"propertyName": "Not null",
-				"propertyKeyword": "required",
-				"enableForReference": true,
-				"propertyType": "checkbox"
 			},
 			{
 				"propertyName": "Comments",
@@ -3258,6 +3317,77 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Not null constraint name",
+				"propertyKeyword": "notNullConstraintName",
+				"propertyType": "text",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "required",
+							"value": true
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "Encryption",
+				"propertyType": "block",
+				"propertyKeyword": "encryption",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Algorithm",
+						"propertyKeyword": "ENCRYPTION_ALGORITHM",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "No Salt",
+						"propertyKeyword": "noSalt",
+						"propertyType": "checkbox"
+					},
+					{
+						"propertyName": "Integrity Algorithm",
+						"propertyKeyword": "INTEGRITY_ALGORITHM",
+						"propertyType": "text"
+					}
+				]
+			},
+			{
+				"propertyName": "Primary key",
+				"propertyKeyword": "compositePrimaryKey",
+				"propertyType": "checkbox",
+				"propertyTooltip": {
+					"disabled": [
+						{
+							"tooltip": "This column is part of the table composite primary key definition. Please refer to this definition if you want more information or to update the Primary Key definition",
+							"dependency": {
+								"key": "compositePrimaryKey",
+								"value": true
+							}
+						},
+						{
+							"tooltip": "Remove the existing composite primary key definition prior to unlock the possibility to mark this single column as the new primary key for this table",
+							"dependency": {
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							}
+						},
+						{
+							"tooltip": "Another column has already been selected as primary key.  You must unselect it prior to either selecting this column, or creating a compound primary key.",
+							"dependency": {
+								"level": "siblings",
+								"key": "primaryKey",
+								"value": true
+							}
+						}
+					]
+				},
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -3265,43 +3395,265 @@ making sure that you maintain a proper JSON format.
 							"type": "or",
 							"values": [
 								{
-									"type": "and",
+									"key": "compositePrimaryKey",
+									"value": true
+								},
+								{
+									"level": "siblings",
+									"key": "compositePrimaryKey",
+									"value": true
+								},
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											},
+											{
+												"type": "or",
+												"values": [
+													{
+														"key": "compositeUniqueKey",
+														"value": false
+													},
+													{
+														"key": "compositeUniqueKey",
+														"exist": false
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					]
+				},
+				"disabled": true
+			},
+			{
+				"propertyName": "Primary key",
+				"propertyKeyword": "primaryKey",
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"level": "siblings",
+								"key": "compositePrimaryKey",
+								"value": true
+							}
+						},
+						{
+							"type": "not",
+							"values": [
+								{
+									"level": "siblings",
+									"value": {
+										"type": "and",
+										"values": [
+											{
+												"key": "primaryKey",
+												"value": true
+											},
+											{
+												"type": "or",
+												"values": [
+													{
+														"key": "compositeUniqueKey",
+														"value": false
+													},
+													{
+														"key": "compositeUniqueKey",
+														"exist": false
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						},
+						{
+							"type": "and",
+							"values": [
+								{
+									"type": "or",
 									"values": [
 										{
-											"key": "isPatternField",
+											"key": "compositePrimaryKey",
 											"value": false
 										},
 										{
-											"key": "isPatternField",
-											"exists": false
+											"key": "compositePrimaryKey",
+											"exist": false
 										}
 									]
 								},
 								{
-									"type": "and",
+									"type": "or",
 									"values": [
 										{
-											"key": "arrayItem",
+											"key": "compositeUniqueKey",
 											"value": false
 										},
 										{
-											"key": "arrayItem",
-											"exists": false
+											"key": "compositeUniqueKey",
+											"exist": false
 										}
 									]
+								}
+							]
+						}
+					]
+				},
+				"disabledOnCondition": {
+					"type": "and",
+					"values": [
+						{
+							"type": "not",
+							"values": {
+								"level": "parent",
+								"key": "type",
+								"value": "object"
+							}
+						}
+					]
+				}
+			},
+			{
+				"propertyName": "Primary key options",
+				"propertyType": "block",
+				"propertyKeyword": "primaryKeyOptions",
+				"enableForReference": true,
+				"propertyTooltip": "Primary key options",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "compositePrimaryKey",
+									"value": false
 								},
 								{
-									"type": "and",
-									"values": [
-										{
-											"key": "subschema",
-											"value": false
-										},
-										{
-											"key": "subschema",
-											"exists": false
-										}
-									]
+									"key": "compositePrimaryKey",
+									"exist": false
+								}
+							]
+						},
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "compositeUniqueKey",
+									"value": false
+								},
+								{
+									"key": "compositeUniqueKey",
+									"exist": false
+								}
+							]
+						}
+					]
+				},
+				"structure": [
+					{
+						"propertyName": "Constraint name",
+						"propertyKeyword": "constraintName",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Defer clause",
+						"propertyKeyword": "deferClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Rely option",
+						"propertyKeyword": "rely",
+						"propertyType": "select",
+						"options": ["", "RELY", "NORELY"]
+					},
+					{
+						"propertyName": "Validate option",
+						"propertyKeyword": "validate",
+						"propertyType": "select",
+						"options": ["", "VALIDATE", "NOVALIDATE"]
+					},
+					{
+						"propertyName": "Index clause",
+						"propertyKeyword": "indexClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Exception clause",
+						"propertyKeyword": "exceptionClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					}
+				]
+			},
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "compositeUniqueKey",
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
+				},
+				"disabled": true
+			},
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "compositePrimaryKey",
+									"value": false
+								},
+								{
+									"key": "compositePrimaryKey",
+									"exist": false
+								}
+							]
+						},
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "compositeUniqueKey",
+									"value": false
+								},
+								{
+									"key": "compositeUniqueKey",
+									"exist": false
 								}
 							]
 						}
@@ -3309,17 +3661,99 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"fieldKeyword": "sample",
+				"propertyName": "Unique key options",
+				"propertyType": "block",
+				"propertyKeyword": "uniqueKeyOptions",
+				"enableForReference": true,
+				"propertyTooltip": "Unique key options",
 				"dependency": {
 					"type": "and",
 					"values": [
 						{
-							"key": "jsonSchemaSpec",
-							"value": "draft-04"
+							"key": "unique",
+							"value": true
+						},
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "compositePrimaryKey",
+									"value": false
+								},
+								{
+									"key": "compositePrimaryKey",
+									"exist": false
+								}
+							]
+						},
+						{
+							"type": "or",
+							"values": [
+								{
+									"key": "compositeUniqueKey",
+									"value": false
+								},
+								{
+									"key": "compositeUniqueKey",
+									"exist": false
+								}
+							]
 						}
 					]
-				}
+				},
+				"structure": [
+					{
+						"propertyName": "Constraint name",
+						"propertyKeyword": "constraintName",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Defer clause",
+						"propertyKeyword": "deferClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Rely option",
+						"propertyKeyword": "rely",
+						"propertyType": "select",
+						"options": ["", "RELY", "NORELY"]
+					},
+					{
+						"propertyName": "Validate option",
+						"propertyKeyword": "validate",
+						"propertyType": "select",
+						"options": ["", "VALIDATE", "NOVALIDATE"]
+					},
+					{
+						"propertyName": "Index clause",
+						"propertyKeyword": "indexClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Exception clause",
+						"propertyKeyword": "exceptionClause",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					}
+				]
 			},
+			"foreignCollection",
+			"foreignField",
+			"relationshipType",
+			"relationshipName",
+			"cardinality",
+			"minLength",
+			"maxLength",
+			"pattern",
+			"format",
+			"enum",
+			"sample",
+			"fakerFunction",
 			{
 				"propertyName": "Remarks",
 				"propertyKeyword": "comments",
@@ -3327,10 +3761,13 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "remarks",
 				"addTimestampButton": true,
 				"propertyType": "details",
-				"template": "textarea"
+				"template": "codeEditor",
+				"templateOptions": {
+					"editorDialect": "markdown"
+				}
 			}
 		],
-		"___0": [],
+		"___1": [],
 		"xml": [
 			"name",
 			"code",

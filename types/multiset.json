@@ -1,0 +1,37 @@
+{
+	"name": "multiset",
+	"erdAbbreviation": "<set>",
+	"dtdAbbreviation": "{...}",
+	"parentType": "array",
+	"useSample": true,
+	"hiddenOnEntity": "view",
+	"defaultValues": {
+		"subtype": "set<char>",
+		"dependencies": [],
+		"primaryKey": false,
+		"properties": [],
+		"minProperties": "",
+		"maxProperties": "",
+		"additionalProperties": false
+	},
+	"subtypes": {
+		"set<char>": {
+			"childValueType": "char"
+		},
+		"set<num>": {
+			"childValueType": "number"
+		},
+		"set<bin>": {
+			"childValueType": "binary"
+		},
+		"set<date>": {
+			"childValueType": "datetime"
+		},
+		"set<bool>": {
+			"childValueType": "boolean"
+		},
+		"set<xml>": {
+			"childValueType": "xml"
+		}
+	}
+}
