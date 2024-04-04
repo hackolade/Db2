@@ -861,6 +861,51 @@ making sure that you maintain a proper JSON format.
 				"valueType": "string"
 			},
 			{
+				"propertyName": "Synonym",
+				"propertyKeyword": "synonym",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": ["", "int", "integer"],
+				"dependency": {
+					"key": "mode",
+					"value": "integer"
+				}
+			},
+			{
+				"propertyName": "Synonym",
+				"propertyKeyword": "synonym",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": ["", "decimal", "numeric"],
+				"dependency": {
+					"key": "mode",
+					"value": "decimal"
+				}
+			},
+			{
+				"propertyName": "Synonym",
+				"propertyKeyword": "synonym",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": ["", "double", "float"],
+				"dependency": {
+					"key": "mode",
+					"value": "double"
+				}
+			},
+			{
+				"propertyName": "Scale",
+				"propertyKeyword": "scale",
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"typeDecorator": true,
+				"dependency": {
+					"key": "mode",
+					"value": "decimal"
+				}
+			},
+			{
 				"propertyName": "Precision",
 				"propertyKeyword": "precision",
 				"propertyType": "numeric",
