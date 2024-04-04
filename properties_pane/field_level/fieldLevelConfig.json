@@ -856,7 +856,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Subtype",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": ["integer", "smallint", "bigint", "decimal", "real", "double", "float", "decfloat"],
+				"options": ["integer", "smallint", "bigint", "decimal", "real", "double", "decfloat"],
 				"data": "options",
 				"valueType": "string"
 			},
@@ -882,10 +882,6 @@ making sure that you maintain a proper JSON format.
 								{
 									"key": "mode",
 									"value": "decfloat"
-								},
-								{
-									"key": "mode",
-									"value": "float"
 								}
 							]
 						}
