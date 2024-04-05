@@ -22,6 +22,14 @@
             "disableMultipleTypes": true,
             "enableForwardEngineering": false,
             "disableReverseEngineering": false,
+            "enableReverseEngineering": {
+                "jsonDocument": true,
+                "jsonSchema": true,
+                "ddl": true,
+                "xsd": true,
+                "excel": true,
+                "plugin": false
+            },
             "disableChoices": true,
             "enableJsonType": true,
             "useJsonTypesWithComplexTypes": true,
