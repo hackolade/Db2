@@ -197,6 +197,22 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
+				"propertyName": "Synonym",
+				"propertyKeyword": "synonym",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": ["", "char large object", "character large object"],
+				"dependency": {
+					"type": "and",
+					"values": [
+						{
+							"key": "mode",
+							"value": "clob"
+						}
+					]
+				}
+			},
+			{
 				"propertyName": "Length",
 				"propertyKeyword": "length",
 				"propertyType": "numeric",
@@ -856,7 +872,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Subtype",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": ["integer", "smallint", "bigint", "decimal", "real", "double", "decfloat"],
+				"options": ["integer", "smallint", "bigint", "decimal", "float", "real", "double", "decfloat"],
 				"data": "options",
 				"valueType": "string"
 			},
@@ -865,7 +881,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "synonym",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": ["", "int", "integer"],
+				"options": ["", "int"],
 				"dependency": {
 					"key": "mode",
 					"value": "integer"
@@ -876,21 +892,10 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "synonym",
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
-				"options": ["", "decimal", "numeric"],
+				"options": ["", "dec", "numeric", "num"],
 				"dependency": {
 					"key": "mode",
 					"value": "decimal"
-				}
-			},
-			{
-				"propertyName": "Synonym",
-				"propertyKeyword": "synonym",
-				"propertyTooltip": "Select from list of options",
-				"propertyType": "select",
-				"options": ["", "double", "float"],
-				"dependency": {
-					"key": "mode",
-					"value": "double"
 				}
 			},
 			{
@@ -920,6 +925,10 @@ making sure that you maintain a proper JSON format.
 						{
 							"type": "or",
 							"values": [
+								{
+									"key": "mode",
+									"value": "float"
+								},
 								{
 									"key": "mode",
 									"value": "real"
