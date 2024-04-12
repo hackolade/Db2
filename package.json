@@ -20,7 +20,7 @@
             "nestedCollections": false,
             "disablePatternField": true,
             "disableMultipleTypes": true,
-            "enableForwardEngineering": false,
+            "enableForwardEngineering": true,
             "disableReverseEngineering": false,
             "enableReverseEngineering": {
                 "jsonDocument": true,
