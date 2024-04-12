@@ -1,20 +1,12 @@
 const _ = require('lodash');
 const templates = require('./templates');
-const {
-	toArray,
-	tab,
-	commentIfDeactivated,
-	checkAllKeysDeactivated,
-	divideIntoActivatedAndDeactivated,
-	hasType,
-	wrap,
-	clean,
-	wrapInQuotes,
-	getNamePrefixedWithSchemaName,
-	wrapComment,
-	getColumnsList,
-} = require('../utils/general.js');
+const { commentIfDeactivated, wrapInQuotes, getNamePrefixedWithSchemaName } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
+const keyHelper = require('./ddlHelpers/keyHelper.js');
+const { getColumnComments } = require('./ddlHelpers/columnDefinitionHelper.js');
+const { getTableCommentStatement } = require('./ddlHelpers/comment/comment.js');
+const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
+const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
 
 module.exports = (baseProvider, options, app) => {
 	return {
@@ -100,37 +92,75 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {
-			return {};
+			const detailsTab = entityData[0];
+			const superTableId = detailsTab.underSuperTable?.[0]?.parentTable;
+			const superTableSchema = tableData.relatedSchemas?.[superTableId];
+			const underSuperTable = superTableSchema?.code || superTableSchema?.collectionName;
+
+			return {
+				...tableData,
+				keyConstraints: keyHelper.getTableKeyConstraints(jsonSchema),
+				selectStatement: _.trim(detailsTab.selectStatement),
+				temporary: detailsTab.temporary,
+				description: detailsTab.description,
+				ifNotExist: detailsTab.ifNotExist,
+				tableProperties: detailsTab.tableProperties,
+				table_tablespace_name: detailsTab.table_tablespace_name,
+				underSuperTable,
+			};
 		},
 
 		createTable(
 			{
-				blockchain_table_clauses,
 				checkConstraints,
 				columnDefinitions,
 				columns,
-				duplicated,
-				external,
-				external_table_clause,
 				foreignKeyConstraints,
 				keyConstraints,
-				immutable,
 				name,
-				partitioning,
 				schemaData,
 				selectStatement,
-				sharded,
-				storage,
 				temporary,
-				temporaryType,
+				table_tablespace_name,
+				underSuperTable,
 				description,
 				ifNotExist,
 				tableProperties,
-				synonyms,
 			},
 			isActivated,
 		) {
-			return '';
+			const ifNotExists = ifNotExist ? ' IF NOT EXISTS' : '';
+			const tableType = temporary ? ' GLOBAL TEMPORARY' : '';
+			const tableName = getNamePrefixedWithSchemaName({ name, schemaName: schemaData.schemaName });
+			const tableProps = getTableProps({
+				columns,
+				foreignKeyConstraints,
+				keyConstraints,
+				checkConstraints,
+				isActivated,
+			});
+			const tableOptions = getTableOptions({
+				selectStatement,
+				tableProperties,
+				table_tablespace_name,
+				underSuperTable,
+			});
+
+			const comment = getTableCommentStatement({ tableName, description });
+			const columnComments = getColumnComments({ tableName, columnDefinitions });
+			const commentStatements = comment || columnComments ? '\n' + comment + columnComments + '\n' : '';
+
+			const createTableDdl = assignTemplates(templates.createTable, {
+				name: tableName,
+				ifNotExists,
+				tableProps,
+				tableType,
+				tableOptions,
+			});
+
+			return commentIfDeactivated(createTableDdl + commentStatements, {
+				isActivated,
+			});
 		},
 
 		hydrateIndex(indexData, tableData, schemaData) {

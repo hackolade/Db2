@@ -94,7 +94,13 @@ const checkAllKeysDeactivated = keys => {
 	return keys.length ? keys.every(key => !_.get(key, 'isActivated', true)) : false;
 };
 
-const divideIntoActivatedAndDeactivated = (items, mapFunction) => {
+/**
+ * @template {object} T
+ * @template {any} K
+ * @param {{ items: T[], mapFunction: (item: T) => K }}
+ * @returns {{ activatedItems: K[], deactivatedItems: K[]}}
+ */
+const divideIntoActivatedAndDeactivated = ({ items, mapFunction }) => {
 	const activatedItems = items.filter(item => _.get(item, 'isActivated', true)).map(mapFunction);
 	const deactivatedItems = items.filter(item => !_.get(item, 'isActivated', true)).map(mapFunction);
 
@@ -127,9 +133,11 @@ const wrap = (str, start = "'", end = "'") => {
 
 const wrapInQuotes = name => `"${name}"`;
 
-const wrapComment = comment => `'${comment}'`;
-
-const getNamePrefixedWithSchemaName = (name, schemaName) => {
+/**
+ * @param {{ name: string, schemaName?: string }}
+ * @returns {string}
+ */
+const getNamePrefixedWithSchemaName = ({ name, schemaName }) => {
 	if (schemaName) {
 		return `${wrapInQuotes(schemaName)}.${wrapInQuotes(name)}`;
 	}
@@ -205,7 +213,6 @@ module.exports = {
 	divideIntoActivatedAndDeactivated,
 	commentIfDeactivated,
 	wrap,
-	wrapComment,
 	wrapInQuotes,
 	getNamePrefixedWithSchemaName,
 	checkFieldPropertiesChanged,
