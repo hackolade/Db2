@@ -1,0 +1,37 @@
+{
+	"type": "ddl",
+	"ddlType": "plugin",
+	"mode": "sql",
+	"fileExtensions": [
+		{
+			"value": "sql",
+			"label": "SQL"
+		}
+	],
+	"hasUpdateScript": false,
+	"applyScriptToInstance": false,
+	"combinedContainers": true,
+	"feLevelSelector": {
+		"container": true,
+		"model": true
+	},
+	"compMode": {
+		"entity": true,
+		"container": true
+	},
+	"namePrefix": "Db2",
+	"level": {
+		"container": true,
+		"entity": true,
+		"view": true
+	},
+	"additionalOptions": [
+		{
+			"id": "applyDropStatements",
+			"value": false,
+			"forUpdate": true,
+			"name": "Apply Drop Statements",
+			"isDropInStatements": true
+		}
+	]
+}
