@@ -1,96 +1,29 @@
 const _ = require('lodash');
 
-const getDbName = containerData => {
-	return containerData?.[0]?.code ?? containerData?.[0]?.name ?? '';
-};
-
-const getEntityName = entityData => {
-	return entityData?.code ?? entityData?.collectionName ?? '';
-};
-
-const getViewName = view => {
-	return (view && (view.code || view.name)) || '';
-};
-
-const getBucketName = bucket => {
-	return (bucket && (bucket.code || bucket.name)) || '';
-};
-
-const getDbData = containerData => {
-	return Object.assign({}, _.get(containerData, '[0]', {}), { name: getDbName(containerData) });
-};
-
-const getViewOn = viewData => _.get(viewData, '[0].viewOn');
-
-const rejectRecursiveRelationships = foreignTableToRelationshipData => {
-	return Object.keys(foreignTableToRelationshipData).reduce((result, foreignTableId) => {
-		const tables = foreignTableToRelationshipData[foreignTableId].filter(item => {
-			const tables = foreignTableToRelationshipData[item.primaryTableId];
-
-			if (!Array.isArray(tables)) {
-				return true;
-			}
-
-			return !tables.some(
-				item => item.primaryTableId === foreignTableId && item.primaryTableId !== item.foreignTableId,
-			);
-		});
-
-		if (_.isEmpty(tables)) {
-			return result;
-		}
-
-		return Object.assign({}, result, {
-			[foreignTableId]: tables,
-		});
-	}, {});
-};
-
-const filterRecursiveRelationships = foreignTableToRelationshipData => {
-	return Object.keys(foreignTableToRelationshipData).reduce((result, foreignTableId) => {
-		const tables = foreignTableToRelationshipData[foreignTableId].filter(item => {
-			const tables = foreignTableToRelationshipData[item.primaryTableId];
-
-			if (!Array.isArray(tables)) {
-				return false;
-			}
-
-			return tables.some(
-				item => item.primaryTableId === foreignTableId && item.primaryTableId !== item.foreignTableId,
-			);
-		});
-
-		return result.concat(tables);
-	}, []);
-};
-
-const tab = (text, tab = '\t') => {
+/**
+ * @param {{ text: string, tab: string }}
+ * @returns {string}
+ */
+const setTab = ({ text, tab = '\t' }) => {
 	return text
 		.split('\n')
 		.map(line => tab + line)
 		.join('\n');
 };
 
-const hasType = (types, type) => {
-	return Object.keys(types).map(_.toLower).includes(_.toLower(type));
+/**
+ * @param {{ descriptors: object, type: string }}
+ * @returns {boolean}
+ */
+const hasType = ({ descriptors, type }) => {
+	return Object.keys(descriptors).map(_.toLower).includes(_.toLower(type));
 };
 
-const clean = obj =>
-	Object.entries(obj)
-		.filter(([name, value]) => !_.isNil(value))
-		.reduce(
-			(result, [name, value]) => ({
-				...result,
-				[name]: value,
-			}),
-			{},
-		);
-
-const checkAllKeysActivated = keys => {
-	return keys.every(key => _.get(key, 'isActivated', true));
-};
-
-const checkAllKeysDeactivated = keys => {
+/**
+ * @param {{ keys: object[] }}
+ * @returns {boolean}
+ */
+const checkAllKeysDeactivated = ({ keys }) => {
 	return keys.length ? keys.every(key => !_.get(key, 'isActivated', true)) : false;
 };
 
@@ -197,18 +130,8 @@ const getGroupItemsByCompMode = ({ newItems = [], oldItems = [] }) => {
 const toArray = val => (_.isArray(val) ? val : [val]);
 
 module.exports = {
-	getDbName,
-	getBucketName,
-	getDbData,
-	getEntityName,
-	getViewName,
-	getViewOn,
-	rejectRecursiveRelationships,
-	filterRecursiveRelationships,
-	tab,
+	setTab,
 	hasType,
-	clean,
-	checkAllKeysActivated,
 	checkAllKeysDeactivated,
 	divideIntoActivatedAndDeactivated,
 	commentIfDeactivated,

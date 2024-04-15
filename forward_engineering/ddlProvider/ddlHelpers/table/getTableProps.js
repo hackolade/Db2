@@ -7,7 +7,7 @@ const {
 	wrapInQuotes,
 	divideIntoActivatedAndDeactivated,
 } = require('../../../utils/general');
-const { getOptionsString } = require('../constraintHelper');
+const { getOptionsString } = require('../constraint/getOptionsString');
 
 /**
  * @typedef {{ activatedItems: string[], deactivatedItems: string[] }} DividedConstraints
@@ -53,7 +53,7 @@ const generateConstraintsString = ({ dividedConstraints, isParentActivated }) =>
  * @returns {string}
  */
 const createKeyConstraint = ({ keyData, isParentActivated }) => {
-	const isAllColumnsDeactivated = checkAllKeysDeactivated(keyData.columns);
+	const isAllColumnsDeactivated = checkAllKeysDeactivated({ keys: keyData.columns });
 	const columns = getColumnsList(keyData.columns, isAllColumnsDeactivated, isParentActivated);
 	const options = getOptionsString(keyData).statement;
 

@@ -9,7 +9,7 @@ const {
 	checkAllKeysDeactivated,
 	toArray,
 	hasType,
-	tab,
+	setTab,
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/keyHelper.js');
@@ -21,10 +21,10 @@ const {
 	getColumnEncrypt,
 	getColumnConstraints,
 } = require('./ddlHelpers/columnDefinitionHelper.js');
-const { getTableCommentStatement } = require('./ddlHelpers/comment/comment.js');
+const { getTableCommentStatement } = require('./ddlHelpers/comment/commentHelper.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
-const { isNotPlainType } = require('./ddlHelpers/table/udt/udt.js');
+const { isNotPlainType } = require('./ddlHelpers/udt/udt.js');
 const { getViewData } = require('./ddlHelpers/view/getViewData.js');
 
 module.exports = (baseProvider, options, app) => {
@@ -38,7 +38,7 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hasType(type) {
-			return hasType(descriptors, type);
+			return hasType({ descriptors, type });
 		},
 
 		hydrateSchema(containerData, data) {
@@ -74,9 +74,9 @@ module.exports = (baseProvider, options, app) => {
 				ofType: jsonSchema.ofType,
 				notPersistable: jsonSchema.notPersistable,
 				size: jsonSchema.size,
-				primaryKey: keyHelper.isInlinePrimaryKey(jsonSchema),
+				primaryKey: keyHelper.isInlinePrimaryKey({ column: jsonSchema }),
 				primaryKeyOptions: jsonSchema.primaryKeyOptions,
-				unique: keyHelper.isInlineUnique(jsonSchema),
+				unique: keyHelper.isInlineUnique({ column: jsonSchema }),
 				uniqueKeyOptions: jsonSchema.uniqueKeyOptions,
 				nullable: columnDefinition.nullable,
 				default: columnDefinition.default,
@@ -148,8 +148,8 @@ module.exports = (baseProvider, options, app) => {
 			dbData,
 			schemaData,
 		) {
-			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
-			const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
+			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated({ keys: primaryKey });
+			const isAllForeignKeysDeactivated = checkAllKeysDeactivated({ keys: foreignKey });
 			const isActivated =
 				!isAllPrimaryKeysDeactivated &&
 				!isAllForeignKeysDeactivated &&
@@ -166,11 +166,11 @@ module.exports = (baseProvider, options, app) => {
 			});
 			const constraintName = name ? `CONSTRAINT ${wrapInQuotes(name)}` : '';
 			const foreignKeyName = isActivated
-				? keyHelper.foreignKeysToString(foreignKeys)
-				: keyHelper.foreignActiveKeysToString(foreignKeys);
+				? keyHelper.foreignKeysToString({ keys: foreignKeys })
+				: keyHelper.foreignActiveKeysToString({ keys: foreignKeys });
 			const primaryKeyName = isActivated
-				? keyHelper.foreignKeysToString(primaryKeys)
-				: keyHelper.foreignActiveKeysToString(primaryKeys);
+				? keyHelper.foreignKeysToString({ keys: primaryKeys })
+				: keyHelper.foreignActiveKeysToString({ keys: primaryKeys });
 
 			const foreignKeyStatement = assignTemplates(templates.createForeignKeyConstraint, {
 				primaryTable: primaryTableName,
@@ -202,8 +202,8 @@ module.exports = (baseProvider, options, app) => {
 			dbData,
 			schemaData,
 		) {
-			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated(primaryKey);
-			const isAllForeignKeysDeactivated = checkAllKeysDeactivated(foreignKey);
+			const isAllPrimaryKeysDeactivated = checkAllKeysDeactivated({ keys: primaryKey });
+			const isAllForeignKeysDeactivated = checkAllKeysDeactivated({ keys: foreignKey });
 			const isActivated =
 				!isAllPrimaryKeysDeactivated &&
 				!isAllForeignKeysDeactivated &&
@@ -224,11 +224,11 @@ module.exports = (baseProvider, options, app) => {
 			});
 			const constraintName = name ? wrapInQuotes(name) : '';
 			const foreignKeyName = isActivated
-				? keyHelper.foreignKeysToString(foreignKeys)
-				: keyHelper.foreignActiveKeysToString(foreignKeys);
+				? keyHelper.foreignKeysToString({ keys: foreignKeys })
+				: keyHelper.foreignActiveKeysToString({ keys: foreignKeys });
 			const primaryKeyName = isActivated
-				? keyHelper.foreignKeysToString(primaryKeys)
-				: keyHelper.foreignActiveKeysToString(primaryKeys);
+				? keyHelper.foreignKeysToString({ keys: primaryKeys })
+				: keyHelper.foreignActiveKeysToString({ keys: primaryKeys });
 
 			const foreignKeyStatement = assignTemplates(templates.createForeignKey, {
 				primaryTable: primaryTableName,
@@ -253,7 +253,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				...tableData,
-				keyConstraints: keyHelper.getTableKeyConstraints(jsonSchema),
+				keyConstraints: keyHelper.getTableKeyConstraints({ jsonSchema }),
 				selectStatement: _.trim(detailsTab.selectStatement),
 				temporary: detailsTab.temporary,
 				description: detailsTab.description,
@@ -363,10 +363,10 @@ module.exports = (baseProvider, options, app) => {
 				description: viewData.description,
 			});
 			const comment = commentStatement ? '\n' + commentStatement + `\n` : '\n';
-			const viewProperties = viewData.viewProperties ? ' \n' + tab(viewData.viewProperties) : '';
+			const viewProperties = viewData.viewProperties ? ' \n' + setTab({ text: viewData.viewProperties }) : '';
 
 			const selectStatement = _.trim(viewData.selectStatement)
-				? _.trim(tab(viewData.selectStatement))
+				? _.trim(setTab({ text: viewData.selectStatement }))
 				: assignTemplates(templates.viewSelectStatement, {
 						tableName: tables.join(', '),
 						keys: columnsAsString,

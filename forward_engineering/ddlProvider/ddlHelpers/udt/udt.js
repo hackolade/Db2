@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { assignTemplates } = require('../../../../utils/assignTemplates');
-const { getNamePrefixedWithSchemaName } = require('../../../../utils/general');
-const templates = require('../../../templates');
+const { assignTemplates } = require('../../../utils/assignTemplates');
+const { getNamePrefixedWithSchemaName } = require('../../../utils/general');
+const templates = require('../../templates');
 
 const notPlainTypes = ['OBJECT_UDT', 'VARRAY', 'TABLE', 'COLLECTION_UDT'];
 

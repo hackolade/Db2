@@ -1,69 +1,79 @@
 const _ = require('lodash');
-const { clean, wrapInQuotes, commentIfDeactivated } = require('../../utils/general');
+const { wrapInQuotes, commentIfDeactivated } = require('../../utils/general');
+
+/**
+ * @enum {string}
+ */
+const KEY_TYPE = {
+	primaryKey: 'PRIMARY KEY',
+	unique: 'UNIQUE',
+};
 
 const mapProperties = (jsonSchema, iteratee) => {
 	return Object.entries(jsonSchema.properties).map(iteratee);
 };
 
-const isUniqueKey = column => {
-	if (column.compositeUniqueKey) {
-		return false;
-	} else if (!column.unique) {
-		return false;
-	} else {
-		return true;
-	}
+/**
+ * @param {{ column: object }}
+ * @returns {boolean}
+ */
+const isUniqueKey = ({ column }) => {
+	return !column.compositeUniqueKey && column.unique;
 };
 
-const isInlineUnique = column => {
-	return isUniqueKey(column) && !column.uniqueKeyOptions?.constraintName;
+/**
+ * @param {{ column: object }}
+ * @returns {boolean}
+ */
+const isInlineUnique = ({ column }) => {
+	return isUniqueKey({ column }) && !column.uniqueKeyOptions?.constraintName;
+};
+/**
+ * @param {{ column: object }}
+ * @returns {boolean}
+ */
+const isPrimaryKey = ({ column }) => {
+	return !column.compositeUniqueKey && !column.compositePrimaryKey && column.primaryKey;
 };
 
-const isPrimaryKey = column => {
-	if (column.compositeUniqueKey) {
-		return false;
-	} else if (column.compositePrimaryKey) {
-		return false;
-	} else if (!column.primaryKey) {
-		return false;
-	} else {
-		return true;
-	}
+/**
+ * @param {{ column: object }}
+ * @returns {boolean}
+ */
+const isInlinePrimaryKey = ({ column }) => {
+	return isPrimaryKey({ column }) && !column.primaryKeyOptions?.constraintName;
 };
 
-const isInlinePrimaryKey = column => {
-	return isPrimaryKey(column) && !column.primaryKeyOptions?.constraintName;
-};
-
-const hydrateUniqueOptions = (options, columnName, isActivated) =>
-	clean({
-		keyType: 'UNIQUE',
+/**
+ * @param {{ columnName?: string, isActivated?: boolean, options: object, keyType: KEY_TYPE}}
+ * @returns {object}
+ */
+const hydrateKeyOptions = ({ columnName, isActivated, options, keyType }) => {
+	return {
+		keyType,
 		columns: [
 			{
 				name: columnName,
 				isActivated: isActivated,
 			},
 		],
-		...options,
-	});
+		..._.omitBy(options, _.isNil),
+	};
+};
 
-const hydratePrimaryKeyOptions = (options, columnName, isActivated) =>
-	clean({
-		keyType: 'PRIMARY KEY',
-		columns: [
-			{
-				name: columnName,
-				isActivated: isActivated,
-			},
-		],
-		...options,
-	});
-
-const findName = (keyId, properties) => {
+/**
+ * @param {{ keyId: string, properties: object }}
+ * @returns {string|undefined}
+ */
+const findName = ({ keyId, properties }) => {
 	return Object.keys(properties).find(name => properties[name].GUID === keyId);
 };
 
-const checkIfActivated = (keyId, properties) => {
+/**
+ * @param {{keyId: string, properties: object }}
+ * @returns {boolean}
+ */
+const checkIfActivated = ({ keyId, properties }) => {
 	return _.get(
 		Object.values(properties).find(prop => prop.GUID === keyId),
 		'isActivated',
@@ -71,16 +81,18 @@ const checkIfActivated = (keyId, properties) => {
 	);
 };
 
-const getKeys = (keys, jsonSchema) => {
+const getKeys = ({ keys, jsonSchema }) => {
 	return _.map(keys, key => {
+		const name = findName({ keyId: key.keyId, properties: jsonSchema.properties });
+		const isActivated = checkIfActivated({ keyId: key.keyId, properties: jsonSchema.properties });
 		return {
-			name: findName(key.keyId, jsonSchema.properties),
-			isActivated: checkIfActivated(key.keyId, jsonSchema.properties),
+			name,
+			isActivated,
 		};
 	});
 };
 
-const getCompositePrimaryKeys = jsonSchema => {
+const getCompositePrimaryKeys = ({ jsonSchema }) => {
 	if (!Array.isArray(jsonSchema.primaryKey)) {
 		return [];
 	}
@@ -88,12 +100,12 @@ const getCompositePrimaryKeys = jsonSchema => {
 	return jsonSchema.primaryKey
 		.filter(primaryKey => !_.isEmpty(primaryKey.compositePrimaryKey))
 		.map(primaryKey => ({
-			...hydratePrimaryKeyOptions(primaryKey, null, null, jsonSchema),
-			columns: getKeys(primaryKey.compositePrimaryKey, jsonSchema),
+			...hydrateKeyOptions({ options: primaryKey, keyType: KEY_TYPE.primaryKey }),
+			columns: getKeys({ keys: primaryKey.compositePrimaryKey, jsonSchema }),
 		}));
 };
 
-const getCompositeUniqueKeys = jsonSchema => {
+const getCompositeUniqueKeys = ({ jsonSchema }) => {
 	if (!Array.isArray(jsonSchema.uniqueKey)) {
 		return [];
 	}
@@ -101,41 +113,49 @@ const getCompositeUniqueKeys = jsonSchema => {
 	return jsonSchema.uniqueKey
 		.filter(uniqueKey => !_.isEmpty(uniqueKey.compositeUniqueKey))
 		.map(uniqueKey => ({
-			...hydrateUniqueOptions(uniqueKey, null, null, jsonSchema),
-			columns: getKeys(uniqueKey.compositeUniqueKey, jsonSchema),
+			...hydrateKeyOptions({ options: uniqueKey, keyType: KEY_TYPE.unique }),
+			columns: getKeys({ keys: uniqueKey.compositeUniqueKey, jsonSchema }),
 		}));
 };
 
-const getTableKeyConstraints = jsonSchema => {
+const getTableKeyConstraints = ({ jsonSchema }) => {
 	if (!jsonSchema.properties) {
 		return [];
 	}
 
-	const uniqueConstraints = mapProperties(jsonSchema, ([name, columnSchema]) => {
-		if (!isUniqueKey(columnSchema) || isInlineUnique(columnSchema)) {
+	const uniqueConstraints = mapProperties(jsonSchema, ([name, column]) => {
+		if (!isUniqueKey({ column }) || isInlineUnique({ column })) {
 			return;
-		} else {
-			return hydrateUniqueOptions(columnSchema.uniqueKeyOptions, name, columnSchema.isActivated);
 		}
+		return hydrateKeyOptions({
+			columnName: name,
+			isActivated: column.isActivated,
+			options: column.uniqueKeyOptions,
+			keyType: KEY_TYPE.unique,
+		});
 	}).filter(Boolean);
 
-	const primaryKeyConstraints = mapProperties(jsonSchema, ([name, columnSchema]) => {
-		if (!isPrimaryKey(columnSchema) || isInlinePrimaryKey(columnSchema)) {
+	const primaryKeyConstraints = mapProperties(jsonSchema, ([name, column]) => {
+		if (!isPrimaryKey({ column }) || isInlinePrimaryKey({ column })) {
 			return;
-		} else {
-			return hydratePrimaryKeyOptions(columnSchema.primaryKeyOptions, name, columnSchema.isActivated);
 		}
+		return hydrateKeyOptions({
+			columnName: name,
+			isActivated: column.isActivated,
+			options: column.primaryKeyOptions,
+			keyType: KEY_TYPE.primaryKey,
+		});
 	}).filter(Boolean);
 
 	return [
 		...primaryKeyConstraints,
-		...getCompositePrimaryKeys(jsonSchema),
+		...getCompositePrimaryKeys({ jsonSchema }),
 		...uniqueConstraints,
-		...getCompositeUniqueKeys(jsonSchema),
+		...getCompositeUniqueKeys({ jsonSchema }),
 	];
 };
 
-const foreignKeysToString = keys => {
+const foreignKeysToString = ({ keys }) => {
 	if (Array.isArray(keys)) {
 		const activatedKeys = keys
 			.filter(key => _.get(key, 'isActivated', true))
@@ -152,7 +172,7 @@ const foreignKeysToString = keys => {
 	return keys;
 };
 
-const foreignActiveKeysToString = keys => {
+const foreignActiveKeysToString = ({ keys }) => {
 	return keys.map(key => _.trim(key.name)).join(', ');
 };
 
@@ -166,7 +186,6 @@ module.exports = {
 	getTableKeyConstraints,
 	isInlineUnique,
 	isInlinePrimaryKey,
-	getKeys,
 	foreignKeysToString,
 	foreignActiveKeysToString,
 	customPropertiesForForeignKey,

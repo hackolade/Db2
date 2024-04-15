@@ -1,4 +1,4 @@
-const { wrapInQuotes } = require('../../utils/general');
+const { wrapInQuotes } = require('../../../utils/general');
 
 const getOptionsString = ({ constraintName, deferClause, rely, validate, indexClause, exceptionClause }) => ({
 	constraintString: `${constraintName ? ` CONSTRAINT ${wrapInQuotes(constraintName.trim())}` : ''}`,

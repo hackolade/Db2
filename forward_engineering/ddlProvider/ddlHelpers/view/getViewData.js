@@ -17,8 +17,9 @@ const getKeyWithAlias = ({ key }) => {
 };
 
 /**
+ * @typedef {{ statement: string, isActivated: boolean }} Column
  * @param {{ keys?: object[] }}
- * @returns {{ tables: string[], columns: string[] }}
+ * @returns {{ tables: string[], columns: Column[] }}
  */
 const getViewData = ({ keys }) => {
 	if (!Array.isArray(keys)) {
