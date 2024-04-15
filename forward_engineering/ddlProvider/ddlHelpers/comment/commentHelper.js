@@ -1,4 +1,4 @@
-const { templates } = require('../../templates');
+const templates = require('../../templates');
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const { wrapInQuotes } = require('../../../utils/general');
 

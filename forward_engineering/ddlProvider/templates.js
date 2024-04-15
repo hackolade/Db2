@@ -17,6 +17,8 @@ module.exports = {
 
 	checkConstraint: '${name}CHECK (${expression})',
 
+	createKeyConstraint: '${constraintName}${keyType}${columns}${options}',
+
 	createView: 'CREATE${orReplace} VIEW ${name} ${viewProperties}\n\tAS ${selectStatement};',
 
 	viewSelectStatement: 'SELECT ${keys}\n\tFROM ${tableName}',

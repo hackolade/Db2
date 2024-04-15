@@ -85,7 +85,7 @@ const checkFieldPropertiesChanged = (compMod, propertiesToCheck) => {
 const columnMapToString = ({ name }) => wrapInQuotes(name);
 
 const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, mapColumn = columnMapToString) => {
-	const dividedColumns = divideIntoActivatedAndDeactivated(columns, mapColumn);
+	const dividedColumns = divideIntoActivatedAndDeactivated({ items: columns, mapFunction: mapColumn });
 	const deactivatedColumnsAsString = dividedColumns?.deactivatedItems?.length
 		? commentIfDeactivated(dividedColumns.deactivatedItems.join(', '), {
 				isActivated: false,

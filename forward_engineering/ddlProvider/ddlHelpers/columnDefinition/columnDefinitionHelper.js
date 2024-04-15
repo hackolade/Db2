@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { commentIfDeactivated } = require('../../../utils/general');
+const { commentIfDeactivated, wrapInQuotes } = require('../../../utils/general');
 const { getOptionsString } = require('../constraint/getOptionsString');
 const { getColumnCommentStatement } = require('../comment/commentHelper');
 
@@ -64,7 +64,9 @@ const getColumnDefault = ({ default: defaultValue, identity }) => {
 
 		return ` GENERATED${getGenerated(identity)} AS IDENTITY (${_.trim(getOptions(identity))})`;
 	} else if (defaultValue) {
-		return ` DEFAULT ${defaultValue}`;
+		const value = _.isNumber(defaultValue) ? defaultValue : wrapInQuotes(defaultValue);
+
+		return ` WITH DEFAULT ${value}`;
 	}
 	return '';
 };

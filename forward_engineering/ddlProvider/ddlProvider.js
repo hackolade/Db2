@@ -65,7 +65,7 @@ module.exports = (baseProvider, options, app) => {
 		hydrateColumn({ columnDefinition, jsonSchema, schemaData, definitionJsonSchema = {} }) {
 			const isUDTRef = !!jsonSchema.$ref;
 			const type = isUDTRef ? columnDefinition.type : _.toUpper(jsonSchema.mode || jsonSchema.type);
-			const itemsType = _.toUpper(jsonSchema.items?.type || '');
+			const itemsType = _.toUpper(jsonSchema.items?.mode || jsonSchema.items?.type || '');
 
 			return {
 				name: columnDefinition.name,
@@ -301,7 +301,7 @@ module.exports = (baseProvider, options, app) => {
 
 			const comment = getTableCommentStatement({ tableName, description });
 			const columnComments = getColumnComments({ tableName, columnDefinitions });
-			const commentStatements = comment || columnComments ? '\n' + comment + columnComments + '\n' : '';
+			const commentStatements = comment || columnComments ? '\n' + comment + columnComments + '\n' : '\n';
 
 			const createTableDdl = assignTemplates(templates.createTable, {
 				name: tableName,
