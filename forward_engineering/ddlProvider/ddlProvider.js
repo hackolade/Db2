@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const templates = require('./templates');
+const defaultTypes = require('../configs/defaultTypes.js');
+const descriptors = require('../configs/descriptors.js');
 const {
 	commentIfDeactivated,
 	wrapInQuotes,
@@ -7,6 +9,7 @@ const {
 	checkAllKeysDeactivated,
 	toArray,
 	hasType,
+	tab,
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/keyHelper.js');
@@ -22,8 +25,7 @@ const { getTableCommentStatement } = require('./ddlHelpers/comment/comment.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
 const { isNotPlainType } = require('./ddlHelpers/table/udt/udt.js');
-const defaultTypes = require('../configs/defaultTypes.js');
-const descriptors = require('../configs/descriptors.js');
+const { getViewData } = require('./ddlHelpers/view/getViewData.js');
 
 module.exports = (baseProvider, options, app) => {
 	return {
@@ -65,6 +67,7 @@ module.exports = (baseProvider, options, app) => {
 			const isUDTRef = !!jsonSchema.$ref;
 			const type = isUDTRef ? columnDefinition.type : _.toUpper(jsonSchema.mode || jsonSchema.type);
 			const itemsType = _.toUpper(jsonSchema.items?.type || '');
+
 			return {
 				name: columnDefinition.name,
 				type,
@@ -323,15 +326,60 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateViewColumn(data) {
-			return {};
+			return {
+				name: data.name,
+				tableName: data.entityName,
+				alias: data.alias,
+				isActivated: data.isActivated,
+				dbName: data.dbName,
+			};
 		},
 
-		hydrateView({ viewData, entityData, jsonSchema }) {
-			return {};
+		hydrateView({ viewData, entityData }) {
+			const detailsTab = entityData[0];
+
+			return {
+				name: viewData.name,
+				keys: viewData.keys,
+				orReplace: detailsTab.or_replace,
+				selectStatement: detailsTab.selectStatement,
+				tableName: viewData.tableName,
+				schemaName: viewData.schemaData.schemaName,
+				description: detailsTab.description,
+				rootTableAlias: detailsTab.rootTableAlias,
+				tableTagsClause: detailsTab.tableTagsClause,
+				viewProperties: detailsTab.viewProperties,
+			};
 		},
 
 		createView(viewData, dbData, isActivated) {
-			return '';
+			const viewName = getNamePrefixedWithSchemaName({ name: viewData.name, schemaName: viewData.schemaName });
+			const orReplace = viewData.orReplace ? ' OR REPLACE' : '';
+
+			const { columns, tables } = getViewData({ keys: viewData.keys });
+			const columnsAsString = columns.map(column => column.statement).join(',\n\t\t');
+			const commentStatement = getTableCommentStatement({
+				tableName: viewName,
+				description: viewData.description,
+			});
+			const comment = commentStatement ? '\n' + commentStatement + `\n` : '\n';
+			const viewProperties = viewData.viewProperties ? ' \n' + tab(viewData.viewProperties) : '';
+
+			const selectStatement = _.trim(viewData.selectStatement)
+				? _.trim(tab(viewData.selectStatement))
+				: assignTemplates(templates.viewSelectStatement, {
+						tableName: tables.join(', '),
+						keys: columnsAsString,
+					});
+
+			const statement = assignTemplates(templates.createView, {
+				name: viewName,
+				orReplace,
+				viewProperties,
+				selectStatement,
+			});
+
+			return commentIfDeactivated(statement + comment, { isActivated });
 		},
 
 		commentIfDeactivated(statement, data, isPartOfLine) {

@@ -16,4 +16,8 @@ module.exports = {
 		'${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete}',
 
 	checkConstraint: '${name}CHECK (${expression})',
+
+	createView: 'CREATE${orReplace} VIEW ${name} ${viewProperties}\n\tAS ${selectStatement};',
+
+	viewSelectStatement: 'SELECT ${keys}\n\tFROM ${tableName}',
 };

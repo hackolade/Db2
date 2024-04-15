@@ -56,8 +56,8 @@ const getColumnDefault = ({ default: defaultValue, identity }) => {
 		const getOptions = ({ identityStart, identityIncrement, numberToCache }) => {
 			const startWith = identityStart ? ` START WITH ${identityStart}` : '';
 			const incrementBy = identityIncrement ? ` INCREMENT BY ${identityIncrement}` : '';
-			const cache = numberToCache ? ` CACHE ${numberToCache}` : ' NOCACHE';
-			return `${startWith}${incrementBy}${cache}`;
+
+			return [startWith, incrementBy].filter(Boolean).join(', ');
 		};
 
 		return ` GENERATED${getGenerated(identity)} AS IDENTITY (${_.trim(getOptions(identity))})`;
@@ -165,7 +165,7 @@ const decorateType = columnDefinition => {
  * @returns {boolean}
  */
 const canHaveIdentity = type => {
-	const typesAllowedToHaveAutoIncrement = ['number'];
+	const typesAllowedToHaveAutoIncrement = ['smallint', 'integer', 'bigint'];
 	return typesAllowedToHaveAutoIncrement.includes(type);
 };
 
