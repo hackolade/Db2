@@ -23,6 +23,16 @@ const getColumnComments = ({ tableName, columnDefinitions }) => {
 		.value();
 };
 
+/**
+ * @param {{
+ * nullable: boolean,
+ * unique: boolean,
+ * primaryKey: boolean,
+ * primaryKeyOptions?: object,
+ * uniqueKeyOptions?: object
+ * }}
+ * @returns {string}
+ */
 const getColumnConstraints = ({ nullable, unique, primaryKey, primaryKeyOptions, uniqueKeyOptions }) => {
 	const { constraintString, statement } = getOptionsString(
 		getOptions({ primaryKey, unique, primaryKeyOptions, uniqueKeyOptions }),
@@ -33,6 +43,10 @@ const getColumnConstraints = ({ nullable, unique, primaryKey, primaryKeyOptions,
 	return `${nullableString}${constraintString}${primaryKeyString}${uniqueKeyString}${statement}`;
 };
 
+/**
+ * @param {{ primaryKey: boolean, unique: boolean, primaryKeyOptions?: object, uniqueKeyOptions?: object}}
+ * @returns {object}
+ */
 const getOptions = ({ primaryKey, unique, primaryKeyOptions, uniqueKeyOptions }) => {
 	if (primaryKey) {
 		return primaryKeyOptions || {};
@@ -43,6 +57,10 @@ const getOptions = ({ primaryKey, unique, primaryKeyOptions, uniqueKeyOptions })
 	}
 };
 
+/**
+ * @param {{ default: string | number | undefined, identity }}
+ * @returns {string}
+ */
 const getColumnDefault = ({ default: defaultValue, identity }) => {
 	if (!_.isEmpty(identity) && identity.generated) {
 		const getGenerated = ({ generated, generatedOnNull }) => {
@@ -71,6 +89,10 @@ const getColumnDefault = ({ default: defaultValue, identity }) => {
 	return '';
 };
 
+/**
+ * @param {{ encryption }}
+ * @returns {string}
+ */
 const getColumnEncrypt = ({ encryption }) => {
 	if (_.isPlainObject(encryption) && !_.isEmpty(_.omit(encryption, 'id'))) {
 		const { ENCRYPTION_ALGORITHM, INTEGRITY_ALGORITHM, noSalt } = encryption;
@@ -135,14 +157,12 @@ const isMultiset = type => type === 'MULTISET';
 
 const decorateType = columnDefinition => {
 	const type = columnDefinition.type;
+	const hasLength = _.isNumber(columnDefinition.length);
 
 	switch (true) {
-		case columnDefinition.lengthSemantics &&
-			canHaveByte(type) &&
-			canHaveLength(type) &&
-			_.isNumber(columnDefinition.length):
+		case columnDefinition.lengthSemantics && canHaveByte(type) && canHaveLength(type) && hasLength:
 			return addByteLength(type, columnDefinition.length, columnDefinition.lengthSemantics);
-		case canHaveLength(type) && _.isNumber(columnDefinition.length):
+		case canHaveLength(type) && hasLength:
 			return addLength(type, columnDefinition.length);
 		case canHavePrecision(type) && canHaveScale(type):
 			return addScalePrecision(type, columnDefinition.precision, columnDefinition.scale);
@@ -164,7 +184,6 @@ const decorateType = columnDefinition => {
 };
 
 /**
- *
  * @param {string} type
  * @returns {boolean}
  */

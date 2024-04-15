@@ -1,7 +1,7 @@
 const { wrapInQuotes } = require('../../../utils/general');
 
 /**
- * @param {{ key?: object }} param0
+ * @param {{ key?: object }}
  * @returns {string}
  */
 const getKeyWithAlias = ({ key }) => {

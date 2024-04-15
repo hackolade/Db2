@@ -51,7 +51,7 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		createSchema({ schemaName, ifNotExist, dbVersion, authorizationName, dataCapture }) {
+		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture }) {
 			const schemaStatement = assignTemplates(templates.createSchema, {
 				schemaName: wrapInQuotes(schemaName),
 				ifNotExists: ifNotExist ? ' IF NOT EXISTS' : '',
@@ -126,7 +126,7 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		createCheckConstraint({ name, expression, comments, description }) {
+		createCheckConstraint({ name, expression }) {
 			return assignTemplates(templates.checkConstraint, {
 				name: name ? `CONSTRAINT ${wrapInQuotes(name)} ` : '',
 				expression: _.trim(expression).replace(/^\(([\s\S]*)\)$/, '$1'),
