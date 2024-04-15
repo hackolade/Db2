@@ -12,19 +12,18 @@ const {
 	setTab,
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
-const keyHelper = require('./ddlHelpers/keyHelper.js');
+const keyHelper = require('./ddlHelpers/key/keyHelper.js');
 const {
-	getColumnComments,
 	canHaveIdentity,
 	decorateType,
+	getColumnComments,
 	getColumnDefault,
 	getColumnEncrypt,
 	getColumnConstraints,
-} = require('./ddlHelpers/columnDefinitionHelper.js');
+} = require('./ddlHelpers/columnDefinition/columnDefinitionHelper.js');
 const { getTableCommentStatement } = require('./ddlHelpers/comment/commentHelper.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
-const { isNotPlainType } = require('./ddlHelpers/udt/udt.js');
 const { getViewData } = require('./ddlHelpers/view/getViewData.js');
 
 module.exports = (baseProvider, options, app) => {
@@ -99,7 +98,7 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateJsonSchemaColumn(jsonSchema, definitionJsonSchema) {
-			if (!jsonSchema.$ref || _.isEmpty(definitionJsonSchema) || isNotPlainType(definitionJsonSchema)) {
+			if (!jsonSchema.$ref || _.isEmpty(definitionJsonSchema)) {
 				return jsonSchema;
 			}
 

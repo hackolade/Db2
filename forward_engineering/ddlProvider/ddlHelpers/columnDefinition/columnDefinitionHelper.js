@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { commentIfDeactivated } = require('../../utils/general');
-const { getOptionsString } = require('./constraint/getOptionsString');
-const { getColumnCommentStatement } = require('./comment/commentHelper');
+const { commentIfDeactivated } = require('../../../utils/general');
+const { getOptionsString } = require('../constraint/getOptionsString');
+const { getColumnCommentStatement } = require('../comment/commentHelper');
 
 /**
  * @param {{ tableName: string, columnDefinitions: object[] }}

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { wrapInQuotes, commentIfDeactivated } = require('../../utils/general');
+const { wrapInQuotes, commentIfDeactivated } = require('../../../utils/general');
 
 /**
  * @enum {string}
