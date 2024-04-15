@@ -919,10 +919,6 @@ making sure that you maintain a proper JSON format.
 								},
 								{
 									"key": "mode",
-									"value": "real"
-								},
-								{
-									"key": "mode",
 									"value": "decimal"
 								},
 								{

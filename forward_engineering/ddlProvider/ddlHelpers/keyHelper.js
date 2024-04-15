@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { clean } = require('../../utils/general');
+const { clean, wrapInQuotes, commentIfDeactivated } = require('../../utils/general');
 
 const mapProperties = (jsonSchema, iteratee) => {
 	return Object.entries(jsonSchema.properties).map(iteratee);
@@ -135,9 +135,39 @@ const getTableKeyConstraints = jsonSchema => {
 	];
 };
 
+const foreignKeysToString = keys => {
+	if (Array.isArray(keys)) {
+		const activatedKeys = keys
+			.filter(key => _.get(key, 'isActivated', true))
+			.map(key => wrapInQuotes(_.trim(key.name)));
+		const deactivatedKeys = keys
+			.filter(key => !_.get(key, 'isActivated', true))
+			.map(key => wrapInQuotes(_.trim(key.name)));
+		const deactivatedKeysAsString = deactivatedKeys.length
+			? commentIfDeactivated(deactivatedKeys, { isActivated: false, isPartOfLine: true })
+			: '';
+
+		return activatedKeys.join(', ') + deactivatedKeysAsString;
+	}
+	return keys;
+};
+
+const foreignActiveKeysToString = keys => {
+	return keys.map(key => _.trim(key.name)).join(', ');
+};
+
+const customPropertiesForForeignKey = ({ customProperties }) => {
+	const relationshipOnDelete = customProperties?.relationshipOnDelete;
+
+	return relationshipOnDelete ? ' ON DELETE ' + relationshipOnDelete : '';
+};
+
 module.exports = {
 	getTableKeyConstraints,
 	isInlineUnique,
 	isInlinePrimaryKey,
 	getKeys,
+	foreignKeysToString,
+	foreignActiveKeysToString,
+	customPropertiesForForeignKey,
 };
