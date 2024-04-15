@@ -998,18 +998,8 @@ making sure that you maintain a proper JSON format.
 						"options": ["", "ALWAYS", "BY DEFAULT"]
 					},
 					{
-						"propertyName": "On null",
-						"propertyKeyword": "generatedOnNull",
-						"propertyTooltip": "Generate a value for the identity column only if a NULL value provided",
-						"propertyType": "checkbox",
-						"dependency": {
-							"key": "generated",
-							"value": "BY DEFAULT"
-						}
-					},
-					{
 						"propertyName": "Start",
-						"propertyKeyword": "identityStart",
+						"propertyKeyword": "start",
 						"propertyTooltip": "Is the value that is used for the very first row loaded into the table",
 						"propertyType": "numeric",
 						"valueType": "number",
@@ -1034,7 +1024,7 @@ making sure that you maintain a proper JSON format.
 					},
 					{
 						"propertyName": "Increment",
-						"propertyKeyword": "identityIncrement",
+						"propertyKeyword": "increment",
 						"propertyTooltip": "Is the incremental value that is added to the identity value of the previous row that was loaded.",
 						"propertyType": "numeric",
 						"valueType": "number",
@@ -1058,12 +1048,58 @@ making sure that you maintain a proper JSON format.
 						}
 					},
 					{
-						"propertyName": "Cache",
-						"propertyKeyword": "numberToCache",
-						"propertyTooltip": "Is a number of values that Oracle should generate beforehand to improve the performance.",
+						"propertyName": "Cycle",
+						"propertyKeyword": "cycle",
+						"propertyTooltip": "The CYCLE or NO CYCLE option determines whether Db2 wraps values when it has generated all values between the START WITH value and MAXVALUE.",
+						"propertyType": "select",
+						"options": ["", "CYCLE", "NO CYCLE"],
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					},
+					{
+						"propertyName": "Min value",
+						"propertyKeyword": "minValue",
+						"propertyTooltip": "",
 						"propertyType": "numeric",
 						"valueType": "number",
-						"minValue": 1,
+						"step": 1,
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					},
+					{
+						"propertyName": "Max value",
+						"propertyKeyword": "maxValue",
+						"propertyTooltip": "",
+						"propertyType": "numeric",
+						"valueType": "number",
 						"step": 1,
 						"dependency": {
 							"type": "not",

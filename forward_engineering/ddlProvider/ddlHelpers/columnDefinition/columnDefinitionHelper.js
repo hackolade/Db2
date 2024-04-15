@@ -53,11 +53,13 @@ const getColumnDefault = ({ default: defaultValue, identity }) => {
 			}
 		};
 
-		const getOptions = ({ identityStart, identityIncrement, numberToCache }) => {
-			const startWith = identityStart ? ` START WITH ${identityStart}` : '';
-			const incrementBy = identityIncrement ? ` INCREMENT BY ${identityIncrement}` : '';
+		const getOptions = ({ start, increment, minValue, maxValue, cycle }) => {
+			const startWith = start ? `START WITH ${start}` : '';
+			const incrementBy = increment ? `INCREMENT BY ${increment}` : '';
+			const minimumValue = minValue ? `MINVALUE ${minValue}` : '';
+			const maximumValue = maxValue ? `MAXVALUE ${maxValue}` : '';
 
-			return [startWith, incrementBy].filter(Boolean).join(', ');
+			return [startWith, incrementBy, cycle, minimumValue, maximumValue].filter(Boolean).join(', ');
 		};
 
 		return ` GENERATED${getGenerated(identity)} AS IDENTITY (${_.trim(getOptions(identity))})`;
@@ -104,7 +106,7 @@ const timestamp = (fractSecPrecision, withTimeZone, localTimeZone) => {
 	return ` TIMESTAMP${_.isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : ''}${withTimeZone ? ` WITH${localTimeZone ? ' LOCAL' : ''} TIME ZONE` : ''}`;
 };
 
-const multiset = itemsType => {
+const getMultisetType = itemsType => {
 	return ` MULTISET` + (itemsType ? `(${itemsType})` : '');
 };
 
@@ -151,7 +153,7 @@ const decorateType = columnDefinition => {
 				columnDefinition.localTimeZone,
 			);
 		case isMultiset(type):
-			return multiset(columnDefinition.itemsType);
+			return getMultisetType(columnDefinition.itemsType);
 		case !!(columnDefinition.isUDTRef && columnDefinition.schemaName):
 			return ` "${columnDefinition.schemaName}"."${type}"`;
 		default:
