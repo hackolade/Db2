@@ -110,7 +110,7 @@ const getMultisetType = itemsType => {
 	return ` MULTISET` + (itemsType ? `(${itemsType})` : '');
 };
 
-const canHaveByte = type => ['CHAR', 'VARCHAR'].includes(type);
+const canHaveByte = type => ['CHAR', 'VARCHAR', 'CLOB', 'DBCLOB', 'NCLOB', 'BLOB'].includes(type);
 const canHaveLength = type =>
 	[
 		'CHAR',
