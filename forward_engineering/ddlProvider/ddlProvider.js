@@ -13,15 +13,11 @@ const {
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/key/keyHelper.js');
-const {
-	canHaveIdentity,
-	getColumnComments,
-	getColumnDefault,
-	getColumnEncrypt,
-	getColumnConstraints,
-} = require('./ddlHelpers/columnDefinition/columnDefinitionHelper.js');
-const { decorateColumnType } = require('./ddlHelpers/columnDefinition/decorateColumnType.js');
-const { getTableCommentStatement } = require('./ddlHelpers/comment/commentHelper.js');
+const { getColumnEncrypt } = require('./ddlHelpers/columnDefinition/getColumnEncrypt.js');
+const { getColumnType } = require('./ddlHelpers/columnDefinition/getColumnType.js');
+const { getColumnDefault } = require('./ddlHelpers/columnDefinition/getColumnDefault.js');
+const { getColumnConstraints } = require('./ddlHelpers/columnDefinition/getColumnConstraints.js');
+const { getTableCommentStatement, getColumnComments } = require('./ddlHelpers/comment/commentHelper.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
 const { getViewData } = require('./ddlHelpers/view/getViewData.js');
@@ -89,9 +85,9 @@ module.exports = (baseProvider, options, app) => {
 				localTimeZone: jsonSchema.localTimeZone,
 				lengthSemantics: jsonSchema.lengthSemantics,
 				encryption: jsonSchema.encryption,
+				identity: jsonSchema.identity,
 				isUDTRef,
 				itemsType,
-				...(canHaveIdentity(jsonSchema.mode) && { identity: jsonSchema.identity }),
 			};
 		},
 
@@ -107,7 +103,7 @@ module.exports = (baseProvider, options, app) => {
 		convertColumnDefinition(columnDefinition, template = templates.columnDefinition) {
 			const statement = assignTemplates(template, {
 				name: wrapInQuotes(columnDefinition.name),
-				type: decorateColumnType(columnDefinition),
+				type: getColumnType(columnDefinition),
 				default: getColumnDefault(columnDefinition),
 				encrypt: getColumnEncrypt(columnDefinition),
 				constraints: getColumnConstraints(columnDefinition),

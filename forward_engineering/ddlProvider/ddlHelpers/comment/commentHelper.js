@@ -1,6 +1,6 @@
 const templates = require('../../templates');
 const { assignTemplates } = require('../../../utils/assignTemplates');
-const { wrapInQuotes } = require('../../../utils/general');
+const { wrapInQuotes, commentIfDeactivated } = require('../../../utils/general');
 
 /**
  * @enum {string}
@@ -41,7 +41,27 @@ const getTableCommentStatement = ({ tableName, description }) => {
 	return getCommentStatement({ objectName: tableName, objectType: OBJECT_TYPE.table, description });
 };
 
+/**
+ * @param {{ tableName: string, columnDefinitions: object[] }}
+ * @returns {string}
+ */
+const getColumnComments = ({ tableName, columnDefinitions = [] }) => {
+	return columnDefinitions
+		.filter(columnDefinition => columnDefinition.comment)
+		.map(columnDefinition => {
+			const comment = getColumnCommentStatement({
+				tableName,
+				columnName: columnDefinition.name,
+				description: columnDefinition.comment,
+			});
+
+			return commentIfDeactivated(comment, columnDefinition);
+		})
+		.join('\n');
+};
+
 module.exports = {
 	getColumnCommentStatement,
 	getTableCommentStatement,
+	getColumnComments,
 };

@@ -76,7 +76,7 @@ const isTimestamp = ({ type }) => type === DATA_TYPE.timestamp;
 
 const isMultiset = ({ type }) => type === DATA_TYPE.multiset;
 
-const decorateColumnType = ({
+const getColumnType = ({
 	type,
 	length,
 	lengthSemantics,
@@ -112,5 +112,5 @@ const decorateColumnType = ({
 };
 
 module.exports = {
-	decorateColumnType,
+	getColumnType,
 };
