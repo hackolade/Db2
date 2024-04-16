@@ -15,12 +15,12 @@ const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/key/keyHelper.js');
 const {
 	canHaveIdentity,
-	decorateType,
 	getColumnComments,
 	getColumnDefault,
 	getColumnEncrypt,
 	getColumnConstraints,
 } = require('./ddlHelpers/columnDefinition/columnDefinitionHelper.js');
+const { decorateColumnType } = require('./ddlHelpers/columnDefinition/decorateColumnType.js');
 const { getTableCommentStatement } = require('./ddlHelpers/comment/commentHelper.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
@@ -107,7 +107,7 @@ module.exports = (baseProvider, options, app) => {
 		convertColumnDefinition(columnDefinition, template = templates.columnDefinition) {
 			const statement = assignTemplates(template, {
 				name: wrapInQuotes(columnDefinition.name),
-				type: decorateType(columnDefinition),
+				type: decorateColumnType(columnDefinition),
 				default: getColumnDefault(columnDefinition),
 				encrypt: getColumnEncrypt(columnDefinition),
 				constraints: getColumnConstraints(columnDefinition),

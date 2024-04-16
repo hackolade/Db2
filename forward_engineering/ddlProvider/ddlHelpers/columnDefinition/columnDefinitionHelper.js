@@ -2,6 +2,7 @@ const { chain, isEmpty, isNumber, isPlainObject, omit, trim, toUpper } = require
 const { commentIfDeactivated, wrapInQuotes } = require('../../../utils/general');
 const { getOptionsString } = require('../constraint/getOptionsString');
 const { getColumnCommentStatement } = require('../comment/commentHelper');
+const { INTEGER_DATA_TYPES } = require('../../../../constants/types');
 
 /**
  * @param {{ tableName: string, columnDefinitions: object[] }}
@@ -102,115 +103,11 @@ const getColumnEncrypt = ({ encryption }) => {
 };
 
 /**
- * @param {{ type: string, length: number, lengthSemantics: string }}
- * @returns {string}
- */
-const addByteLength = ({ type, length, lengthSemantics }) => {
-	return ` ${type}(${length} ${toUpper(lengthSemantics)})`;
-};
-
-/**
- * @param {{ type: string, length: number }}
- * @returns {string}
- */
-const addLength = ({ type, length }) => {
-	return ` ${type}(${length})`;
-};
-
-/**
- * @param {{ type: string, precision: number, scale: number }}
- * @returns {string}
- */
-const addScalePrecision = ({ type, precision, scale }) => {
-	if (isNumber(scale)) {
-		return ` ${type}(${precision ? precision : '*'},${scale})`;
-	}
-
-	if (isNumber(precision)) {
-		return ` ${type}(${precision})`;
-	}
-
-	return ` ${type}`;
-};
-
-const addPrecision = ({ type, precision }) => {
-	if (isNumber(precision)) {
-		return ` ${type}(${precision})`;
-	}
-	return ` ${type}`;
-};
-
-const getTimestampType = ({ fractSecPrecision, withTimeZone, localTimeZone }) => {
-	return ` TIMESTAMP${isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : ''}${withTimeZone ? ` WITH${localTimeZone ? ' LOCAL' : ''} TIME ZONE` : ''}`;
-};
-
-const getMultisetType = ({ itemsType }) => {
-	return ` MULTISET` + (itemsType ? `(${itemsType})` : '');
-};
-
-const canHaveByte = ({ type }) => ['CHAR', 'VARCHAR', 'CLOB', 'DBCLOB', 'NCLOB', 'BLOB'].includes(type);
-const canHaveLength = ({ type }) =>
-	[
-		'CHAR',
-		'VARCHAR',
-		'NCHAR',
-		'NVARCHAR',
-		'CLOB',
-		'GRAPHIC',
-		'VARGRAPHIC',
-		'DBCLOB',
-		'BINARY',
-		'VARBINARY',
-		'BLOB',
-		'ARRAY',
-	].includes(type);
-const canHavePrecision = ({ type }) => ['DECIMAL', 'FLOAT', 'DECFLOAT'].includes(type);
-const canHaveScale = ({ type }) => type === 'DECIMAL';
-const isTimestamp = ({ type }) => type === 'TIMESTAMP';
-const isMultiset = ({ type }) => type === 'MULTISET';
-
-const decorateType = ({
-	type,
-	length,
-	lengthSemantics,
-	precision,
-	scale,
-	fractSecPrecision,
-	withTimeZone,
-	localTimeZone,
-	itemsType,
-	isUDTRef,
-	schemaName,
-}) => {
-	const hasLength = isNumber(length);
-
-	switch (true) {
-		case hasLength && lengthSemantics && canHaveByte({ type }) && canHaveLength({ type }):
-			return addByteLength({ type, length, lengthSemantics });
-		case hasLength && canHaveLength({ type }):
-			return addLength({ type, length });
-		case canHavePrecision({ type }) && canHaveScale({ type }):
-			return addScalePrecision({ type, precision, scale });
-		case canHavePrecision({ type }) && isNumber(precision):
-			return addPrecision({ type, precision });
-		case isTimestamp({ type }):
-			return getTimestampType({ fractSecPrecision, withTimeZone, localTimeZone });
-		case isMultiset({ type }):
-			return getMultisetType({ itemsType });
-		case !!(isUDTRef && schemaName):
-			return ` "${schemaName}"."${type}"`;
-		default:
-			return ` ${type}`;
-	}
-};
-
-/**
  * @param {string} type
  * @returns {boolean}
  */
 const canHaveIdentity = type => {
-	const typesAllowedToHaveAutoIncrement = ['smallint', 'integer', 'bigint'];
-	return typesAllowedToHaveAutoIncrement.includes(type);
+	return INTEGER_DATA_TYPES.includes(toUpper(type));
 };
 
 module.exports = {
@@ -218,6 +115,5 @@ module.exports = {
 	getColumnConstraints,
 	getColumnDefault,
 	getColumnEncrypt,
-	decorateType,
 	canHaveIdentity,
 };
