@@ -155,8 +155,8 @@ module.exports = (baseProvider, options, app) => {
 				primaryTableActivated &&
 				foreignTableActivated;
 
-			const foreignKeys = toArray(foreignKey);
-			const primaryKeys = toArray(primaryKey);
+			const foreignKeys = toArray({ value: foreignKey });
+			const primaryKeys = toArray({ value: primaryKey });
 
 			const onDelete = keyHelper.customPropertiesForForeignKey({ customProperties });
 			const primaryTableName = getNamePrefixedWithSchemaName({
@@ -209,8 +209,8 @@ module.exports = (baseProvider, options, app) => {
 				primaryTableActivated &&
 				foreignTableActivated;
 
-			const foreignKeys = toArray(foreignKey);
-			const primaryKeys = toArray(primaryKey);
+			const foreignKeys = toArray({ value: foreignKey });
+			const primaryKeys = toArray({ value: primaryKey });
 
 			const onDelete = keyHelper.customPropertiesForForeignKey({ customProperties });
 			const primaryTableName = getNamePrefixedWithSchemaName({

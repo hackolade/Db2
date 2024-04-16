@@ -53,17 +53,6 @@ const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComm
 	}
 };
 
-const wrap = (str, start = "'", end = "'") => {
-	const firstChar = str[0];
-	const lastChar = str[str.length - 1];
-
-	if (lastChar === start && firstChar === end) {
-		return str;
-	} else {
-		return `${start}${str}${end}`;
-	}
-};
-
 const wrapInQuotes = name => `"${name}"`;
 
 /**
@@ -76,10 +65,6 @@ const getNamePrefixedWithSchemaName = ({ name, schemaName }) => {
 	}
 
 	return wrapInQuotes(name);
-};
-
-const checkFieldPropertiesChanged = (compMod, propertiesToCheck) => {
-	return propertiesToCheck.some(prop => compMod?.oldField[prop] !== compMod?.newField[prop]);
 };
 
 const columnMapToString = ({ name }) => wrapInQuotes(name);
@@ -99,35 +84,11 @@ const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, map
 };
 
 /**
- * @param str {string}
- * @return {string}
- * */
-const escapeSingleQuote = str => {
-	return str.replaceAll("'", "''");
-};
-
-const getGroupItemsByCompMode = ({ newItems = [], oldItems = [] }) => {
-	const addedItems = newItems.filter(newItem => !oldItems.some(item => item.id === newItem.id));
-	const removedItems = [];
-	const modifiedItems = [];
-
-	oldItems.forEach(oldItem => {
-		const newItem = newItems.find(item => item.id === oldItem.id);
-
-		if (!newItem) {
-			removedItems.push(oldItem);
-		} else if (!_.isEqual(newItem, oldItem)) {
-			modifiedItems.push(newItem);
-		}
-	});
-
-	return {
-		added: addedItems,
-		removed: removedItems,
-		modified: modifiedItems,
-	};
-};
-const toArray = val => (_.isArray(val) ? val : [val]);
+ * @template {object} T
+ * @param {{ value: T | T[] }}
+ * @returns {T[]}
+ */
+const toArray = ({ value }) => (Array.isArray(value) ? value : [value]);
 
 module.exports = {
 	setTab,
@@ -135,12 +96,8 @@ module.exports = {
 	checkAllKeysDeactivated,
 	divideIntoActivatedAndDeactivated,
 	commentIfDeactivated,
-	wrap,
 	wrapInQuotes,
 	getNamePrefixedWithSchemaName,
-	checkFieldPropertiesChanged,
 	getColumnsList,
-	escapeSingleQuote,
-	getGroupItemsByCompMode,
 	toArray,
 };
