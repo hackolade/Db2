@@ -5,7 +5,7 @@ const { getColumnCommentStatement } = require('../comment/commentHelper');
 
 /**
  * @param {{ tableName: string, columnDefinitions: object[] }}
- * @returns
+ * @returns {string}
  */
 const getColumnComments = ({ tableName, columnDefinitions }) => {
 	return chain(columnDefinitions)
@@ -101,41 +101,55 @@ const getColumnEncrypt = ({ encryption }) => {
 	return '';
 };
 
-const addByteLength = (type, length, lengthSemantics) => {
+/**
+ * @param {{ type: string, length: number, lengthSemantics: string }}
+ * @returns {string}
+ */
+const addByteLength = ({ type, length, lengthSemantics }) => {
 	return ` ${type}(${length} ${toUpper(lengthSemantics)})`;
 };
 
-const addLength = (type, length) => {
+/**
+ * @param {{ type: string, length: number }}
+ * @returns {string}
+ */
+const addLength = ({ type, length }) => {
 	return ` ${type}(${length})`;
 };
 
-const addScalePrecision = (type, precision, scale) => {
+/**
+ * @param {{ type: string, precision: number, scale: number }}
+ * @returns {string}
+ */
+const addScalePrecision = ({ type, precision, scale }) => {
 	if (isNumber(scale)) {
 		return ` ${type}(${precision ? precision : '*'},${scale})`;
-	} else if (isNumber(precision)) {
-		return ` ${type}(${precision})`;
-	} else {
-		return ` ${type}`;
 	}
+
+	if (isNumber(precision)) {
+		return ` ${type}(${precision})`;
+	}
+
+	return ` ${type}`;
 };
 
-const addPrecision = (type, precision) => {
+const addPrecision = ({ type, precision }) => {
 	if (isNumber(precision)) {
 		return ` ${type}(${precision})`;
 	}
 	return ` ${type}`;
 };
 
-const timestamp = (fractSecPrecision, withTimeZone, localTimeZone) => {
+const getTimestampType = ({ fractSecPrecision, withTimeZone, localTimeZone }) => {
 	return ` TIMESTAMP${isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : ''}${withTimeZone ? ` WITH${localTimeZone ? ' LOCAL' : ''} TIME ZONE` : ''}`;
 };
 
-const getMultisetType = itemsType => {
+const getMultisetType = ({ itemsType }) => {
 	return ` MULTISET` + (itemsType ? `(${itemsType})` : '');
 };
 
-const canHaveByte = type => ['CHAR', 'VARCHAR', 'CLOB', 'DBCLOB', 'NCLOB', 'BLOB'].includes(type);
-const canHaveLength = type =>
+const canHaveByte = ({ type }) => ['CHAR', 'VARCHAR', 'CLOB', 'DBCLOB', 'NCLOB', 'BLOB'].includes(type);
+const canHaveLength = ({ type }) =>
 	[
 		'CHAR',
 		'VARCHAR',
@@ -150,34 +164,41 @@ const canHaveLength = type =>
 		'BLOB',
 		'ARRAY',
 	].includes(type);
-const canHavePrecision = type => ['DECIMAL', 'FLOAT', 'DECFLOAT'].includes(type);
-const canHaveScale = type => type === 'DECIMAL';
-const isTimezone = type => type === 'TIMESTAMP';
-const isMultiset = type => type === 'MULTISET';
+const canHavePrecision = ({ type }) => ['DECIMAL', 'FLOAT', 'DECFLOAT'].includes(type);
+const canHaveScale = ({ type }) => type === 'DECIMAL';
+const isTimestamp = ({ type }) => type === 'TIMESTAMP';
+const isMultiset = ({ type }) => type === 'MULTISET';
 
-const decorateType = columnDefinition => {
-	const type = columnDefinition.type;
-	const hasLength = isNumber(columnDefinition.length);
+const decorateType = ({
+	type,
+	length,
+	lengthSemantics,
+	precision,
+	scale,
+	fractSecPrecision,
+	withTimeZone,
+	localTimeZone,
+	itemsType,
+	isUDTRef,
+	schemaName,
+}) => {
+	const hasLength = isNumber(length);
 
 	switch (true) {
-		case columnDefinition.lengthSemantics && canHaveByte(type) && canHaveLength(type) && hasLength:
-			return addByteLength(type, columnDefinition.length, columnDefinition.lengthSemantics);
-		case canHaveLength(type) && hasLength:
-			return addLength(type, columnDefinition.length);
-		case canHavePrecision(type) && canHaveScale(type):
-			return addScalePrecision(type, columnDefinition.precision, columnDefinition.scale);
-		case canHavePrecision(type) && isNumber(columnDefinition.precision):
-			return addPrecision(type, columnDefinition.precision);
-		case isTimezone(type):
-			return timestamp(
-				columnDefinition.fractSecPrecision,
-				columnDefinition.withTimeZone,
-				columnDefinition.localTimeZone,
-			);
-		case isMultiset(type):
-			return getMultisetType(columnDefinition.itemsType);
-		case !!(columnDefinition.isUDTRef && columnDefinition.schemaName):
-			return ` "${columnDefinition.schemaName}"."${type}"`;
+		case hasLength && lengthSemantics && canHaveByte({ type }) && canHaveLength({ type }):
+			return addByteLength({ type, length, lengthSemantics });
+		case hasLength && canHaveLength({ type }):
+			return addLength({ type, length });
+		case canHavePrecision({ type }) && canHaveScale({ type }):
+			return addScalePrecision({ type, precision, scale });
+		case canHavePrecision({ type }) && isNumber(precision):
+			return addPrecision({ type, precision });
+		case isTimestamp({ type }):
+			return getTimestampType({ fractSecPrecision, withTimeZone, localTimeZone });
+		case isMultiset({ type }):
+			return getMultisetType({ itemsType });
+		case !!(isUDTRef && schemaName):
+			return ` "${schemaName}"."${type}"`;
 		default:
 			return ` ${type}`;
 	}

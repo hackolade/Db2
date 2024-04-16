@@ -48,17 +48,24 @@ const divideIntoActivatedAndDeactivated = ({ items, mapFunction }) => {
 	return { activatedItems, deactivatedItems };
 };
 
+/**
+ * @param {string} statement
+ * @param {{ isActivated: boolean, isPartOfLine: boolean, inlineComment: string }}
+ * @returns {string}
+ */
 const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComment = '--' }) => {
 	if (isActivated !== false) {
 		return statement;
 	}
+
 	if (isPartOfLine) {
 		return '/* ' + statement + ' */';
-	} else if (statement.includes('\n')) {
-		return '/*\n' + statement + ' */\n';
-	} else {
-		return inlineComment + ' ' + statement;
 	}
+
+	if (statement.includes('\n')) {
+		return '/*\n' + statement + ' */\n';
+	}
+	return inlineComment + ' ' + statement;
 };
 
 const wrapInQuotes = name => `"${name}"`;
