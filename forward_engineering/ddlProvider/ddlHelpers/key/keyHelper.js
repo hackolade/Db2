@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { wrapInQuotes, commentIfDeactivated } = require('../../../utils/general');
+const { omitBy, isNil, isEmpty, trim } = require('lodash');
+const { wrapInQuotes, commentIfDeactivated, checkIsKeyActivated } = require('../../../utils/general');
 
 /**
  * @enum {string}
@@ -57,7 +57,7 @@ const hydrateKeyOptions = ({ columnName, isActivated, options, keyType }) => {
 				isActivated: isActivated,
 			},
 		],
-		..._.omitBy(options, _.isNil),
+		...omitBy(options, isNil),
 	};
 };
 
@@ -74,17 +74,16 @@ const findName = ({ keyId, properties }) => {
  * @returns {boolean}
  */
 const checkIfActivated = ({ keyId, properties }) => {
-	return _.get(
-		Object.values(properties).find(prop => prop.GUID === keyId),
-		'isActivated',
-		true,
-	);
+	const key = Object.values(properties).find(prop => prop.GUID === keyId);
+
+	return key?.isActivated ?? true;
 };
 
-const getKeys = ({ keys, jsonSchema }) => {
-	return _.map(keys, key => {
+const getKeys = ({ jsonSchema, keys = [] }) => {
+	return keys.map(key => {
 		const name = findName({ keyId: key.keyId, properties: jsonSchema.properties });
 		const isActivated = checkIfActivated({ keyId: key.keyId, properties: jsonSchema.properties });
+
 		return {
 			name,
 			isActivated,
@@ -98,7 +97,7 @@ const getCompositePrimaryKeys = ({ jsonSchema }) => {
 	}
 
 	return jsonSchema.primaryKey
-		.filter(primaryKey => !_.isEmpty(primaryKey.compositePrimaryKey))
+		.filter(primaryKey => !isEmpty(primaryKey.compositePrimaryKey))
 		.map(primaryKey => ({
 			...hydrateKeyOptions({ options: primaryKey, keyType: KEY_TYPE.primaryKey }),
 			columns: getKeys({ keys: primaryKey.compositePrimaryKey, jsonSchema }),
@@ -111,7 +110,7 @@ const getCompositeUniqueKeys = ({ jsonSchema }) => {
 	}
 
 	return jsonSchema.uniqueKey
-		.filter(uniqueKey => !_.isEmpty(uniqueKey.compositeUniqueKey))
+		.filter(uniqueKey => !isEmpty(uniqueKey.compositeUniqueKey))
 		.map(uniqueKey => ({
 			...hydrateKeyOptions({ options: uniqueKey, keyType: KEY_TYPE.unique }),
 			columns: getKeys({ keys: uniqueKey.compositeUniqueKey, jsonSchema }),
@@ -157,12 +156,10 @@ const getTableKeyConstraints = ({ jsonSchema }) => {
 
 const foreignKeysToString = ({ keys }) => {
 	if (Array.isArray(keys)) {
-		const activatedKeys = keys
-			.filter(key => _.get(key, 'isActivated', true))
-			.map(key => wrapInQuotes(_.trim(key.name)));
+		const activatedKeys = keys.filter(key => checkIsKeyActivated({ key })).map(key => wrapInQuotes(trim(key.name)));
 		const deactivatedKeys = keys
-			.filter(key => !_.get(key, 'isActivated', true))
-			.map(key => wrapInQuotes(_.trim(key.name)));
+			.filter(key => !checkIsKeyActivated({ key }))
+			.map(key => wrapInQuotes(trim(key.name)));
 		const deactivatedKeysAsString = deactivatedKeys.length
 			? commentIfDeactivated(deactivatedKeys, { isActivated: false, isPartOfLine: true })
 			: '';
@@ -173,7 +170,7 @@ const foreignKeysToString = ({ keys }) => {
 };
 
 const foreignActiveKeysToString = ({ keys }) => {
-	return keys.map(key => _.trim(key.name)).join(', ');
+	return keys.map(key => trim(key.name)).join(', ');
 };
 
 const customPropertiesForForeignKey = ({ customProperties }) => {

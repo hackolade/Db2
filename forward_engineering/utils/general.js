@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { toLower } = require('lodash');
 
 /**
  * @param {{ text: string, tab: string }}
@@ -16,7 +16,15 @@ const setTab = ({ text, tab = '\t' }) => {
  * @returns {boolean}
  */
 const hasType = ({ descriptors, type }) => {
-	return Object.keys(descriptors).map(_.toLower).includes(_.toLower(type));
+	return Object.keys(descriptors).map(toLower).includes(toLower(type));
+};
+
+/**
+ * @param {{ key?: object }}
+ * @returns {boolean}
+ */
+const checkIsKeyActivated = ({ key }) => {
+	return key?.isActivated ?? true;
 };
 
 /**
@@ -24,7 +32,7 @@ const hasType = ({ descriptors, type }) => {
  * @returns {boolean}
  */
 const checkAllKeysDeactivated = ({ keys }) => {
-	return keys.length ? keys.every(key => !_.get(key, 'isActivated', true)) : false;
+	return keys.length ? keys.every(key => !checkIsKeyActivated({ key })) : false;
 };
 
 /**
@@ -34,8 +42,8 @@ const checkAllKeysDeactivated = ({ keys }) => {
  * @returns {{ activatedItems: K[], deactivatedItems: K[]}}
  */
 const divideIntoActivatedAndDeactivated = ({ items, mapFunction }) => {
-	const activatedItems = items.filter(item => _.get(item, 'isActivated', true)).map(mapFunction);
-	const deactivatedItems = items.filter(item => !_.get(item, 'isActivated', true)).map(mapFunction);
+	const activatedItems = items.filter(item => checkIsKeyActivated({ key: item })).map(mapFunction);
+	const deactivatedItems = items.filter(item => !checkIsKeyActivated({ key: item })).map(mapFunction);
 
 	return { activatedItems, deactivatedItems };
 };
@@ -94,6 +102,7 @@ module.exports = {
 	setTab,
 	hasType,
 	checkAllKeysDeactivated,
+	checkIsKeyActivated,
 	divideIntoActivatedAndDeactivated,
 	commentIfDeactivated,
 	wrapInQuotes,

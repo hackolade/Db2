@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { chain, isEmpty, isNumber, isPlainObject, omit, trim, toUpper } = require('lodash');
 const { commentIfDeactivated, wrapInQuotes } = require('../../../utils/general');
 const { getOptionsString } = require('../constraint/getOptionsString');
 const { getColumnCommentStatement } = require('../comment/commentHelper');
@@ -8,7 +8,7 @@ const { getColumnCommentStatement } = require('../comment/commentHelper');
  * @returns
  */
 const getColumnComments = ({ tableName, columnDefinitions }) => {
-	return _.chain(columnDefinitions)
+	return chain(columnDefinitions)
 		.filter('comment')
 		.map(columnData => {
 			const comment = getColumnCommentStatement({
@@ -62,7 +62,7 @@ const getOptions = ({ primaryKey, unique, primaryKeyOptions, uniqueKeyOptions })
  * @returns {string}
  */
 const getColumnDefault = ({ default: defaultValue, identity }) => {
-	if (!_.isEmpty(identity) && identity.generated) {
+	if (!isEmpty(identity) && identity.generated) {
 		const getGenerated = ({ generated, generatedOnNull }) => {
 			if (generated === 'BY DEFAULT') {
 				return ` ${generated} ${generatedOnNull ? ' ON NULL' : ''}`;
@@ -80,9 +80,9 @@ const getColumnDefault = ({ default: defaultValue, identity }) => {
 			return [startWith, incrementBy, cycle, minimumValue, maximumValue].filter(Boolean).join(', ');
 		};
 
-		return ` GENERATED${getGenerated(identity)} AS IDENTITY (${_.trim(getOptions(identity))})`;
+		return ` GENERATED${getGenerated(identity)} AS IDENTITY (${trim(getOptions(identity))})`;
 	} else if (defaultValue) {
-		const value = _.isNumber(defaultValue) ? defaultValue : wrapInQuotes(defaultValue);
+		const value = isNumber(defaultValue) ? defaultValue : wrapInQuotes(defaultValue);
 
 		return ` WITH DEFAULT ${value}`;
 	}
@@ -94,7 +94,7 @@ const getColumnDefault = ({ default: defaultValue, identity }) => {
  * @returns {string}
  */
 const getColumnEncrypt = ({ encryption }) => {
-	if (_.isPlainObject(encryption) && !_.isEmpty(_.omit(encryption, 'id'))) {
+	if (isPlainObject(encryption) && !isEmpty(omit(encryption, 'id'))) {
 		const { ENCRYPTION_ALGORITHM, INTEGRITY_ALGORITHM, noSalt } = encryption;
 		return ` ENCRYPT${ENCRYPTION_ALGORITHM ? ` USING '${ENCRYPTION_ALGORITHM}'` : ''}${INTEGRITY_ALGORITHM ? ` '${INTEGRITY_ALGORITHM}'` : ''}${noSalt ? ' NO SALT' : ''}`;
 	}
@@ -102,7 +102,7 @@ const getColumnEncrypt = ({ encryption }) => {
 };
 
 const addByteLength = (type, length, lengthSemantics) => {
-	return ` ${type}(${length} ${_.toUpper(lengthSemantics)})`;
+	return ` ${type}(${length} ${toUpper(lengthSemantics)})`;
 };
 
 const addLength = (type, length) => {
@@ -110,9 +110,9 @@ const addLength = (type, length) => {
 };
 
 const addScalePrecision = (type, precision, scale) => {
-	if (_.isNumber(scale)) {
+	if (isNumber(scale)) {
 		return ` ${type}(${precision ? precision : '*'},${scale})`;
-	} else if (_.isNumber(precision)) {
+	} else if (isNumber(precision)) {
 		return ` ${type}(${precision})`;
 	} else {
 		return ` ${type}`;
@@ -120,14 +120,14 @@ const addScalePrecision = (type, precision, scale) => {
 };
 
 const addPrecision = (type, precision) => {
-	if (_.isNumber(precision)) {
+	if (isNumber(precision)) {
 		return ` ${type}(${precision})`;
 	}
 	return ` ${type}`;
 };
 
 const timestamp = (fractSecPrecision, withTimeZone, localTimeZone) => {
-	return ` TIMESTAMP${_.isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : ''}${withTimeZone ? ` WITH${localTimeZone ? ' LOCAL' : ''} TIME ZONE` : ''}`;
+	return ` TIMESTAMP${isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : ''}${withTimeZone ? ` WITH${localTimeZone ? ' LOCAL' : ''} TIME ZONE` : ''}`;
 };
 
 const getMultisetType = itemsType => {
@@ -157,7 +157,7 @@ const isMultiset = type => type === 'MULTISET';
 
 const decorateType = columnDefinition => {
 	const type = columnDefinition.type;
-	const hasLength = _.isNumber(columnDefinition.length);
+	const hasLength = isNumber(columnDefinition.length);
 
 	switch (true) {
 		case columnDefinition.lengthSemantics && canHaveByte(type) && canHaveLength(type) && hasLength:
@@ -166,7 +166,7 @@ const decorateType = columnDefinition => {
 			return addLength(type, columnDefinition.length);
 		case canHavePrecision(type) && canHaveScale(type):
 			return addScalePrecision(type, columnDefinition.precision, columnDefinition.scale);
-		case canHavePrecision(type) && _.isNumber(columnDefinition.precision):
+		case canHavePrecision(type) && isNumber(columnDefinition.precision):
 			return addPrecision(type, columnDefinition.precision);
 		case isTimezone(type):
 			return timestamp(

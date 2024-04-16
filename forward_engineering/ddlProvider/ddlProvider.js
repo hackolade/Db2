@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { toUpper, isEmpty, trim } = require('lodash');
 const templates = require('./templates');
 const defaultTypes = require('../configs/defaultTypes.js');
 const descriptors = require('../configs/descriptors.js');
@@ -41,13 +41,11 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateSchema(containerData, data) {
-			const dbVersion = _.get(data, 'modelData.0.dbVersion');
 			return {
 				schemaName: containerData.name,
 				ifNotExist: containerData.ifNotExist,
 				authorizationName: containerData.authorizationName,
 				dataCapture: containerData.dataCapture,
-				dbVersion,
 			};
 		},
 
@@ -64,8 +62,8 @@ module.exports = (baseProvider, options, app) => {
 
 		hydrateColumn({ columnDefinition, jsonSchema, schemaData, definitionJsonSchema = {} }) {
 			const isUDTRef = !!jsonSchema.$ref;
-			const type = isUDTRef ? columnDefinition.type : _.toUpper(jsonSchema.mode || jsonSchema.type);
-			const itemsType = _.toUpper(jsonSchema.items?.mode || jsonSchema.items?.type || '');
+			const type = isUDTRef ? columnDefinition.type : toUpper(jsonSchema.mode || jsonSchema.type);
+			const itemsType = toUpper(jsonSchema.items?.mode || jsonSchema.items?.type || '');
 
 			return {
 				name: columnDefinition.name,
@@ -98,11 +96,12 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateJsonSchemaColumn(jsonSchema, definitionJsonSchema) {
-			if (!jsonSchema.$ref || _.isEmpty(definitionJsonSchema)) {
+			if (!jsonSchema.$ref || isEmpty(definitionJsonSchema)) {
 				return jsonSchema;
 			}
+			const { $ref, ...jsonSchemaWithoutRef } = jsonSchema;
 
-			return { ...definitionJsonSchema, ..._.omit(jsonSchema, '$ref') };
+			return { ...definitionJsonSchema, ...jsonSchemaWithoutRef };
 		},
 
 		convertColumnDefinition(columnDefinition, template = templates.columnDefinition) {
@@ -129,7 +128,7 @@ module.exports = (baseProvider, options, app) => {
 		createCheckConstraint({ name, expression }) {
 			return assignTemplates(templates.checkConstraint, {
 				name: name ? `CONSTRAINT ${wrapInQuotes(name)} ` : '',
-				expression: _.trim(expression).replace(/^\(([\s\S]*)\)$/, '$1'),
+				expression: trim(expression).replace(/^\(([\s\S]*)\)$/, '$1'),
 			});
 		},
 
@@ -180,7 +179,7 @@ module.exports = (baseProvider, options, app) => {
 			});
 
 			return {
-				statement: _.trim(foreignKeyStatement),
+				statement: trim(foreignKeyStatement),
 				isActivated,
 			};
 		},
@@ -239,7 +238,7 @@ module.exports = (baseProvider, options, app) => {
 			});
 
 			return {
-				statement: _.trim(foreignKeyStatement) + '\n',
+				statement: trim(foreignKeyStatement) + '\n',
 				isActivated,
 			};
 		},
@@ -253,7 +252,7 @@ module.exports = (baseProvider, options, app) => {
 			return {
 				...tableData,
 				keyConstraints: keyHelper.getTableKeyConstraints({ jsonSchema }),
-				selectStatement: _.trim(detailsTab.selectStatement),
+				selectStatement: trim(detailsTab.selectStatement),
 				temporary: detailsTab.temporary,
 				description: detailsTab.description,
 				ifNotExist: detailsTab.ifNotExist,
@@ -364,8 +363,8 @@ module.exports = (baseProvider, options, app) => {
 			const comment = commentStatement ? '\n' + commentStatement + `\n` : '\n';
 			const viewProperties = viewData.viewProperties ? ' \n' + setTab({ text: viewData.viewProperties }) : '';
 
-			const selectStatement = _.trim(viewData.selectStatement)
-				? _.trim(setTab({ text: viewData.selectStatement }))
+			const selectStatement = trim(viewData.selectStatement)
+				? trim(setTab({ text: viewData.selectStatement }))
 				: assignTemplates(templates.viewSelectStatement, {
 						tableName: tables.join(', '),
 						keys: columnsAsString,
