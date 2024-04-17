@@ -21,7 +21,10 @@ const getCommentStatement = ({ objectName, objectType, description }) => {
 		return '';
 	}
 
-	return assignTemplates(templates.comment, { objectType, objectName, comment: wrapComment(description) });
+	return assignTemplates({
+		template: templates.comment,
+		templateData: { objectType, objectName, comment: wrapComment(description) },
+	});
 };
 
 /**
@@ -29,7 +32,7 @@ const getCommentStatement = ({ objectName, objectType, description }) => {
  * @returns {string}
  */
 const getColumnCommentStatement = ({ tableName, columnName, description }) => {
-	const objectName = tableName + '.' + wrapInQuotes(columnName);
+	const objectName = tableName + '.' + wrapInQuotes({ name: columnName });
 	return getCommentStatement({ objectName, objectType: OBJECT_TYPE.column, description });
 };
 

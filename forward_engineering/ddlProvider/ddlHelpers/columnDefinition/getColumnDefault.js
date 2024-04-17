@@ -45,7 +45,7 @@ const getColumnDefault = ({ default: defaultValue, identity, type }) => {
 	}
 
 	if (defaultValue) {
-		const value = isNumber(defaultValue) ? defaultValue : wrapInQuotes(defaultValue);
+		const value = isNumber(defaultValue) ? defaultValue : wrapInQuotes({ name: defaultValue });
 
 		return ` WITH DEFAULT ${value}`;
 	}

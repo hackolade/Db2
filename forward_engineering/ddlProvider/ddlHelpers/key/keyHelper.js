@@ -176,10 +176,12 @@ const getTableKeyConstraints = ({ jsonSchema }) => {
  */
 const foreignKeysToString = ({ keys }) => {
 	if (Array.isArray(keys)) {
-		const activatedKeys = keys.filter(key => checkIsKeyActivated({ key })).map(key => wrapInQuotes(trim(key.name)));
+		const activatedKeys = keys
+			.filter(key => checkIsKeyActivated({ key }))
+			.map(key => wrapInQuotes({ name: trim(key.name) }));
 		const deactivatedKeys = keys
 			.filter(key => !checkIsKeyActivated({ key }))
-			.map(key => wrapInQuotes(trim(key.name)));
+			.map(key => wrapInQuotes({ name: trim(key.name) }));
 		const deactivatedKeysAsString = deactivatedKeys.length
 			? commentIfDeactivated(deactivatedKeys, { isActivated: false, isPartOfLine: true })
 			: '';

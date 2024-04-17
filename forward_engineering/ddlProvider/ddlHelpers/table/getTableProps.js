@@ -56,13 +56,19 @@ const createKeyConstraint = ({ keyData, isParentActivated }) => {
 	const isAllColumnsDeactivated = checkAllKeysDeactivated({ keys: keyData.columns });
 	const columns = getColumnsList(keyData.columns, isAllColumnsDeactivated, isParentActivated);
 	const options = getOptionsString(keyData).statement;
+	const constraintName = keyData.constraintName
+		? `CONSTRAINT ${wrapInQuotes({ name: keyData.constraintName })} `
+		: '';
 
 	return {
-		statement: assignTemplates(templates.createKeyConstraint, {
-			constraintName: keyData.constraintName ? `CONSTRAINT ${wrapInQuotes(keyData.constraintName)} ` : '',
-			keyType: keyData.keyType,
-			columns,
-			options,
+		statement: assignTemplates({
+			template: templates.createKeyConstraint,
+			templateData: {
+				constraintName,
+				keyType: keyData.keyType,
+				columns,
+				options,
+			},
 		}),
 		isActivated: !isAllColumnsDeactivated,
 	};
@@ -109,11 +115,14 @@ const getTableProps = ({ columns, foreignKeyConstraints, keyConstraints, checkCo
 	});
 	const columnsString = joinStatements({ statements: columns });
 	const checkConstraintsString = joinStatements({ statements: checkConstraints });
-	const tableProps = assignTemplates(templates.createTableProps, {
-		columns: columnsString,
-		foreignKeyConstraints: foreignKeyConstraintsString,
-		keyConstraints: keyConstraintsString,
-		checkConstraints: checkConstraintsString,
+	const tableProps = assignTemplates({
+		template: templates.createTableProps,
+		templateData: {
+			columns: columnsString,
+			foreignKeyConstraints: foreignKeyConstraintsString,
+			keyConstraints: keyConstraintsString,
+			checkConstraints: checkConstraintsString,
+		},
 	});
 
 	return tableProps ? `\n(\n\t${tableProps}\n)` : '';

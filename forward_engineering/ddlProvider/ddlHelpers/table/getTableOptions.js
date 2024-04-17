@@ -34,7 +34,7 @@ const getUnderClause = value => {
 		return '';
 	}
 
-	return 'UNDER ' + wrapInQuotes(value) + ' INHERIT SELECT PRIVILEGES';
+	return 'UNDER ' + wrapInQuotes({ name: value }) + ' INHERIT SELECT PRIVILEGES';
 };
 
 module.exports = {

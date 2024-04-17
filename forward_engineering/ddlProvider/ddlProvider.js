@@ -46,11 +46,14 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture }) {
-			const schemaStatement = assignTemplates(templates.createSchema, {
-				schemaName: wrapInQuotes(schemaName),
-				ifNotExists: ifNotExist ? ' IF NOT EXISTS' : '',
-				authorization: authorizationName ? ' AUTHORIZATION ' + authorizationName : '',
-				dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
+			const schemaStatement = assignTemplates({
+				template: templates.createSchema,
+				templateData: {
+					schemaName: wrapInQuotes({ name: schemaName }),
+					ifNotExists: ifNotExist ? ' IF NOT EXISTS' : '',
+					authorization: authorizationName ? ' AUTHORIZATION ' + authorizationName : '',
+					dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
+				},
 			});
 
 			return schemaStatement;
@@ -101,12 +104,15 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		convertColumnDefinition(columnDefinition, template = templates.columnDefinition) {
-			const statement = assignTemplates(template, {
-				name: wrapInQuotes(columnDefinition.name),
-				type: getColumnType(columnDefinition),
-				default: getColumnDefault(columnDefinition),
-				encrypt: getColumnEncrypt(columnDefinition),
-				constraints: getColumnConstraints(columnDefinition),
+			const statement = assignTemplates({
+				template,
+				templateData: {
+					name: wrapInQuotes({ name: columnDefinition.name }),
+					type: getColumnType(columnDefinition),
+					default: getColumnDefault(columnDefinition),
+					encrypt: getColumnEncrypt(columnDefinition),
+					constraints: getColumnConstraints(columnDefinition),
+				},
 			});
 
 			return commentIfDeactivated(statement, { isActivated: columnDefinition.isActivated });
@@ -122,9 +128,12 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		createCheckConstraint({ name, expression }) {
-			return assignTemplates(templates.checkConstraint, {
-				name: name ? `CONSTRAINT ${wrapInQuotes(name)} ` : '',
-				expression: trim(expression).replace(/^\(([\s\S]*)\)$/, '$1'),
+			return assignTemplates({
+				template: templates.checkConstraint,
+				templateData: {
+					name: name ? `CONSTRAINT ${wrapInQuotes({ name })} ` : '',
+					expression: trim(expression).replace(/^\(([\s\S]*)\)$/, '$1'),
+				},
 			});
 		},
 
@@ -158,7 +167,7 @@ module.exports = (baseProvider, options, app) => {
 				name: primaryTable,
 				schemaName: primarySchemaName || schemaData.schemaName,
 			});
-			const constraintName = name ? `CONSTRAINT ${wrapInQuotes(name)}` : '';
+			const constraintName = name ? `CONSTRAINT ${wrapInQuotes({ name })}` : '';
 			const foreignKeyName = isActivated
 				? keyHelper.foreignKeysToString({ keys: foreignKeys })
 				: keyHelper.foreignActiveKeysToString({ keys: foreignKeys });
@@ -166,12 +175,15 @@ module.exports = (baseProvider, options, app) => {
 				? keyHelper.foreignKeysToString({ keys: primaryKeys })
 				: keyHelper.foreignActiveKeysToString({ keys: primaryKeys });
 
-			const foreignKeyStatement = assignTemplates(templates.createForeignKeyConstraint, {
-				primaryTable: primaryTableName,
-				name: constraintName,
-				foreignKey: foreignKeyName,
-				primaryKey: primaryKeyName,
-				onDelete,
+			const foreignKeyStatement = assignTemplates({
+				template: templates.createForeignKeyConstraint,
+				templateData: {
+					primaryTable: primaryTableName,
+					name: constraintName,
+					foreignKey: foreignKeyName,
+					primaryKey: primaryKeyName,
+					onDelete,
+				},
 			});
 
 			return {
@@ -216,7 +228,7 @@ module.exports = (baseProvider, options, app) => {
 				name: foreignTable,
 				schemaName: foreignSchemaName || schemaData.schemaName,
 			});
-			const constraintName = name ? wrapInQuotes(name) : '';
+			const constraintName = name ? wrapInQuotes({ name }) : '';
 			const foreignKeyName = isActivated
 				? keyHelper.foreignKeysToString({ keys: foreignKeys })
 				: keyHelper.foreignActiveKeysToString({ keys: foreignKeys });
@@ -224,13 +236,16 @@ module.exports = (baseProvider, options, app) => {
 				? keyHelper.foreignKeysToString({ keys: primaryKeys })
 				: keyHelper.foreignActiveKeysToString({ keys: primaryKeys });
 
-			const foreignKeyStatement = assignTemplates(templates.createForeignKey, {
-				primaryTable: primaryTableName,
-				foreignTable: foreignTableName,
-				name: constraintName,
-				foreignKey: foreignKeyName,
-				primaryKey: primaryKeyName,
-				onDelete,
+			const foreignKeyStatement = assignTemplates({
+				template: templates.createForeignKey,
+				templateData: {
+					primaryTable: primaryTableName,
+					foreignTable: foreignTableName,
+					name: constraintName,
+					foreignKey: foreignKeyName,
+					primaryKey: primaryKeyName,
+					onDelete,
+				},
 			});
 
 			return {
@@ -298,12 +313,15 @@ module.exports = (baseProvider, options, app) => {
 			const columnComments = getColumnComments({ tableName, columnDefinitions });
 			const commentStatements = comment || columnComments ? '\n' + comment + columnComments + '\n' : '\n';
 
-			const createTableDdl = assignTemplates(templates.createTable, {
-				name: tableName,
-				ifNotExists,
-				tableProps,
-				tableType,
-				tableOptions,
+			const createTableDdl = assignTemplates({
+				template: templates.createTable,
+				templateData: {
+					name: tableName,
+					ifNotExists,
+					tableProps,
+					tableType,
+					tableOptions,
+				},
 			});
 
 			return commentIfDeactivated(createTableDdl + commentStatements, {
@@ -361,16 +379,22 @@ module.exports = (baseProvider, options, app) => {
 
 			const selectStatement = trim(viewData.selectStatement)
 				? trim(setTab({ text: viewData.selectStatement }))
-				: assignTemplates(templates.viewSelectStatement, {
-						tableName: tables.join(', '),
-						keys: columnsAsString,
+				: assignTemplates({
+						template: templates.viewSelectStatement,
+						templateData: {
+							tableName: tables.join(', '),
+							keys: columnsAsString,
+						},
 					});
 
-			const statement = assignTemplates(templates.createView, {
-				name: viewName,
-				orReplace,
-				viewProperties,
-				selectStatement,
+			const statement = assignTemplates({
+				template: templates.createView,
+				templateData: {
+					name: viewName,
+					orReplace,
+					viewProperties,
+					selectStatement,
+				},
 			});
 
 			return commentIfDeactivated(statement + comment, { isActivated });

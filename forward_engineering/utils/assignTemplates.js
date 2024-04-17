@@ -2,14 +2,18 @@ const template = (modifiers = '') => new RegExp('\\$\\{(.*?)\\}', modifiers);
 const getAllTemplates = str => str.match(template('gi')) || [];
 const parseTemplate = str => (str.match(template('i')) || [])[1];
 
-const assignTemplates = (str, templates) => {
-	return getAllTemplates(str).reduce((result, item) => {
+/**
+ * @param {{ template: string, templateData: object}}
+ * @returns {string}
+ */
+const assignTemplates = ({ template, templateData }) => {
+	return getAllTemplates(template).reduce((result, item) => {
 		const templateName = parseTemplate(item);
 
 		return result.replace(item, () => {
-			return templates[templateName] || templates[templateName] === 0 ? templates[templateName] : '';
+			return templateData[templateName] || templateData[templateName] === 0 ? templateData[templateName] : '';
 		});
-	}, str);
+	}, template);
 };
 
 module.exports = {
