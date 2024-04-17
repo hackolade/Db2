@@ -20,7 +20,7 @@
             "nestedCollections": false,
             "disablePatternField": true,
             "disableMultipleTypes": true,
-            "enableForwardEngineering": false,
+            "enableForwardEngineering": true,
             "disableReverseEngineering": false,
             "enableReverseEngineering": {
                 "jsonDocument": true,
@@ -74,5 +74,8 @@
         "lint-staged": "14.0.1",
         "prettier": "3.2.5",
         "simple-git-hooks": "2.11.1"
+    },
+    "dependencies": {
+        "lodash": "4.17.21"
     }
 }
