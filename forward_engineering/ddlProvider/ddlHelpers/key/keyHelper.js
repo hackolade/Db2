@@ -79,6 +79,10 @@ const checkIfActivated = ({ keyId, properties }) => {
 	return key?.isActivated ?? true;
 };
 
+/**
+ * @param {{ jsonSchema: object, keys?: object[] }}
+ * @returns {{ name: string, isActivated: boolean }}
+ */
 const getKeys = ({ jsonSchema, keys = [] }) => {
 	return keys.map(key => {
 		const name = findName({ keyId: key.keyId, properties: jsonSchema.properties });
@@ -91,6 +95,10 @@ const getKeys = ({ jsonSchema, keys = [] }) => {
 	});
 };
 
+/**
+ * @param {{ jsonSchema: object }}
+ * @returns {object}
+ */
 const getCompositePrimaryKeys = ({ jsonSchema }) => {
 	if (!Array.isArray(jsonSchema.primaryKey)) {
 		return [];
@@ -104,6 +112,10 @@ const getCompositePrimaryKeys = ({ jsonSchema }) => {
 		}));
 };
 
+/**
+ * @param {{ jsonSchema: object }}
+ * @returns {object}
+ */
 const getCompositeUniqueKeys = ({ jsonSchema }) => {
 	if (!Array.isArray(jsonSchema.uniqueKey)) {
 		return [];
@@ -117,6 +129,10 @@ const getCompositeUniqueKeys = ({ jsonSchema }) => {
 		}));
 };
 
+/**
+ * @param {{ jsonSchema: object }}
+ * @returns {object[]}
+ */
 const getTableKeyConstraints = ({ jsonSchema }) => {
 	if (!jsonSchema.properties) {
 		return [];
@@ -154,6 +170,10 @@ const getTableKeyConstraints = ({ jsonSchema }) => {
 	];
 };
 
+/**
+ * @param {{ keys: object[] }}
+ * @returns {string}
+ */
 const foreignKeysToString = ({ keys }) => {
 	if (Array.isArray(keys)) {
 		const activatedKeys = keys.filter(key => checkIsKeyActivated({ key })).map(key => wrapInQuotes(trim(key.name)));
@@ -169,10 +189,18 @@ const foreignKeysToString = ({ keys }) => {
 	return keys;
 };
 
+/**
+ * @param {{ keys: object[] }}
+ * @returns {string}
+ */
 const foreignActiveKeysToString = ({ keys }) => {
 	return keys.map(key => trim(key.name)).join(', ');
 };
 
+/**
+ * @param {{ customProperties?: object }}
+ * @returns {string}
+ */
 const customPropertiesForForeignKey = ({ customProperties }) => {
 	const relationshipOnDelete = customProperties?.relationshipOnDelete;
 

@@ -53,7 +53,11 @@ const addPrecision = ({ type, precision }) => {
  * @returns {string}
  */
 const getTimestampType = ({ fractSecPrecision, withTimeZone, localTimeZone }) => {
-	return ` TIMESTAMP${isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : ''}${withTimeZone ? ` WITH${localTimeZone ? ' LOCAL' : ''} TIME ZONE` : ''}`;
+	const fractSecPrecisionString = isNumber(fractSecPrecision) ? `(${fractSecPrecision})` : '';
+	const localString = localTimeZone ? ' LOCAL' : '';
+	const timeZoneString = withTimeZone ? ` WITH${localString} TIME ZONE` : '';
+
+	return ` TIMESTAMP${fractSecPrecisionString}${timeZoneString}`;
 };
 
 /**
