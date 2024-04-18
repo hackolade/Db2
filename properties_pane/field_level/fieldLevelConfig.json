@@ -2633,9 +2633,6 @@ making sure that you maintain a proper JSON format.
 		"json": [
 			"name",
 			"code",
-			"additionalProperties",
-			"minProperties",
-			"maxProperties",
 			{
 				"fieldKeyword": "dependencies",
 				"dependency": {
@@ -2736,18 +2733,18 @@ making sure that you maintain a proper JSON format.
 				"hidden": true
 			},
 			{
-				"propertyName": "Not null",
-				"propertyKeyword": "required",
-				"enableForReference": true,
-				"propertyType": "checkbox"
-			},
-			{
 				"propertyName": "Comments",
 				"propertyKeyword": "description",
 				"propertyTooltip": "comments",
 				"addTimestampButton": false,
 				"propertyType": "details",
 				"template": "textarea"
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
 			},
 			{
 				"propertyName": "Not null",
@@ -2814,6 +2811,9 @@ making sure that you maintain a proper JSON format.
 					]
 				}
 			},
+			"minProperties",
+			"maxProperties",
+			"additionalProperties",
 			{
 				"propertyName": "Remarks",
 				"propertyKeyword": "comments",
