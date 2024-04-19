@@ -1,6 +1,10 @@
-const { isNumber, toUpper } = require('lodash');
+const { toUpper } = require('lodash');
 const { wrapInQuotes } = require('../../../utils/general');
 const { DATA_TYPES_WITH_IDENTITY } = require('../../../../constants/types');
+
+/**
+ * @typedef {string | number} DefaultValue
+ */
 
 /**
  * @param {{ type: string }}
@@ -32,7 +36,17 @@ const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle }) => 
 };
 
 /**
- * @param {{ default: string | number | undefined, identity?: object }}
+ * @param {{ defaultValue: DefaultValue }}
+ * @returns {DefaultValue}
+ */
+const wrapInQuotesDefaultValue = ({ defaultValue }) => {
+	const doesContainSpaces = /\s+/g.test(defaultValue);
+
+	return doesContainSpaces ? wrapInQuotes({ name: defaultValue }) : defaultValue;
+};
+
+/**
+ * @param {{ default?: DefaultValue, identity?: object }}
  * @returns {string}
  */
 const getColumnDefault = ({ default: defaultValue, identity, type }) => {
@@ -44,8 +58,8 @@ const getColumnDefault = ({ default: defaultValue, identity, type }) => {
 		return ` GENERATED ${identity.generated} AS IDENTITY (${identityOptions})`;
 	}
 
-	if (defaultValue) {
-		const value = isNumber(defaultValue) ? defaultValue : wrapInQuotes({ name: defaultValue });
+	if (defaultValue || defaultValue === 0) {
+		const value = wrapInQuotesDefaultValue({ defaultValue });
 
 		return ` WITH DEFAULT ${value}`;
 	}
