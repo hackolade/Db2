@@ -2811,8 +2811,30 @@ making sure that you maintain a proper JSON format.
 					]
 				}
 			},
-			"minProperties",
-			"maxProperties",
+			{
+				"fieldKeyword": "minProperties",
+				"dependency": {
+					"type": "not",
+					"values": [
+						{
+							"key": "subtype",
+							"value": "array"
+						}
+					]
+				}
+			},
+			{
+				"fieldKeyword": "maxProperties",
+				"dependency": {
+					"type": "not",
+					"values": [
+						{
+							"key": "subtype",
+							"value": "array"
+						}
+					]
+				}
+			},
 			"additionalProperties",
 			{
 				"propertyName": "Remarks",
