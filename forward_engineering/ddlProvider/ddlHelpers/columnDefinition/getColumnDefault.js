@@ -1,13 +1,13 @@
 const { isNumber, toUpper } = require('lodash');
 const { wrapInQuotes } = require('../../../utils/general');
-const { INTEGER_DATA_TYPES } = require('../../../../constants/types');
+const { DATA_TYPES_WITH_IDENTITY } = require('../../../../constants/types');
 
 /**
  * @param {{ type: string }}
  * @returns {boolean}
  */
 const canHaveIdentity = ({ type }) => {
-	return INTEGER_DATA_TYPES.includes(toUpper(type));
+	return DATA_TYPES_WITH_IDENTITY.includes(toUpper(type));
 };
 
 /**
