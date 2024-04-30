@@ -22,4 +22,6 @@ module.exports = {
 	createView: 'CREATE${orReplace} VIEW ${name} ${viewProperties}\n\tAS ${selectStatement};',
 
 	viewSelectStatement: 'SELECT ${keys}\n\tFROM ${tableName}',
+
+	createIndex: 'CREATE${indexType} INDEX${indexName} ON ${indexTableName}${indexOptions};\n',
 };
