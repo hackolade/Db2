@@ -331,5 +331,113 @@ making sure that you maintain a proper JSON format.
 				]
 			}
 		]
+	},
+	{
+		"lowerTab": "Indexes",
+		"structure": [
+			{
+				"propertyName": "Index",
+				"propertyType": "group",
+				"propertyKeyword": "Indxs",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "indxName",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Activated",
+						"propertyKeyword": "isActivated",
+						"propertyTooltip": "Deactivated item will be not included in FE script",
+						"propertyType": "checkbox",
+						"defaultValue": true
+					},
+					{
+						"propertyName": "Type",
+						"propertyKeyword": "indxType",
+						"propertyType": "select",
+						"options": ["", "unique"]
+					},
+					{
+						"propertyName": "Keys",
+						"propertyKeyword": "indxKey",
+						"propertyType": "fieldList",
+						"template": "orderedList",
+						"attributeList": ["asc", "desc", "random"]
+					},
+					{
+						"propertyName": "Include keys",
+						"propertyKeyword": "indxIncludeKey",
+						"propertyType": "fieldList",
+						"propertyTooltip": "Introduces a clause that specifies additional columns to be appended to the set of index key columns. Any columns included with this clause are not used to enforce uniqueness.",
+						"template": "orderedList",
+						"attributeList": [],
+						"dependency": {
+							"type": "and",
+							"values": [
+								{
+									"key": "indxType",
+									"value": "unique"
+								},
+								{
+									"type": "not",
+									"values": [
+										{
+											"level": "parent",
+											"key": "temporary",
+											"value": true
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Compress",
+						"propertyKeyword": "indxCompress",
+						"propertyType": "select",
+						"propertyTooltip": "Specifies whether index compression is enabled.",
+						"options": ["", "yes", "no"]
+					},
+					{
+						"propertyName": "Null keys",
+						"propertyKeyword": "indxNullKeys",
+						"propertyType": "select",
+						"propertyTooltip": "'Include' specifies that an index entry is created when all parts of the index key contain the null value.",
+						"options": ["", "include", "exclude"]
+					},
+					{
+						"propertyName": "Tablespace",
+						"propertyKeyword": "tablespace",
+						"propertyTooltip": "Specify the tablespace in which Db2 Database creates the table. If you omit TABLESPACE, then the database creates that item in the default tablespace of the owner of the schema containing the table.",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Description",
+						"propertyKeyword": "indxDescription",
+						"propertyTooltip": "description",
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					},
+
+					{
+						"propertyName": "Comments",
+						"propertyKeyword": "indxComments",
+						"propertyTooltip": "comments",
+						"addTimestampButton": false,
+						"propertyType": "details",
+						"template": "codeEditor",
+						"templateOptions": {
+							"editorDialect": "markdown"
+						}
+					}
+				]
+			}
+		]
 	}
 ]
