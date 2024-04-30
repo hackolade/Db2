@@ -1,3 +1,4 @@
+const { trim } = require('lodash');
 const templates = require('../../templates');
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const { wrapInQuotes, commentIfDeactivated } = require('../../../utils/general');
@@ -8,6 +9,7 @@ const { wrapInQuotes, commentIfDeactivated } = require('../../../utils/general')
 const OBJECT_TYPE = {
 	column: 'COLUMN',
 	table: 'TABLE',
+	index: 'INDEX',
 };
 
 const wrapComment = comment => `'${comment}'`;
@@ -23,7 +25,7 @@ const getCommentStatement = ({ objectName, objectType, description }) => {
 
 	return assignTemplates({
 		template: templates.comment,
-		templateData: { objectType, objectName, comment: wrapComment(description) },
+		templateData: { objectType, objectName: trim(objectName), comment: wrapComment(description) },
 	});
 };
 
@@ -42,6 +44,14 @@ const getColumnCommentStatement = ({ tableName, columnName, description }) => {
  */
 const getTableCommentStatement = ({ tableName, description }) => {
 	return getCommentStatement({ objectName: tableName, objectType: OBJECT_TYPE.table, description });
+};
+
+/**
+ * @param {{ indexName: string, description?: string }}
+ * @returns {string}
+ */
+const getIndexCommentStatement = ({ indexName, description }) => {
+	return getCommentStatement({ objectName: indexName, objectType: OBJECT_TYPE.index, description });
 };
 
 /**
@@ -67,4 +77,5 @@ module.exports = {
 	getColumnCommentStatement,
 	getTableCommentStatement,
 	getColumnComments,
+	getIndexCommentStatement,
 };
