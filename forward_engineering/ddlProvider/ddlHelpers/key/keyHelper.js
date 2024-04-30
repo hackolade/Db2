@@ -26,7 +26,7 @@ const isUniqueKey = ({ column }) => {
  * @returns {boolean}
  */
 const isInlineUnique = ({ column }) => {
-	return isUniqueKey({ column }) && !column.uniqueKeyOptions?.constraintName;
+	return isUniqueKey({ column }) && !trim(column.uniqueKeyOptions?.constraintName);
 };
 /**
  * @param {{ column: object }}
@@ -41,7 +41,7 @@ const isPrimaryKey = ({ column }) => {
  * @returns {boolean}
  */
 const isInlinePrimaryKey = ({ column }) => {
-	return isPrimaryKey({ column }) && !column.primaryKeyOptions?.constraintName;
+	return isPrimaryKey({ column }) && !trim(column.primaryKeyOptions?.constraintName);
 };
 
 /**

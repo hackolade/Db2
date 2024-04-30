@@ -318,7 +318,7 @@ module.exports = (baseProvider, options, app) => {
 
 			const comment = getTableCommentStatement({ tableName, description });
 			const columnComments = getColumnComments({ tableName, columnDefinitions });
-			const commentStatements = comment || columnComments ? '\n' + comment + columnComments : '';
+			const commentStatements = comment || columnComments ? '\n' + comment + columnComments : '\n';
 
 			const createTableDdl = assignTemplates({
 				template: templates.createTable,
