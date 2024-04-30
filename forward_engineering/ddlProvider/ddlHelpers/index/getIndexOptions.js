@@ -13,7 +13,7 @@ const getIndexKeys = (keys = []) => {
 
 	const keysClause = keys
 		.map(({ name, type }) => {
-			const keyType = type ? ` ${toUpper(type)}` : '';
+			const keyType = getBasicValue({ prefix: ' ', modifier: toUpper })(type);
 			const keyName = wrapInQuotes({ name });
 
 			return keyName + keyType;
