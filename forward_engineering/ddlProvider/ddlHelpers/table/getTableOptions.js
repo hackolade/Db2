@@ -1,40 +1,38 @@
 const { wrapInQuotes } = require('../../../utils/general');
+const { getOptionsByConfigs, getBasicValue } = require('../options/getOptionsByConfigs');
 
-const wrap = value => (value ? `${value}\n` : '');
-
+/**
+ * @param {object} tableData
+ * @returns {string}
+ */
 const getTableOptions = tableData => {
 	/**
 	 * @type {Array}
 	 */
-	const optionConfigs = [
-		{ key: 'selectStatement', getValue: getBasicValue('AS') },
-		{ key: 'underSuperTable', getValue: getUnderClause },
-		{ key: 'tableProperties', getValue: value => value },
-		{ key: 'table_tablespace_name', getValue: getBasicValue('IN') },
+	const configs = [
+		{
+			key: 'selectStatement',
+			getValue: getBasicValue({ prefix: 'AS' }),
+		},
+		{
+			key: 'underSuperTable',
+			getValue: getBasicValue({
+				prefix: 'UNDER',
+				postfix: 'INHERIT SELECT PRIVILEGES',
+				modifier: name => wrapInQuotes({ name }),
+			}),
+		},
+		{
+			key: 'tableProperties',
+			getValue: value => value,
+		},
+		{
+			key: 'table_tablespace_name',
+			getValue: getBasicValue({ prefix: 'IN' }),
+		},
 	];
 
-	const statements = optionConfigs
-		.filter(config => tableData[config.key])
-		.map(config => wrap(config.getValue(tableData[config.key], tableData)))
-		.join('');
-
-	return statements ? ` ${statements}`.replace(/\n$/, '') : '';
-};
-
-const getBasicValue = prefix => value => {
-	if (!value) {
-		return '';
-	}
-
-	return `${prefix} ${value}`;
-};
-
-const getUnderClause = value => {
-	if (!value) {
-		return '';
-	}
-
-	return 'UNDER ' + wrapInQuotes({ name: value }) + ' INHERIT SELECT PRIVILEGES';
+	return getOptionsByConfigs({ configs, data: tableData });
 };
 
 module.exports = {
