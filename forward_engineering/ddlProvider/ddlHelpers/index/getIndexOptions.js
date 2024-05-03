@@ -48,7 +48,7 @@ const getIndexOptions = ({ index }) => {
 		{ key: 'indxIncludeKey', getValue: getIncludeIndexKeys },
 		{ key: 'indxCompress', getValue: getBasicValue({ prefix: 'COMPRESS', modifier: toUpper }) },
 		{ key: 'indxNullKeys', getValue: getBasicValue({ postfix: 'NULL KEYS', modifier: toUpper }) },
-		{ key: 'tablespace', getValue: getBasicValue({ prefix: 'IN' }) },
+		{ key: 'indxTablespace', getValue: getBasicValue({ prefix: 'IN' }) },
 	];
 
 	return getOptionsByConfigs({ configs, data: index });
