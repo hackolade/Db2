@@ -203,10 +203,12 @@ const foreignActiveKeysToString = ({ keys }) => {
  * @param {{ customProperties?: object }}
  * @returns {string}
  */
-const customPropertiesForForeignKey = ({ customProperties }) => {
-	const relationshipOnDelete = customProperties?.relationshipOnDelete;
+const customPropertiesForForeignKey = ({ customProperties = {} }) => {
+	const { relationshipOnDelete, relationshipOnUpdate } = customProperties;
+	const relationshipOnDeleteClause = relationshipOnDelete ? ' ON DELETE ' + relationshipOnDelete : '';
+	const relationshipOnUpdateClause = relationshipOnUpdate ? ' ON UPDATE ' + relationshipOnUpdate : '';
 
-	return relationshipOnDelete ? ' ON DELETE ' + relationshipOnDelete : '';
+	return relationshipOnDeleteClause + relationshipOnUpdateClause;
 };
 
 module.exports = {
