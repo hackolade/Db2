@@ -17,10 +17,17 @@ const { getColumnEncrypt } = require('./ddlHelpers/columnDefinition/getColumnEnc
 const { getColumnType } = require('./ddlHelpers/columnDefinition/getColumnType.js');
 const { getColumnDefault } = require('./ddlHelpers/columnDefinition/getColumnDefault.js');
 const { getColumnConstraints } = require('./ddlHelpers/columnDefinition/getColumnConstraints.js');
-const { getTableCommentStatement, getColumnComments } = require('./ddlHelpers/comment/commentHelper.js');
+const {
+	getTableCommentStatement,
+	getColumnComments,
+	getIndexCommentStatement,
+} = require('./ddlHelpers/comment/commentHelper.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
 const { getViewData } = require('./ddlHelpers/view/getViewData.js');
+const { getIndexName } = require('./ddlHelpers/index/getIndexName.js');
+const { getIndexType } = require('./ddlHelpers/index/getIndexType.js');
+const { getIndexOptions } = require('./ddlHelpers/index/getIndexOptions.js');
 
 module.exports = (baseProvider, options, app) => {
 	return {
@@ -311,7 +318,7 @@ module.exports = (baseProvider, options, app) => {
 
 			const comment = getTableCommentStatement({ tableName, description });
 			const columnComments = getColumnComments({ tableName, columnDefinitions });
-			const commentStatements = comment || columnComments ? '\n' + comment + columnComments + '\n' : '\n';
+			const commentStatements = comment || columnComments ? '\n' + comment + columnComments : '\n';
 
 			const createTableDdl = assignTemplates({
 				template: templates.createTable,
@@ -330,11 +337,24 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateIndex(indexData, tableData, schemaData) {
-			return {};
+			return { ...indexData, schemaName: schemaData.schemaName };
 		},
 
-		createIndex(tableName, index, dbData, isParentActivated = true) {
-			return '';
+		createIndex(tableName, index) {
+			const indexName = getIndexName({ index });
+			const indexType = getIndexType({ index });
+			const indexOptions = getIndexOptions({ index });
+			const indexTableName = getNamePrefixedWithSchemaName({ name: tableName, schemaName: index.schemaName });
+			const statement = assignTemplates({
+				template: templates.createIndex,
+				templateData: { indexType, indexName, indexOptions, indexTableName },
+			});
+			const commentStatement = getIndexCommentStatement({ indexName, description: index.indxDescription });
+			const createIndexStatement = statement + commentStatement;
+
+			return commentIfDeactivated(createIndexStatement, {
+				isActivated: index.isActivated,
+			});
 		},
 
 		hydrateViewColumn(data) {

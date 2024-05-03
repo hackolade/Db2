@@ -410,7 +410,7 @@ making sure that you maintain a proper JSON format.
 					},
 					{
 						"propertyName": "Tablespace",
-						"propertyKeyword": "tablespace",
+						"propertyKeyword": "indxTablespace",
 						"propertyTooltip": "Specify the tablespace in which Db2 Database creates the table. If you omit TABLESPACE, then the database creates that item in the default tablespace of the owner of the schema containing the table.",
 						"propertyType": "text"
 					},
