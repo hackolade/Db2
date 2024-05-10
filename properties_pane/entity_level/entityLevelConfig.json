@@ -439,5 +439,47 @@ making sure that you maintain a proper JSON format.
 				]
 			}
 		]
+	},
+	{
+		"lowerTab": "Check Constraints",
+		"structure": [
+			{
+				"propertyName": "Check Constraint",
+				"propertyType": "group",
+				"propertyKeyword": "chkConstr",
+				"propertyTooltip": "",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "chkConstrName",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Expression",
+						"propertyKeyword": "constrExpression",
+						"propertyTooltip": "Expression",
+						"propertyType": "details",
+						"template": "textarea",
+						"markdown": false
+					},
+					{
+						"propertyName": "Description",
+						"propertyKeyword": "constrDescription",
+						"propertyTooltip": "description",
+						"propertyType": "details",
+						"template": "textarea"
+					},
+					{
+						"propertyName": "Comments",
+						"propertyKeyword": "constrComments",
+						"propertyTooltip": "comments",
+						"addTimestampButton": false,
+						"propertyType": "details",
+						"template": "textarea"
+					}
+				]
+			}
+		]
 	}
 ]
