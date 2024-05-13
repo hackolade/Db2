@@ -155,10 +155,12 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Column",
 				"propertyKeyword": "auxiliaryBaseColumn",
 				"propertyTooltip": "Identifies the column of base table that is to be stored in the auxiliary table.",
-				"propertyType": "detailshashed",
+				"propertyType": "fieldList",
+				"template": "orderedList",
 				"dataToLoad": "auxiliaryBaseTable",
-				"options": [],
-				"template": "collectiontree",
+				"templateOptions": {
+					"maxFields": 1
+				},
 				"dependency": {
 					"key": "auxiliary",
 					"value": true
@@ -166,7 +168,7 @@ making sure that you maintain a proper JSON format.
 			},
 			{
 				"propertyName": "Append",
-				"propertyKeyword": "append",
+				"propertyKeyword": "auxiliaryAppend",
 				"propertyTooltip": "Specifies whether append processing is used for the table. The APPEND clause must not be specified for a table in a work file table space.",
 				"propertyType": "select",
 				"options": ["", "yes", "no"],
