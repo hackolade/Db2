@@ -1,4 +1,3 @@
-const { last } = require('lodash');
 const { getNamePrefixedWithSchemaName } = require('../../../utils/general');
 const { getName, getIdToNameHashTable } = require('../jsonSchema/jsonSchemaHelper');
 
