@@ -113,8 +113,11 @@ const getTableProps = ({ columns, foreignKeyConstraints, keyConstraints, checkCo
 		dividedConstraints: dividedForeignKeyConstraints,
 		isParentActivated: isActivated,
 	});
+	const checkConstraintsString = generateConstraintsString({
+		dividedConstraints: { activatedItems: checkConstraints, deactivatedItems: [] },
+		isParentActivated: isActivated,
+	});
 	const columnsString = joinStatements({ statements: columns });
-	const checkConstraintsString = joinStatements({ statements: checkConstraints });
 	const tableProps = assignTemplates({
 		template: templates.createTableProps,
 		templateData: {
