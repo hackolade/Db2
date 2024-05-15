@@ -134,6 +134,62 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox"
 			},
 			{
+				"propertyName": "Auxiliary",
+				"propertyKeyword": "auxiliary",
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Table",
+				"propertyKeyword": "auxiliaryBaseTable",
+				"propertyTooltip": "Identifies the base table that is to be stored in the auxiliary table.",
+				"propertyType": "selecthashed",
+				"template": "entities",
+				"withEmptyOption": true,
+				"excludeCurrent": true,
+				"dependency": {
+					"key": "auxiliary",
+					"value": true
+				}
+			},
+			{
+				"propertyName": "Column",
+				"propertyKeyword": "auxiliaryBaseColumn",
+				"propertyTooltip": "Identifies the column of base table that is to be stored in the auxiliary table.",
+				"propertyType": "fieldList",
+				"template": "orderedList",
+				"dataToLoad": "auxiliaryBaseTable",
+				"templateOptions": {
+					"maxFields": 1
+				},
+				"dependency": {
+					"key": "auxiliary",
+					"value": true
+				}
+			},
+			{
+				"propertyName": "Append",
+				"propertyKeyword": "auxiliaryAppend",
+				"propertyTooltip": "Specifies whether append processing is used for the table. The APPEND clause must not be specified for a table in a work file table space.",
+				"propertyType": "select",
+				"options": ["", "yes", "no"],
+				"dependency": {
+					"key": "auxiliary",
+					"value": true
+				}
+			},
+
+			{
+				"propertyName": "Part",
+				"propertyKeyword": "auxiliaryPart",
+				"propertyTooltip": "Specifies the partition of the base table for which the auxiliary table is to store the specified column.",
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"dependency": {
+					"key": "auxiliary",
+					"value": true
+				}
+			},
+			{
 				"propertyName": "If not exists",
 				"propertyKeyword": "ifNotExist",
 				"propertyTooltip": "Specifies that no error message is shown when the table cannot be created because a table with the specified name already exists in the current database and schema.",

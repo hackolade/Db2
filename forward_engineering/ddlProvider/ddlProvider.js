@@ -28,6 +28,9 @@ const { getViewData } = require('./ddlHelpers/view/getViewData.js');
 const { getIndexName } = require('./ddlHelpers/index/getIndexName.js');
 const { getIndexType } = require('./ddlHelpers/index/getIndexType.js');
 const { getIndexOptions } = require('./ddlHelpers/index/getIndexOptions.js');
+const { getTableType } = require('./ddlHelpers/table/getTableType.js');
+const { getName } = require('./ddlHelpers/jsonSchema/jsonSchemaHelper.js');
+const { hydrateAuxiliaryTableData } = require('./ddlHelpers/table/hydrateAuxiliaryTableData.js');
 
 module.exports = (baseProvider, options, app) => {
 	return {
@@ -265,10 +268,12 @@ module.exports = (baseProvider, options, app) => {
 			const detailsTab = entityData[0];
 			const superTableId = detailsTab.underSuperTable?.[0]?.parentTable;
 			const superTableSchema = tableData.relatedSchemas?.[superTableId];
-			const underSuperTable = superTableSchema?.code || superTableSchema?.collectionName;
+			const underSuperTable = getName({ item: superTableSchema });
+			const auxiliaryTableData = hydrateAuxiliaryTableData({ tableData, detailsTab });
 
 			return {
 				...tableData,
+				...auxiliaryTableData,
 				keyConstraints: keyHelper.getTableKeyConstraints({ jsonSchema }),
 				selectStatement: trim(detailsTab.selectStatement),
 				temporary: detailsTab.temporary,
@@ -291,6 +296,11 @@ module.exports = (baseProvider, options, app) => {
 				schemaData,
 				selectStatement,
 				temporary,
+				auxiliary,
+				auxiliaryBaseTable,
+				auxiliaryBaseColumn,
+				auxiliaryAppend,
+				auxiliaryPart,
 				table_tablespace_name,
 				underSuperTable,
 				description,
@@ -300,8 +310,33 @@ module.exports = (baseProvider, options, app) => {
 			isActivated,
 		) {
 			const ifNotExists = ifNotExist ? ' IF NOT EXISTS' : '';
-			const tableType = temporary ? ' GLOBAL TEMPORARY' : '';
+			const tableType = getTableType({ auxiliary, temporary });
 			const tableName = getNamePrefixedWithSchemaName({ name, schemaName: schemaData.schemaName });
+			const comment = getTableCommentStatement({ tableName, description });
+
+			if (auxiliary) {
+				const tableOptions = getTableOptions({
+					table_tablespace_name,
+					auxiliaryBaseTable,
+					auxiliaryBaseColumn,
+					auxiliaryAppend,
+					auxiliaryPart,
+				});
+				const createTableStatement = assignTemplates({
+					template: templates.createAuxiliaryTable,
+					templateData: {
+						name: tableName,
+						tableType,
+						tableOptions,
+					},
+				});
+				const commentStatement = comment ? '\n' + comment + '\n' : '\n';
+
+				return commentIfDeactivated(createTableStatement + commentStatement, {
+					isActivated,
+				});
+			}
+
 			const tableProps = getTableProps({
 				columns,
 				foreignKeyConstraints,
@@ -316,7 +351,6 @@ module.exports = (baseProvider, options, app) => {
 				underSuperTable,
 			});
 
-			const comment = getTableCommentStatement({ tableName, description });
 			const columnComments = getColumnComments({ tableName, columnDefinitions });
 			const commentStatements = comment || columnComments ? '\n' + comment + columnComments : '\n';
 

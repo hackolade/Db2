@@ -1,3 +1,4 @@
+const { toUpper } = require('lodash');
 const { wrapInQuotes } = require('../../../utils/general');
 const { getOptionsByConfigs, getBasicValue } = require('../options/getOptionsByConfigs');
 
@@ -29,6 +30,22 @@ const getTableOptions = tableData => {
 		{
 			key: 'table_tablespace_name',
 			getValue: getBasicValue({ prefix: 'IN' }),
+		},
+		{
+			key: 'auxiliaryBaseTable',
+			getValue: getBasicValue({ prefix: 'STORES' }),
+		},
+		{
+			key: 'auxiliaryAppend',
+			getValue: getBasicValue({ prefix: 'APPEND', modifier: toUpper }),
+		},
+		{
+			key: 'auxiliaryBaseColumn',
+			getValue: getBasicValue({ prefix: 'COLUMN', modifier: name => wrapInQuotes({ name }) }),
+		},
+		{
+			key: 'auxiliaryPart',
+			getValue: getBasicValue({ prefix: 'PART' }),
 		},
 	];
 
