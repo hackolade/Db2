@@ -76,7 +76,7 @@
         "simple-git-hooks": "2.11.1"
     },
     "dependencies": {
-        "ibm_db": "2.8.0",
+        "ibm_db": "3.2.4",
         "lodash": "4.17.21"
     }
 }
