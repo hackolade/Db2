@@ -4,3 +4,4 @@
 node_modules
 .DS_Store
 release
+shared/Db2Client/target

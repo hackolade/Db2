@@ -1,38 +1,154 @@
-const db2 = require('ibm_db');
+/**
+ * @typedef {import('../types').Connection} Connection
+ * @typedef {import('../types').ConnectionInfo} ConnectionInfo
+ * @typedef {import('../types').Logger} Logger
+ */
 
-let database = null;
+const os = require('os');
+const util = require('util');
+const path = require('path');
+const exec = util.promisify(require('child_process').exec);
+const { spawn } = require('child_process');
+const { ERROR_MESSAGE } = require('../../constants/constants');
 
 /**
- * @param {{ connectionInfo: ConnectionInfo, app: App }}
- * @throws {Error}
- * @returns {Promise<object>}
+ * @type {Connection | null}
  */
-const connect = async ({ connectionInfo, app }) => {
-	if (database) {
-		return database;
+let connection;
+
+/**
+ * @returns {boolean}
+ */
+const isWindows = () => os.platform() === 'win32';
+
+/**
+ * @param {string} argKey
+ * @param {string | number} argValue
+ * @returns {string}
+ */
+const createArgument = (argKey, argValue) => ` --${argKey}="${argValue}"`;
+
+/**
+ * @param {{ clientPath: string, connectionInfo: ConnectionInfo }}
+ * @returns {string[]}
+ */
+const buildCommand = ({ clientPath, connectionInfo }) => {
+	let commandArgs = ['-jar', clientPath];
+
+	connectionInfo.host && commandArgs.push(createArgument('host', connectionInfo.host));
+	connectionInfo.port && commandArgs.push(createArgument('port', connectionInfo.port));
+	connectionInfo.database && commandArgs.push(createArgument('database', connectionInfo.database));
+	connectionInfo.userName && commandArgs.push(createArgument('user', connectionInfo.userName));
+	connectionInfo.userPassword && commandArgs.push(createArgument('pass', connectionInfo.userPassword));
+
+	return commandArgs;
+};
+
+/**
+ * @returns {string}
+ */
+const getDefaultJavaPath = () => {
+	const javaHome = isWindows() ? '%JAVA_HOME%' : '$JAVA_HOME';
+	return javaHome + '/bin/java';
+};
+
+/**
+ * @param {{ javaHomePath: string, logger: Logger }}
+ * @returns {Promise<void>}
+ * @throws {Error}
+ */
+const checkJavaPath = async ({ javaPath, logger }) => {
+	try {
+		const testCommand = `"${javaPath}" --help`;
+		await exec(testCommand);
+		logger.info(`Path to JAVA binary file successfully checked. JAVA path: ${javaPath}`);
+	} catch (error) {
+		logger.error(error);
+		throw new Error(ERROR_MESSAGE.missingJavaPath);
 	}
+};
 
-	database = await db2.open(
-		{
-			DATABASE: connectionInfo.database,
-			HOSTNAME: connectionInfo.host,
-			PORT: connectionInfo.port,
-			UID: connectionInfo.userName,
-			PWD: connectionInfo.userPassword,
-		},
-		{
-			connectTimeout: connectionInfo.connectTimeout,
-		},
-	);
+/**
+ * @param {{ connectionInfo: ConnectionInfo, logger: Logger }}
+ * @returns {Promise<Connection>}
+ */
+const createConnection = async ({ connectionInfo, logger }) => {
+	const javaPath = connectionInfo.javaHomePath || getDefaultJavaPath();
 
-	return database;
+	await checkJavaPath({ javaPath, logger });
+
+	const clientPath = path.resolve(__dirname, '..', 'addons', 'Db2Client.jar');
+	const clientCommandArguments = buildCommand({ clientPath, connectionInfo });
+
+	return {
+		execute: query => {
+			return new Promise((resolve, reject) => {
+				const queryArgument = createArgument('query', query);
+				const queryResult = spawn(`"${javaPath}"`, [...clientCommandArguments, queryArgument], {
+					shell: true,
+				});
+
+				queryResult.on('error', error => {
+					reject(error);
+				});
+
+				const errorData = [];
+				queryResult.stderr.on('data', data => {
+					errorData.push(data);
+				});
+
+				const resultData = [];
+				queryResult.stdout.on('data', data => {
+					resultData.push(data);
+				});
+
+				queryResult.on('close', code => {
+					if (code !== 0) {
+						reject(new Error(Buffer.concat(errorData).toString()));
+						return;
+					}
+
+					const stdoutResult = Buffer.concat(resultData).toString();
+					const rowJson = stdoutResult.match(/<hackolade>(.*?)<\/hackolade>/)?.[1];
+
+					if (!rowJson) {
+						resolve([]);
+						return;
+					}
+
+					const parsedResult = JSON.parse(rowJson);
+					if (parsedResult.error) {
+						reject(parsedResult.error);
+						return;
+					}
+
+					resolve(parsedResult.data);
+				});
+			});
+		},
+	};
+};
+
+/**
+ * @param {{ connectionInfo: ConnectionInfo, logger: Logger }}
+ * @returns {Promise<Connection>}
+ */
+const connect = async ({ connectionInfo, logger }) => {
+	if (connection) {
+		return connection;
+	}
+	connection = await createConnection({ connectionInfo, logger });
+
+	return connection;
 };
 
 /**
  * @returns {Promise<void>}
  */
 const disconnect = async () => {
-	await database?.close();
+	if (connection) {
+		connection = null;
+	}
 };
 
 const connectionHelper = {

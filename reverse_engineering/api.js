@@ -1,8 +1,39 @@
+/**
+ * @typedef {import('../shared/types').App} App
+ * @typedef {import('../shared/types').AppLogger} AppLogger
+ * @typedef {import('../shared/types').ConnectionInfo} ConnectionInfo
+ * @typedef {import('../shared/types').Logger} Logger
+ * @typedef {import('../shared/types').Callback} Callback
+ */
+
 const { connectionHelper } = require('../shared/helpers/connectionHelper');
+const { instanceHelper } = require('../shared/helpers/instanceHelper');
 const { logHelper } = require('../shared/helpers/logHelper');
 
-const connect = async (connectionInfo, logger, callback, app) => {
-	throw new Error('Not implemented');
+/**
+ * @param {ConnectionInfo} connectionInfo
+ * @param {AppLogger} appLogger
+ * @param {Callback} callback
+ * @param {App} app
+ */
+const connect = async (connectionInfo, appLogger, callback, app) => {
+	const logger = logHelper.createLogger({
+		title: 'Connect to database',
+		hiddenKeys: connectionInfo.hiddenKeys,
+		logger: appLogger,
+	});
+
+	try {
+		await connectionHelper.disconnect();
+		const connection = await connectionHelper.connect({ connectionInfo, logger });
+		const version = await instanceHelper.getVersion({ connection });
+
+		logger.info('Db version: ' + version);
+		callback();
+	} catch (error) {
+		logger.error(error);
+		callback(error);
+	}
 };
 
 /**
@@ -33,18 +64,21 @@ const disconnect = async (connectionInfo, appLogger, callback) => {
  * @param {App} app
  */
 const testConnection = async (connectionInfo, appLogger, callback, app) => {
+	const logger = logHelper.createLogger({
+		title: 'Test database connection',
+		hiddenKeys: connectionInfo.hiddenKeys,
+		logger: appLogger,
+	});
+
 	try {
 		await connectionHelper.disconnect();
-		await connectionHelper.connect({ connectionInfo });
+		const connection = await connectionHelper.connect({ connectionInfo, logger });
+		const version = await instanceHelper.getVersion({ connection });
 		await connectionHelper.disconnect();
+
+		logger.info('Db version: ' + version);
 		callback();
 	} catch (error) {
-		const logger = logHelper.createLogger({
-			title: 'Test database connection',
-			hiddenKeys: connectionInfo.hiddenKeys,
-			logger: appLogger,
-		});
-
 		logger.error(error);
 		callback(error);
 	}
