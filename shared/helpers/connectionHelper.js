@@ -29,6 +29,16 @@ const isWindows = () => os.platform() === 'win32';
 const createArgument = (argKey, argValue) => ` --${argKey}="${argValue}"`;
 
 /**
+ * @param {{ [argKey: string]: string }} queryData
+ * @returns {string[]}
+ */
+const getQueryArguments = queryData => {
+	return Object.entries(queryData).reduce((result, [argKey, argValue]) => {
+		return [...result, createArgument(argKey, argValue)];
+	}, []);
+};
+
+/**
  * @param {{ clientPath: string, connectionInfo: ConnectionInfo }}
  * @returns {string[]}
  */
@@ -81,10 +91,10 @@ const createConnection = async ({ connectionInfo, logger }) => {
 	const clientCommandArguments = buildCommand({ clientPath, connectionInfo });
 
 	return {
-		execute: query => {
+		execute: queryData => {
 			return new Promise((resolve, reject) => {
-				const queryArgument = createArgument('query', query);
-				const queryResult = spawn(`"${javaPath}"`, [...clientCommandArguments, queryArgument], {
+				const queryArguments = getQueryArguments(queryData);
+				const queryResult = spawn(`"${javaPath}"`, [...clientCommandArguments, ...queryArguments], {
 					shell: true,
 				});
 

@@ -13,7 +13,7 @@ const { queryHelper } = require('./queryHelper');
  */
 const getDbVersion = async ({ connection }) => {
 	const query = queryHelper.getDbVersionQuery();
-	const result = await connection.execute(query);
+	const result = await connection.execute({ query });
 	const rawVersion = result?.[0]?.SERVICE_LEVEL || '';
 	const [version] = /v\d+.\d+/gi.exec(rawVersion) || [''];
 
@@ -26,7 +26,7 @@ const getDbVersion = async ({ connection }) => {
  */
 const getSchemaNames = async ({ connection }) => {
 	const query = queryHelper.getSchemasQuery();
-	const result = await connection.execute(query);
+	const result = await connection.execute({ query });
 
 	return result.map(row => row.SCHEMANAME);
 };
@@ -37,7 +37,7 @@ const getSchemaNames = async ({ connection }) => {
  */
 const getDatabasesWithTableNames = async ({ connection, tableType, includeSystemCollection, tableNameModifier }) => {
 	const query = queryHelper.getTableNamesQuery({ tableType, includeSystemCollection });
-	const result = await connection.execute(query);
+	const result = await connection.execute({ query });
 
 	return result.reduce((result, { SCHEMANAME, TABLENAME }) => {
 		return {
@@ -54,7 +54,7 @@ const getDatabasesWithTableNames = async ({ connection, tableType, includeSystem
 const getSchemaProperties = async ({ connection, schemaName, logger }) => {
 	try {
 		const query = queryHelper.getSchemaQuery({ schemaName });
-		const result = await connection.execute(query);
+		const result = await connection.execute({ query });
 
 		return (result || []).reduce((acc, row) => {
 			return {
@@ -76,12 +76,14 @@ const getSchemaProperties = async ({ connection, schemaName, logger }) => {
 const getTableDdl = async ({ connection, schemaName, tableName, tableType, logger }) => {
 	try {
 		const generateQuery = queryHelper.getGenerateTableDdlQuery({ schemaName, tableName, tableType });
-		const tokenResult = await connection.execute(generateQuery);
-		const opToken = tokenResult?.[0]?.OP_TOKEN;
-		const selectQuery = queryHelper.getSelectTableDdlQuery({ opToken });
-		const ddlResult = await connection.execute(selectQuery);
+		const opToken = await connection.execute({ callablequery: generateQuery });
+		const selectQuery = queryHelper.getSelectTableDdlQuery({ opToken, tableType });
+		const ddlResult = await connection.execute({ query: selectQuery });
+		const clearQuery = queryHelper.getClearTableDdlQuery();
 
-		return ddlResult.map(row => row.SQL_STMT).join(' ');
+		await connection.execute({ callablequery: clearQuery, inparam: opToken });
+
+		return ddlResult.map(row => row.SQL_STMT + ';').join('\n');
 	} catch (error) {
 		logger.error(error);
 

@@ -73,7 +73,7 @@ const getTableNamesQuery = ({ tableType, includeSystemCollection }) => {
 const getGenerateTableDdlQuery = ({ schemaName, tableName, tableType }) => {
 	const tableArgument = tableType === TABLE_TYPE.table ? '-t' : '-v';
 
-	return `{CALL SYSPROC.DB2LK_GENERATE_DDL('-a -e -z ${schemaName} ${tableArgument} ${tableName}', ?);}`;
+	return `CALL SYSPROC.DB2LK_GENERATE_DDL('-a -e -z ${schemaName} ${tableArgument} ${tableName}', ?);`;
 };
 
 /**
@@ -85,20 +85,29 @@ const getSelectTableDdlQuery = ({ opToken, tableType }) => {
 	const query = `
 	SELECT SQL_STMT
 	FROM SYSTOOLS.DB2LOOK_INFO
-	WHERE OP_TOKEN=${opToken}
+	WHERE OP_TOKEN= ${opToken}
 	AND OBJ_TYPE ${objectTypeOperator} '${TABLE_TYPE.view}'
 	ORDER BY CREATION_TIME, OP_SEQUENCE;`;
 
 	return cleanUpQuery({ query });
 };
 
+/**
+ * @returns {string}
+ */
+const getClearTableDdlQuery = () => {
+	return 'CALL SYSPROC.DB2LK_CLEAN_TABLE(?)';
+};
+
 const queryHelper = {
+	cleanUpQuery,
 	getDbVersionQuery,
 	getSchemaQuery,
 	getSchemasQuery,
 	getTableNamesQuery,
 	getGenerateTableDdlQuery,
 	getSelectTableDdlQuery,
+	getClearTableDdlQuery,
 };
 
 module.exports = {
