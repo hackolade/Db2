@@ -5,8 +5,6 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class App {
     public static void main(String[] args) {
@@ -16,50 +14,50 @@ public class App {
         String user = findArgument(args, Argument.USER);
         String password = findArgument(args, Argument.PASSWORD);
         String query = cleanStringValue(findArgument(args, Argument.QUERY));
+				String callableQuery = cleanStringValue(findArgument(args, Argument.CALLABLE_QUERY));
+				String inParam = findArgument(args, Argument.IN_PARAM);
 
-        Db2Service db2Service = new Db2Service(host, port, database, user, password, new ResponseMapper());
+		Db2Service db2Service = new Db2Service(host, port, database, user, password, new ResponseMapper());
 
-        JSONObject result = new JSONObject();
+		JSONObject result = new JSONObject();
 
-        try {
-            db2Service.openConnection();
-            JSONArray queryResult = db2Service.executeQuery(query);
-            result.put("data", queryResult);
-        } catch (SQLException e) {
-            JSONObject errorObj = new JSONObject();
-            errorObj.put("message", e.getMessage());
-            errorObj.put("stack", e.getStackTrace());
+		try {
+			db2Service.openConnection();
 
-            result.put("error", errorObj);
-        } finally {
-            db2Service.closeConnection();
+			if (!query.isEmpty()) {
+				JSONArray queryResult = db2Service.executeQuery(query);
+				result.put("data", queryResult);
+			}
+
+			if (!callableQuery.isEmpty()) {
+				int queryResult = db2Service.executeCallableQuery(callableQuery, inParam);
+				result.put("data", queryResult);
+			}
+		} catch (SQLException e) {
+			JSONObject errorObj = new JSONObject();
+			errorObj.put("message", e.getMessage());
+			errorObj.put("stack", e.getStackTrace());
+
+			result.put("error", errorObj);
+		} finally {
+			db2Service.closeConnection();
 			print(result.toString());
-        }
-    }
+		}
+	}
 
-    private static String cleanStringValue(String value) {
-        return value.replaceAll("<\\$>", "\"");
-    }
+	private static String cleanStringValue(String value) {
+		return value.replace("<\\$>", "\"");
+	}
 
-    private static String findArgument(String[] args, Argument argument) {
-        return Arrays.stream(args)
-                .filter(arg -> arg.startsWith(argument.getPrefix()))
-                .map(arg -> arg.substring(argument.getStartValueIndex()))
-                .findFirst()
-                .orElse("");
-    }
+	private static String findArgument(String[] args, Argument argument) {
+		return Arrays.stream(args)
+				.filter(arg -> arg.startsWith(argument.getPrefix()))
+				.map(arg -> arg.substring(argument.getStartValueIndex()))
+				.findFirst()
+				.orElse("");
+	}
 
-    // private static List<AdditionalArgument> getAdditionalArguments(String[] args) {
-    //     List<String> defaultArgumentPrefixes = Arrays.stream(Argument.values()).map(Argument::getPrefix)
-    //             .collect(Collectors.toList());
-
-    //     return Arrays.stream(args)
-    //             .filter(arg -> defaultArgumentPrefixes.stream().noneMatch(arg::startsWith))
-    //             .map(AdditionalArgument::new)
-    //             .collect(Collectors.toList());
-    // }
-
-     private static void print(String value) {
-         System.out.println(String.format("<hackolade>%s</hackolade>", value));
-     }
+	private static void print(String value) {
+		System.out.println(String.format("<hackolade>%s</hackolade>", value));
+	}
 }
