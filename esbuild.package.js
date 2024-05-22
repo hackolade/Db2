@@ -19,6 +19,7 @@ const copyDb2Client = () => ({
 					{ force: true },
 				);
 			} catch (err) {
+				// eslint-disable-next-line no-console
 				console.error('Copy Db2Client.jar failed with:', err);
 			}
 		});
@@ -37,7 +38,7 @@ esbuild
 		platform: 'node',
 		target: 'node16',
 		outdir: RELEASE_FOLDER_PATH,
-		minify: false,
+		minify: true,
 		logLevel: 'info',
 		plugins: [
 			clean({
