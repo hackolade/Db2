@@ -20,7 +20,7 @@ const EXCLUDED_FILES = [
 	'release',
 	'node_modules',
 	'package-lock.json',
-	'shared/Db2Client',
+	'shared',
 ];
 
 module.exports = {

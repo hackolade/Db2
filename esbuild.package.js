@@ -8,6 +8,23 @@ const { EXCLUDED_EXTENSIONS, EXCLUDED_FILES, DEFAULT_RELEASE_FOLDER_PATH } = req
 const packageData = JSON.parse(fs.readFileSync('./package.json').toString());
 const RELEASE_FOLDER_PATH = path.join(DEFAULT_RELEASE_FOLDER_PATH, `${packageData.name}-${packageData.version}`);
 
+const copyDb2Client = () => ({
+	name: 'copyDb2Client',
+	setup(build) {
+		build.onEnd(async () => {
+			try {
+				await fs.promises.cp(
+					path.resolve(__dirname, 'shared', 'addons', 'Db2Client.jar'),
+					path.join(RELEASE_FOLDER_PATH, 'addons', 'Db2Client.jar'),
+					{ force: true },
+				);
+			} catch (err) {
+				console.error('Copy Db2Client.jar failed with:', err);
+			}
+		});
+	},
+});
+
 esbuild
 	.build({
 		entryPoints: [
@@ -20,7 +37,7 @@ esbuild
 		platform: 'node',
 		target: 'node16',
 		outdir: RELEASE_FOLDER_PATH,
-		minify: true,
+		minify: false,
 		logLevel: 'info',
 		plugins: [
 			clean({
@@ -32,6 +49,7 @@ esbuild
 				excludedExtensions: EXCLUDED_EXTENSIONS,
 				excludedFiles: EXCLUDED_FILES,
 			}),
+			copyDb2Client(),
 			addReleaseFlag(path.resolve(RELEASE_FOLDER_PATH, 'package.json')),
 		],
 	})

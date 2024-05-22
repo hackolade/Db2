@@ -87,6 +87,7 @@ const createConnection = async ({ connectionInfo, logger }) => {
 
 	await checkJavaPath({ javaPath, logger });
 
+	// If you need to change this clientPath, please ensure that your changes work in the packaged plugin
 	const clientPath = path.resolve(__dirname, '..', 'addons', 'Db2Client.jar');
 	const clientCommandArguments = buildCommand({ clientPath, connectionInfo });
 
