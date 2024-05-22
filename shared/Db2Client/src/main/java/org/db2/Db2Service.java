@@ -34,13 +34,16 @@ public class Db2Service {
 		this.callableStatement = connection.prepareCall(query);
 
 		if (!inParam.isEmpty()) {
-			callableStatement.setInt(1, 1);
-			callableStatement.executeUpdate();
+			int param = Integer.parseInt(inParam);
 
-			return Integer.parseInt(inParam);
+			callableStatement.setInt(1, param);
+			callableStatement.execute();
+
+			return param;
 		}
 
 		callableStatement.registerOutParameter(1, Types.INTEGER);
+		callableStatement.execute();
 
 		return callableStatement.getInt(1);
 	}

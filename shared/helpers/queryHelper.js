@@ -96,7 +96,7 @@ const getSelectTableDdlQuery = ({ opToken, tableType }) => {
  * @returns {string}
  */
 const getClearTableDdlQuery = () => {
-	return 'CALL SYSPROC.DB2LK_CLEAN_TABLE(?)';
+	return 'CALL SYSPROC.DB2LK_CLEAN_TABLE(?);';
 };
 
 const queryHelper = {
