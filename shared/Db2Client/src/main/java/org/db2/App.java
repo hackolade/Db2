@@ -7,15 +7,15 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class App {
-    public static void main(String[] args) {
-        String host = findArgument(args, Argument.HOST);
-        String port = findArgument(args, Argument.PORT);
-        String database = findArgument(args, Argument.DATABASE);
-        String user = findArgument(args, Argument.USER);
-        String password = findArgument(args, Argument.PASSWORD);
-        String query = cleanStringValue(findArgument(args, Argument.QUERY));
-				String callable = findArgument(args, Argument.CALLABLE);
-				String inParam = findArgument(args, Argument.IN_PARAM);
+	public static void main(String[] args) {
+		String host = findArgument(args, Argument.HOST);
+		String port = findArgument(args, Argument.PORT);
+		String database = findArgument(args, Argument.DATABASE);
+		String user = findArgument(args, Argument.USER);
+		String password = findArgument(args, Argument.PASSWORD);
+		String query = cleanStringValue(findArgument(args, Argument.QUERY));
+		String callable = findArgument(args, Argument.CALLABLE);
+		String inParam = findArgument(args, Argument.IN_PARAM);
 
 		Db2Service db2Service = new Db2Service(host, port, database, user, password, new ResponseMapper());
 
@@ -24,15 +24,13 @@ public class App {
 		try {
 			db2Service.openConnection();
 
-			if (!query.isEmpty()) {
+			boolean isCallableQuery = Boolean.parseBoolean(callable);
 
-			}
-
-			if (callable.isEmpty()) {
-				JSONArray queryResult = db2Service.executeQuery(query);
+			if (isCallableQuery) {
+				int queryResult = db2Service.executeCallableQuery(query, inParam);
 				result.put("data", queryResult);
 			} else {
-				int queryResult = db2Service.executeCallableQuery(query, inParam);
+				JSONArray queryResult = db2Service.executeQuery(query);
 				result.put("data", queryResult);
 			}
 		} catch (SQLException e) {
