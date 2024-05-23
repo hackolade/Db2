@@ -36,16 +36,16 @@ public class Db2Service {
 		if (!inParam.isEmpty()) {
 			int param = Integer.parseInt(inParam);
 
-			callableStatement.setInt(1, param);
-			callableStatement.execute();
+			this.callableStatement.setInt(1, param);
+			this.callableStatement.execute();
 
 			return param;
 		}
 
-		callableStatement.registerOutParameter(1, Types.INTEGER);
-		callableStatement.execute();
+		this.callableStatement.registerOutParameter(1, Types.INTEGER);
+		this.callableStatement.execute();
 
-		return callableStatement.getInt(1);
+		return this.callableStatement.getInt(1);
 	}
 
 	public void openConnection() throws SQLException {

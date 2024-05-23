@@ -7,7 +7,7 @@ public enum Argument {
 	PORT("--port", 7),
 	QUERY("--query", 8),
 	DATABASE("--database", 11),
-	CALLABLE_QUERY("--callablequery", 16),
+	CALLABLE("--callable", 11),
 	IN_PARAM("--inparam", 10);
 
 	private final String argPrefix;

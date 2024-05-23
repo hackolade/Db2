@@ -95,7 +95,7 @@ type DbCollectionData = {
 };
 
 type Connection = {
-  execute: (query: string) => Promise<any>;
+  execute: ({ query, callable, inparam }: { query: string, callable?: boolean, inparam?: number }) => Promise<any>;
 };
 
 export {

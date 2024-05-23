@@ -76,12 +76,12 @@ const getSchemaProperties = async ({ connection, schemaName, logger }) => {
 const getTableDdl = async ({ connection, schemaName, tableName, tableType, logger }) => {
 	try {
 		const generateQuery = queryHelper.getGenerateTableDdlQuery({ schemaName, tableName, tableType });
-		const opToken = await connection.execute({ callablequery: generateQuery });
+		const opToken = await connection.execute({ query: generateQuery, callable: true });
 		const selectQuery = queryHelper.getSelectTableDdlQuery({ opToken, tableType });
 		const ddlResult = await connection.execute({ query: selectQuery });
 		const clearQuery = queryHelper.getClearTableDdlQuery();
 
-		await connection.execute({ callablequery: clearQuery, inparam: opToken });
+		await connection.execute({ query: clearQuery, callable: true, inparam: opToken });
 
 		return ddlResult.map(row => row.SQL_STMT + ';').join('\n');
 	} catch (error) {
