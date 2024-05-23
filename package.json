@@ -76,6 +76,7 @@
         "simple-git-hooks": "2.11.1"
     },
     "dependencies": {
+        "async": "3.2.5",
         "lodash": "4.17.21"
     }
 }

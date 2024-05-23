@@ -2,7 +2,7 @@ const path = require('path');
 
 const DEFAULT_RELEASE_FOLDER_PATH = path.resolve(__dirname, 'release');
 
-const EXCLUDED_EXTENSIONS = ['.js', '.g4', '.interp', '.tokens'];
+const EXCLUDED_EXTENSIONS = ['.js', '.g4', '.interp', '.tokens', '.ts'];
 const EXCLUDED_FILES = [
 	'.github',
 	'.DS_Store',
@@ -20,6 +20,7 @@ const EXCLUDED_FILES = [
 	'release',
 	'node_modules',
 	'package-lock.json',
+	'shared',
 ];
 
 module.exports = {
