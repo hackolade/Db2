@@ -18,32 +18,6 @@ const { nameHelper } = require('../shared/helpers/nameHelper');
  * @param {ConnectionInfo} connectionInfo
  * @param {AppLogger} appLogger
  * @param {Callback} callback
- * @param {App} app
- */
-const connect = async (connectionInfo, appLogger, callback, app) => {
-	const logger = logHelper.createLogger({
-		title: 'Connect to database',
-		hiddenKeys: connectionInfo.hiddenKeys,
-		logger: appLogger,
-	});
-
-	try {
-		await connectionHelper.disconnect();
-		const connection = await connectionHelper.connect({ connectionInfo, logger });
-		const version = await instanceHelper.getDbVersion({ connection });
-
-		logger.info('Db version: ' + version);
-		callback();
-	} catch (error) {
-		logger.error(error);
-		callback(error);
-	}
-};
-
-/**
- * @param {ConnectionInfo} connectionInfo
- * @param {AppLogger} appLogger
- * @param {Callback} callback
  */
 const disconnect = async (connectionInfo, appLogger, callback) => {
 	try {
@@ -76,7 +50,7 @@ const testConnection = async (connectionInfo, appLogger, callback, app) => {
 
 	try {
 		logger.info(connectionInfo);
-		await connectionHelper.disconnect();
+
 		const connection = await connectionHelper.connect({ connectionInfo, logger });
 		const version = await instanceHelper.getDbVersion({ connection });
 		await connectionHelper.disconnect();
@@ -271,7 +245,6 @@ const getDbCollectionsData = async (connectionInfo, appLogger, callback, app) =>
 };
 
 module.exports = {
-	connect,
 	disconnect,
 	testConnection,
 	getSchemaNames,
