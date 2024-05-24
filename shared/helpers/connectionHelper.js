@@ -69,7 +69,7 @@ const getDefaultJavaPath = () => {
  */
 const checkJavaPath = async ({ javaPath, logger }) => {
 	try {
-		const testCommand = `"${javaPath}" --help`;
+		const testCommand = `"${javaPath}" -version`;
 		await exec(testCommand);
 		logger.info(`Path to JAVA binary file successfully checked. JAVA path: ${javaPath}`);
 	} catch (error) {
