@@ -73,7 +73,7 @@ const getTableNamesQuery = ({ tableType, includeSystemCollection }) => {
 const getGenerateTableDdlQuery = ({ schemaName, tableName, tableType }) => {
 	const tableArgument = tableType === TABLE_TYPE.table ? '-t' : '-v';
 
-	return `CALL SYSPROC.DB2LK_GENERATE_DDL('-a -e -z ${schemaName} ${tableArgument} ${tableName}', ?);`;
+	return `CALL SYSPROC.DB2LK_GENERATE_DDL('-a -e -z ""${schemaName}"" ${tableArgument} ""${tableName}""', ?);`;
 };
 
 /**
