@@ -1,5 +1,5 @@
 module.exports = {
-	createSchema: 'CREATE SCHEMA${ifNotExists} ${schemaName}${authorization}${dataCapture};',
+	createSchema: 'CREATE SCHEMA ${schemaName}${authorization}${dataCapture};',
 
 	createTable: 'CREATE${tableType} TABLE${ifNotExists} ${name}${tableProps}${tableOptions};',
 
