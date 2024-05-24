@@ -133,12 +133,6 @@ making sure that you maintain a proper JSON format.
 				"options": ["", "NONE", "CHANGES"]
 			},
 			{
-				"propertyName": "If not exist",
-				"propertyKeyword": "ifNotExist",
-				"defaultValue": true,
-				"propertyType": "checkbox"
-			},
-			{
 				"propertyName": "Remarks",
 				"propertyKeyword": "comments",
 				"propertyTooltip": "remarks",

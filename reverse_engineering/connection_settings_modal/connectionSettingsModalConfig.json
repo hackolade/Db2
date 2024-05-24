@@ -9,92 +9,10 @@
 				"inputPlaceholder": "Name"
 			},
 			{
-				"inputLabel": "Mode",
-				"inputKeyword": "mode",
-				"description": "Specify connection mode",
-				"inputType": "select",
-				"defaultValue": "thin",
-				"options": [
-					{
-						"value": "thin",
-						"label": "Thin mode"
-					},
-					{
-						"value": "thick",
-						"label": "Thick mode",
-						"dependency": {
-							"type": "not",
-							"values": [
-								{
-									"dependantOnOS": true,
-									"platform": "macOS",
-									"architecture": "arm"
-								}
-							]
-						}
-					}
-				]
-			},
-			{
-				"inputLabel": "Client type",
-				"inputKeyword": "clientType",
-				"inputType": "select",
-				"defaultValue": "Host / Port",
-				"dependency": {
-					"key": "mode",
-					"value": "thick"
-				},
-				"options": [
-					{
-						"value": "Db2Home",
-						"label": "Db2 Home"
-					},
-					{
-						"value": "InstantClient",
-						"label": "Instant Client"
-					}
-				]
-			},
-			{
-				"inputLabel": "Client location",
-				"inputKeyword": "clientPath",
-				"inputType": "file",
-				"inputPlaceholder": "Client path",
-				"openType": "openDirectory",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "clientType",
-							"value": "InstantClient"
-						},
-						{
-							"key": "mode",
-							"value": "thick"
-						}
-					]
-				}
-			},
-			{
-				"inputLabel": "Connection method",
-				"inputKeyword": "connectionMethod",
-				"inputType": "select",
-				"defaultValue": "Basic",
-				"options": [
-					{ "value": "Basic", "label": "Basic" },
-					{ "value": "Wallet", "label": "Cloud Wallet" },
-					{ "value": "TNS", "label": "TNS" }
-				]
-			},
-			{
 				"inputLabel": "Hostname",
 				"inputKeyword": "host",
 				"description": "Specify the host IP address or DNS name of Db2 server",
 				"inputType": "text",
-				"dependency": {
-					"key": "connectionMethod",
-					"value": "Basic"
-				},
 				"regex": "([^\\s])"
 			},
 			{
@@ -102,85 +20,14 @@
 				"inputKeyword": "port",
 				"description": "Specify the port number of Db2 server",
 				"inputType": "numeric",
-				"defaultValue": 1521,
-				"dependency": {
-					"key": "connectionMethod",
-					"value": "Basic"
-				}
+				"defaultValue": 50000
 			},
 			{
-				"inputLabel": "Wallet file",
-				"inputKeyword": "walletFile",
-				"description": "Specify the full path location and name of the wallet zip file",
-				"inputType": "file",
-				"extensions": ["zip"],
-				"dependency": {
-					"key": "connectionMethod",
-					"value": ["Wallet"]
-				}
-			},
-			{
-				"inputLabel": "Tnsnames Directory",
-				"inputKeyword": "TNSpath",
-				"description": "Specify the full path to directory with tnsnames.ora file",
-				"inputType": "file",
-				"openType": "openDirectory",
-				"dependency": {
-					"key": "connectionMethod",
-					"value": ["TNS"]
-				}
-			},
-			{
-				"inputLabel": "Identifier type",
-				"inputKeyword": "identifierType",
-				"inputType": "select",
-				"defaultValue": "serviceName",
-				"options": [
-					{ "value": "serviceName", "label": "Service Name" },
-					{ "value": "SID", "label": "SID" }
-				],
-				"dependency": {
-					"key": "connectionMethod",
-					"value": ["Basic"]
-				}
-			},
-			{
-				"inputLabel": "Service Name",
-				"inputKeyword": "serviceName",
-				"description": "Specify the service name of the Db2 Instance",
+				"inputLabel": "Database",
+				"inputKeyword": "database",
+				"description": "Specify the name of the database to connect to",
 				"inputType": "text",
-				"dependency": {
-					"type": "or",
-					"values": [
-						{
-							"key": "identifierType",
-							"value": "serviceName"
-						},
-						{
-							"key": "connectionMethod",
-							"value": ["Wallet", "TNS"]
-						}
-					]
-				}
-			},
-			{
-				"inputLabel": "SID",
-				"inputKeyword": "sid",
-				"description": "Optionally specify the SID of the Db2 Instance",
-				"inputType": "text",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "identifierType",
-							"value": "SID"
-						},
-						{
-							"key": "connectionMethod",
-							"value": ["Basic"]
-						}
-					]
-				}
+				"inputPlaceholder": "Database"
 			}
 		]
 	},
@@ -192,7 +39,8 @@
 				"inputKeyword": "authMethod",
 				"inputType": "select",
 				"defaultValue": "Username / Password",
-				"options": [{ "value": "Username / Password", "label": "Username / Password" }]
+				"options": [{ "value": "Username / Password", "label": "Username / Password" }],
+				"disabled": true
 			},
 			{
 				"inputLabel": "User Name",
@@ -201,7 +49,7 @@
 				"inputPlaceholder": "User Name",
 				"dependency": {
 					"key": "authMethod",
-					"value": ["Username / Password", "Kerberos"]
+					"value": ["Username / Password"]
 				},
 				"validation": {
 					"regex": "([^\\s])"
@@ -214,134 +62,11 @@
 				"inputPlaceholder": "Password",
 				"dependency": {
 					"key": "authMethod",
-					"value": ["Username / Password", "Kerberos"]
+					"value": ["Username / Password"]
 				},
 				"isHiddenKey": true,
 				"validation": {
 					"regex": "([^\\s])"
-				}
-			},
-			{
-				"inputLabel": "Role",
-				"inputKeyword": "authRole",
-				"inputType": "select",
-				"defaultValue": "default",
-				"options": [
-					{ "value": "default", "label": "default" },
-					{ "value": "SYSDBA", "label": "SYSDBA" },
-					{ "value": "SYSOPER", "label": "SYSOPER" },
-					{ "value": "SYSBACKUP", "label": "SYSBACKUP" },
-					{ "value": "SYSDG", "label": "SYSDG" },
-					{ "value": "SYSKM", "label": "SYSKM" },
-					{ "value": "SYSASM", "label": "SYSASM" }
-				]
-			}
-		]
-	},
-	{
-		"tab": "SSH",
-		"helpUrl": "https://hackolade.com/help/SSH7.html",
-		"structure": [
-			{
-				"inputLabel": "Use SSH Tunnel",
-				"inputKeyword": "ssh",
-				"inputType": "checkbox",
-				"defaultValue": false
-			},
-			{
-				"inputLabel": "SSH Address",
-				"inputKeyword": "ssh_host",
-				"inputType": "text",
-				"inputPlaceholder": "SSH Address",
-				"disable": {
-					"key": "ssh",
-					"value": false
-				}
-			},
-			{
-				"inputLabel": "Port",
-				"inputKeyword": "ssh_port",
-				"inputType": "numeric",
-				"inputPlaceholder": "Port",
-				"defaultValue": 22,
-				"disable": {
-					"key": "ssh",
-					"value": false
-				}
-			},
-			{
-				"inputLabel": "SSH User Name",
-				"inputKeyword": "ssh_user",
-				"inputType": "text",
-				"inputPlaceholder": "SSH User Name",
-				"disable": {
-					"key": "ssh",
-					"value": false
-				}
-			},
-			{
-				"inputLabel": "SSH Auth Method",
-				"inputKeyword": "ssh_method",
-				"inputType": "select",
-				"options": [
-					{
-						"value": "privateKey",
-						"label": "Private Key"
-					},
-					{
-						"value": "password",
-						"label": "Password"
-					}
-				],
-				"disable": {
-					"key": "ssh",
-					"value": false
-				},
-				"defaultValue": "privateKey"
-			},
-			{
-				"inputLabel": "Private Key",
-				"inputKeyword": "ssh_key_file",
-				"inputType": "file",
-				"inputPlaceholder": "Private Key",
-				"extensions": ["*"],
-				"dependency": {
-					"key": "ssh_method",
-					"value": ["privateKey", ""]
-				},
-				"disable": {
-					"key": "ssh",
-					"value": false
-				}
-			},
-			{
-				"inputLabel": "Passphrase",
-				"inputKeyword": "ssh_key_passphrase",
-				"inputType": "password",
-				"inputPlaceholder": "Passphrase",
-				"isHiddenKey": true,
-				"dependency": {
-					"key": "ssh_method",
-					"value": ["privateKey", ""]
-				},
-				"disable": {
-					"key": "ssh",
-					"value": false
-				}
-			},
-			{
-				"inputLabel": "Client key password",
-				"inputKeyword": "ssh_password",
-				"inputType": "password",
-				"inputPlaceholder": "Password",
-				"isHiddenKey": true,
-				"dependency": {
-					"key": "ssh_method",
-					"value": ["password", ""]
-				},
-				"disable": {
-					"key": "ssh",
-					"value": false
 				}
 			}
 		]
@@ -350,12 +75,11 @@
 		"tab": "Advanced",
 		"structure": [
 			{
-				"inputLabel": "Schema name",
-				"inputKeyword": "schemaName",
-				"inputType": "text",
-				"inputPlaceholder": "Schema name",
-				"description": "Optionally specify a schema name to limit the scope of discovery",
-				"regex": "([^\\s])"
+				"inputLabel": "Java binary path",
+				"inputKeyword": "javaHomePath",
+				"inputType": "file",
+				"inputPlaceholder": "/opt/openjdk/bin/java",
+				"extensions": ["*"]
 			}
 		]
 	}
