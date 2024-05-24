@@ -49,7 +49,6 @@ module.exports = (baseProvider, options, app) => {
 		hydrateSchema(containerData, data) {
 			return {
 				schemaName: containerData.name,
-				ifNotExist: containerData.ifNotExist,
 				authorizationName: containerData.authorizationName,
 				dataCapture: containerData.dataCapture,
 			};
@@ -60,7 +59,6 @@ module.exports = (baseProvider, options, app) => {
 				template: templates.createSchema,
 				templateData: {
 					schemaName: wrapInQuotes({ name: schemaName }),
-					ifNotExists: ifNotExist ? ' IF NOT EXISTS' : '',
 					authorization: authorizationName ? ' AUTHORIZATION ' + authorizationName : '',
 					dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
 				},
