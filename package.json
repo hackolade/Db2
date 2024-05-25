@@ -1,7 +1,6 @@
 {
     "name": "Db2",
-    "version": "0.1.4",
-    "versionDate": "2024-05-03",
+    "version": "0.2.1",
     "author": "hackolade",
     "engines": {
         "hackolade": "7.4.0",
