@@ -75,6 +75,12 @@ const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComm
 const wrapInQuotes = ({ name }) => `"${name}"`;
 
 /**
+ * @param {{ name: string }}
+ * @returns {string}
+ */
+const wrapInSingleQuotes = ({ name }) => `'${name}'`;
+
+/**
  * @param {{ name: string, schemaName?: string }}
  * @returns {string}
  */
@@ -117,6 +123,7 @@ module.exports = {
 	divideIntoActivatedAndDeactivated,
 	commentIfDeactivated,
 	wrapInQuotes,
+	wrapInSingleQuotes,
 	getNamePrefixedWithSchemaName,
 	getColumnsList,
 	toArray,
