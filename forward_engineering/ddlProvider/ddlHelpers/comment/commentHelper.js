@@ -1,7 +1,7 @@
 const { trim } = require('lodash');
 const templates = require('../../templates');
 const { assignTemplates } = require('../../../utils/assignTemplates');
-const { wrapInQuotes, commentIfDeactivated } = require('../../../utils/general');
+const { wrapInQuotes, commentIfDeactivated, wrapInSingleQuotes } = require('../../../utils/general');
 
 /**
  * @enum {string}
@@ -11,8 +11,6 @@ const OBJECT_TYPE = {
 	table: 'TABLE',
 	index: 'INDEX',
 };
-
-const wrapComment = comment => `'${comment}'`;
 
 /**
  * @param {{ objectName: string, objectType: OBJECT_TYPE, description?: string }}
@@ -25,7 +23,7 @@ const getCommentStatement = ({ objectName, objectType, description }) => {
 
 	return assignTemplates({
 		template: templates.comment,
-		templateData: { objectType, objectName: trim(objectName), comment: wrapComment(description) },
+		templateData: { objectType, objectName: trim(objectName), comment: wrapInSingleQuotes({ name: description }) },
 	});
 };
 

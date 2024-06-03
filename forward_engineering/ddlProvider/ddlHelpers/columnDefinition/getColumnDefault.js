@@ -1,6 +1,6 @@
 const { toUpper } = require('lodash');
-const { wrapInQuotes } = require('../../../utils/general');
-const { DATA_TYPES_WITH_IDENTITY } = require('../../../../constants/types');
+const { wrapInSingleQuotes } = require('../../../utils/general');
+const { DATA_TYPES_WITH_IDENTITY, STRING_DATA_TYPES } = require('../../../../constants/types');
 
 /**
  * @typedef {string | number} DefaultValue
@@ -36,13 +36,13 @@ const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle }) => 
 };
 
 /**
- * @param {{ defaultValue: DefaultValue }}
+ * @param {{ defaultValue: DefaultValue, type: string }}
  * @returns {DefaultValue}
  */
-const wrapInQuotesDefaultValue = ({ defaultValue }) => {
-	const doesContainSpaces = /\s+/g.test(defaultValue);
+const wrapInQuotesDefaultValue = ({ defaultValue, type }) => {
+	const isStringDataType = STRING_DATA_TYPES.includes(toUpper(type));
 
-	return doesContainSpaces ? wrapInQuotes({ name: defaultValue }) : defaultValue;
+	return isStringDataType ? wrapInSingleQuotes({ name: defaultValue }) : defaultValue;
 };
 
 /**
@@ -59,7 +59,7 @@ const getColumnDefault = ({ default: defaultValue, identity, type }) => {
 	}
 
 	if (defaultValue || defaultValue === 0) {
-		const value = wrapInQuotesDefaultValue({ defaultValue });
+		const value = wrapInQuotesDefaultValue({ defaultValue, type });
 
 		return ` WITH DEFAULT ${value}`;
 	}
