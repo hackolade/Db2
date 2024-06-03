@@ -9,7 +9,7 @@ module.exports = {
 
 	createTableProps: '${columns}${keyConstraints}${checkConstraints}${foreignKeyConstraints}',
 
-	columnDefinition: '${name}${type}${default}${encrypt}${constraints}',
+	columnDefinition: '${name}${type}${default}${constraints}',
 
 	createForeignKey:
 		'ALTER TABLE ${foreignTable} ADD CONSTRAINT ${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete};',

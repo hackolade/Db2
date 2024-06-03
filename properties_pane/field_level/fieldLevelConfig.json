@@ -444,29 +444,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Encryption",
-				"propertyType": "block",
-				"propertyKeyword": "encryption",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Algorithm",
-						"propertyKeyword": "ENCRYPTION_ALGORITHM",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "No Salt",
-						"propertyKeyword": "noSalt",
-						"propertyType": "checkbox"
-					},
-					{
-						"propertyName": "Integrity Algorithm",
-						"propertyKeyword": "INTEGRITY_ALGORITHM",
-						"propertyType": "text"
-					}
-				]
-			},
-			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyType": "checkbox",
@@ -2932,29 +2909,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Encryption",
-				"propertyType": "block",
-				"propertyKeyword": "encryption",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Algorithm",
-						"propertyKeyword": "ENCRYPTION_ALGORITHM",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "No Salt",
-						"propertyKeyword": "noSalt",
-						"propertyType": "checkbox"
-					},
-					{
-						"propertyName": "Integrity Algorithm",
-						"propertyKeyword": "INTEGRITY_ALGORITHM",
-						"propertyType": "text"
-					}
-				]
-			},
-			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyType": "checkbox",
@@ -3451,29 +3405,6 @@ making sure that you maintain a proper JSON format.
 						}
 					]
 				}
-			},
-			{
-				"propertyName": "Encryption",
-				"propertyType": "block",
-				"propertyKeyword": "encryption",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Algorithm",
-						"propertyKeyword": "ENCRYPTION_ALGORITHM",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "No Salt",
-						"propertyKeyword": "noSalt",
-						"propertyType": "checkbox"
-					},
-					{
-						"propertyName": "Integrity Algorithm",
-						"propertyKeyword": "INTEGRITY_ALGORITHM",
-						"propertyType": "text"
-					}
-				]
 			},
 			{
 				"propertyName": "Primary key",

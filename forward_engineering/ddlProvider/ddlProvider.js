@@ -13,7 +13,6 @@ const {
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/key/keyHelper.js');
-const { getColumnEncrypt } = require('./ddlHelpers/columnDefinition/getColumnEncrypt.js');
 const { getColumnType } = require('./ddlHelpers/columnDefinition/getColumnType.js');
 const { getColumnDefault } = require('./ddlHelpers/columnDefinition/getColumnDefault.js');
 const { getColumnConstraints } = require('./ddlHelpers/columnDefinition/getColumnConstraints.js');
@@ -95,7 +94,6 @@ module.exports = (baseProvider, options, app) => {
 				withTimeZone: jsonSchema.withTimeZone,
 				localTimeZone: jsonSchema.localTimeZone,
 				lengthSemantics: jsonSchema.lengthSemantics,
-				encryption: jsonSchema.encryption,
 				identity: jsonSchema.identity,
 				isUDTRef,
 				itemsType,
@@ -118,7 +116,6 @@ module.exports = (baseProvider, options, app) => {
 					name: wrapInQuotes({ name: columnDefinition.name }),
 					type: getColumnType(columnDefinition),
 					default: getColumnDefault(columnDefinition),
-					encrypt: getColumnEncrypt(columnDefinition),
 					constraints: getColumnConstraints(columnDefinition),
 				},
 			});
