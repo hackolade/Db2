@@ -53,10 +53,23 @@ const DATA_TYPES_WITH_PRECISION = [DATA_TYPE.decimal, DATA_TYPE.float, DATA_TYPE
 
 const DATA_TYPES_WITH_IDENTITY = [DATA_TYPE.integer, DATA_TYPE.smallint, DATA_TYPE.bigint, DATA_TYPE.decimal];
 
+const STRING_DATA_TYPES = [
+	DATA_TYPE.char,
+	DATA_TYPE.varchar,
+	DATA_TYPE.nchar,
+	DATA_TYPE.nvarchar,
+	DATA_TYPE.clob,
+	DATA_TYPE.graphic,
+	DATA_TYPE.vargraphic,
+	DATA_TYPE.dbclob,
+	DATA_TYPE.blob,
+];
+
 module.exports = {
 	DATA_TYPE,
 	DATA_TYPES_WITH_BYTE,
 	DATA_TYPES_WITH_LENGTH,
 	DATA_TYPES_WITH_PRECISION,
 	DATA_TYPES_WITH_IDENTITY,
+	STRING_DATA_TYPES,
 };
