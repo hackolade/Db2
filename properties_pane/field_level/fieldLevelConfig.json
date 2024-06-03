@@ -3836,23 +3836,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Array type",
-				"propertyType": "group",
-				"propertyKeyword": "array_type",
-				"propertyTooltip": "Declaring the array number of dimensions is simply for documentation; it does not affect run-time behavior.",
-				"structure": [
-					{
-						"propertyName": "Size limit",
-						"propertyKeyword": "array_size_limit",
-						"propertyTooltip": "Declaring the array size is simply for documentation; it does not affect run-time behavior.",
-						"propertyType": "numeric",
-						"valueType": "number",
-						"minValue": 0,
-						"step": 1
-					}
-				]
-			},
-			{
 				"propertyName": "Generated column",
 				"propertyKeyword": "generatedColumn",
 				"propertyTooltip": "A generated column is a special column that is always computed from other columns",

@@ -41,6 +41,11 @@
  */
 {
 	"delete": {
-		"field": ["encryption"]
+		"field": {
+			"char": ["encryption"],
+			"array": ["encryption"],
+			"multiset": ["encryption"],
+			"xml": ["array_type"]
+		}
 	}
 }
