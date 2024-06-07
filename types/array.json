@@ -19,5 +19,22 @@
 		"maxItems": "",
 		"uniqueItems": false,
 		"length": 1
+	},
+	"subtype": "array",
+	"subtypes": {
+		"array": {
+			"childValueType": [
+				"array",
+				"binary",
+				"boolean",
+				"char",
+				"datetime",
+				"json",
+				"multiset",
+				"number",
+				"rowid",
+				"xml"
+			]
+		}
 	}
 }
