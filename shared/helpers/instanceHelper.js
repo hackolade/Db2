@@ -24,9 +24,11 @@ const getDbVersion = async ({ connection }) => {
  * @param {{ connection: Connection }}
  * @returns {Promise<string[]>}
  */
-const getSchemaNames = async ({ connection }) => {
+const getSchemaNames = async ({ connection, logger }) => {
 	const query = queryHelper.getSchemasQuery();
 	const result = await connection.execute({ query });
+
+	logger.info(`Get tables query "${query}" result: ` + JSON.stringify(result));
 
 	return result.map(row => row.SCHEMANAME);
 };
@@ -35,9 +37,16 @@ const getSchemaNames = async ({ connection }) => {
  * @param {{ connection: Connection, tableType: string, includeSystemCollection: boolean, tableNameModifier: (name: string) => string }}
  * @returns {Promise<NameMap>}
  */
-const getDatabasesWithTableNames = async ({ connection, tableType, includeSystemCollection, tableNameModifier }) => {
+const getDatabasesWithTableNames = async ({
+	connection,
+	tableType,
+	includeSystemCollection,
+	tableNameModifier,
+	logger,
+}) => {
 	const query = queryHelper.getTableNamesQuery({ tableType, includeSystemCollection });
 	const result = await connection.execute({ query });
+	logger.info(`Get tables query "${query}" result: ` + JSON.stringify(result));
 
 	return result.reduce((result, { SCHEMANAME, TABLENAME }) => {
 		return {

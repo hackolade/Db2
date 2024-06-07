@@ -78,8 +78,8 @@ const getSchemaNames = async (connectionInfo, appLogger, callback, app) => {
 
 	try {
 		const connection = await connectionHelper.connect({ connectionInfo, logger });
-		const schemaNames = await instanceHelper.getSchemaNames({ connection });
-
+		const schemaNames = await instanceHelper.getSchemaNames({ connection, logger });
+		logger.info('schema names: ' + JSON.stringify(schemaNames));
 		callback(null, schemaNames);
 	} catch (error) {
 		logger.error(error);
@@ -110,6 +110,7 @@ const getDbCollectionsNames = async (connectionInfo, appLogger, callback, app) =
 			tableType: TABLE_TYPE.table,
 			includeSystemCollection: connectionInfo.includeSystemCollection,
 			tableNameModifier: identity,
+			logger,
 		});
 
 		logger.info('Get views and schema names');
@@ -119,6 +120,7 @@ const getDbCollectionsNames = async (connectionInfo, appLogger, callback, app) =
 			tableType: TABLE_TYPE.view,
 			includeSystemCollection: connectionInfo.includeSystemCollection,
 			tableNameModifier: nameHelper.setViewSign,
+			logger,
 		});
 		const allDatabaseNames = [...Object.keys(tableNames), ...Object.keys(viewNames)];
 		const dbCollectionNames = allDatabaseNames.map(dbName => {
