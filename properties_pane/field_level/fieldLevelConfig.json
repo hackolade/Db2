@@ -444,29 +444,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Encryption",
-				"propertyType": "block",
-				"propertyKeyword": "encryption",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Algorithm",
-						"propertyKeyword": "ENCRYPTION_ALGORITHM",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "No Salt",
-						"propertyKeyword": "noSalt",
-						"propertyType": "checkbox"
-					},
-					{
-						"propertyName": "Integrity Algorithm",
-						"propertyKeyword": "INTEGRITY_ALGORITHM",
-						"propertyType": "text"
-					}
-				]
-			},
-			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyType": "checkbox",
@@ -2932,29 +2909,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Encryption",
-				"propertyType": "block",
-				"propertyKeyword": "encryption",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Algorithm",
-						"propertyKeyword": "ENCRYPTION_ALGORITHM",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "No Salt",
-						"propertyKeyword": "noSalt",
-						"propertyType": "checkbox"
-					},
-					{
-						"propertyName": "Integrity Algorithm",
-						"propertyKeyword": "INTEGRITY_ALGORITHM",
-						"propertyType": "text"
-					}
-				]
-			},
-			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyType": "checkbox",
@@ -3453,29 +3407,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "Encryption",
-				"propertyType": "block",
-				"propertyKeyword": "encryption",
-				"propertyTooltip": "",
-				"structure": [
-					{
-						"propertyName": "Algorithm",
-						"propertyKeyword": "ENCRYPTION_ALGORITHM",
-						"propertyType": "text"
-					},
-					{
-						"propertyName": "No Salt",
-						"propertyKeyword": "noSalt",
-						"propertyType": "checkbox"
-					},
-					{
-						"propertyName": "Integrity Algorithm",
-						"propertyKeyword": "INTEGRITY_ALGORITHM",
-						"propertyType": "text"
-					}
-				]
-			},
-			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyType": "checkbox",
@@ -3903,23 +3834,6 @@ making sure that you maintain a proper JSON format.
 				"templateOptions": {
 					"editorDialect": "markdown"
 				}
-			},
-			{
-				"propertyName": "Array type",
-				"propertyType": "group",
-				"propertyKeyword": "array_type",
-				"propertyTooltip": "Declaring the array number of dimensions is simply for documentation; it does not affect run-time behavior.",
-				"structure": [
-					{
-						"propertyName": "Size limit",
-						"propertyKeyword": "array_size_limit",
-						"propertyTooltip": "Declaring the array size is simply for documentation; it does not affect run-time behavior.",
-						"propertyType": "numeric",
-						"valueType": "number",
-						"minValue": 0,
-						"step": 1
-					}
-				]
 			},
 			{
 				"propertyName": "Generated column",
