@@ -78,7 +78,7 @@
 				"inputLabel": "Java binary path",
 				"inputKeyword": "javaHomePath",
 				"inputType": "file",
-				"inputPlaceholder": "/opt/openjdk/bin/java",
+				"inputPlaceholder": "C:Program Files (x86)Javajre-1.8\binjava.exe",
 				"extensions": ["*"]
 			}
 		]
