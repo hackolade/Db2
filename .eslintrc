@@ -28,7 +28,7 @@
 		"no-unused-vars": "off",
 		"unused-imports/no-unused-imports": "error",
 		"unused-imports/no-unused-vars": [
-			"warn",
+			"off",
 			{
 				"vars": "all",
 				"varsIgnorePattern": "^(React$|__)",
@@ -50,7 +50,13 @@
 			"parserOptions": {
 				"project": "./tsconfig.json"
 			}
-		}
+		},
+		{
+			"files": ["*.d.ts"],
+			"rules": {
+				"@typescript-eslint/no-explicit-any": "off"
+			}
+		},
 	],
 	"settings": {
 		"import/resolver": {
