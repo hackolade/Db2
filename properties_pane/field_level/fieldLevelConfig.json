@@ -276,7 +276,6 @@ making sure that you maintain a proper JSON format.
 				"minValue": 1,
 				"maxValue": 128,
 				"step": 1,
-				"defaultValue": 1,
 				"typeDecorator": true,
 				"dependency": {
 					"type": "and",
