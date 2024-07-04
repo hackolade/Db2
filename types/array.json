@@ -24,10 +24,10 @@
 	"subtypes": {
 		"array": {
 			"childValueType": [
+				"char",
 				"array",
 				"binary",
 				"boolean",
-				"char",
 				"datetime",
 				"json",
 				"multiset",
