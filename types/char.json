@@ -29,8 +29,8 @@
 		"enum": [],
 		"sample": "",
 		"comments": "",
-		"mode": "char",
-		"length": 1
+		"mode": "varchar",
+		"length": 20
 	},
 	"subtypes": {
 		"object": {
