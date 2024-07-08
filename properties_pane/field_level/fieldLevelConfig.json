@@ -138,6 +138,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "character"],
+				"defaultValue": "",
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -154,6 +155,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "char varying", "character varying"],
+				"defaultValue": "",
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -170,6 +172,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "national char", "national character"],
+				"defaultValue": "",
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -186,6 +189,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "nchar varying", "national char varying", "national character varying"],
+				"defaultValue": "",
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -202,6 +206,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "char large object", "character large object"],
+				"defaultValue": "",
 				"dependency": {
 					"type": "and",
 					"values": [
@@ -873,6 +878,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "int"],
+				"defaultValue": "",
 				"dependency": {
 					"key": "mode",
 					"value": "integer"
@@ -884,6 +890,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of options",
 				"propertyType": "select",
 				"options": ["", "dec", "numeric", "num"],
+				"defaultValue": "",
 				"dependency": {
 					"key": "mode",
 					"value": "decimal"
