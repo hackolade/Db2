@@ -19,7 +19,8 @@
 				"multiset",
 				"number",
 				"rowid",
-				"xml"
+				"xml",
+				"object"
 			]
 		}
 	}
