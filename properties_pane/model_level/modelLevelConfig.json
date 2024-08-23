@@ -90,7 +90,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Encoding",
 				"propertyKeyword": "encoding",
 				"propertyTooltip": "Select from list of options",
-				"defaultValue": "UTF8",
+				"defaultValue": "UTF-8",
 				"propertyType": "select",
 				"options": ["UTF-8", "UCS-2"]
 			},
