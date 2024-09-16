@@ -35,27 +35,19 @@ const { hydrateAuxiliaryTableData } = require('./ddlHelpers/table/hydrateAuxilia
  * @param {{ columns: object[] }}
  * @returns {string}
  */
-const getViewColumnsAsString = ({ columns }) => {
-	const statements = columns.map(({ statement, isActivated }) =>
-		commentIfDeactivated(statement, { isActivated, isPartOfLine: false }),
-	);
-	const lastNonCommentIndex = statements.findLastIndex(statement => !statement.startsWith('--'));
+const getViewColumnsAsString = ({ app, columns }) => {
+	const { joinActivatedAndDeactivatedStatements } = app.require('@hackolade/ddl-fe-utils');
 
-	if (lastNonCommentIndex === -1) {
-		return statements.join('\n');
-	}
+	const statementDtos = columns.map(({ statement, isActivated }) => {
+		return {
+			statement: commentIfDeactivated(statement, { isActivated, isPartOfLine: false }),
+			isActivated,
+		};
+	});
+	const indent = '\n\t\t';
+	const statements = joinActivatedAndDeactivatedStatements({ statementDtos, delimiter: ',', indent });
 
-	return statements
-		.map((st, index) => {
-			const isNotLast = index !== statements.length - 1;
-
-			if (lastNonCommentIndex === index && isNotLast) {
-				return `${st} -- ,`;
-			}
-
-			return `${st}${isNotLast ? ',' : ''}`;
-		})
-		.join('\n\t\t');
+	return indent + statements;
 };
 
 module.exports = (baseProvider, options, app) => {
@@ -446,7 +438,7 @@ module.exports = (baseProvider, options, app) => {
 			const orReplace = viewData.orReplace ? ' OR REPLACE' : '';
 
 			const { columns, tables } = getViewData({ keys: viewData.keys });
-			const columnsAsString = getViewColumnsAsString({ columns });
+			const columnsAsString = getViewColumnsAsString({ app, columns });
 			const commentStatement = getTableCommentStatement({
 				tableName: viewName,
 				description: viewData.description,
