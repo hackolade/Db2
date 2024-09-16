@@ -8,6 +8,7 @@ const {
 	divideIntoActivatedAndDeactivated,
 } = require('../../../utils/general');
 const { getOptionsString } = require('../constraint/getOptionsString');
+const { INLINE_COMMENT } = require('../../../../constants/constants');
 
 /**
  * @typedef {{ activatedItems: string[], deactivatedItems: string[] }} DividedConstraints
@@ -94,6 +95,7 @@ const getDividedForeignKeyConstraints = ({ foreignKeyConstraints }) => {
 
 /**
  * @param {{
+ * app: { require: (moduleName: string) => any; }
  * columns: string[],
  * foreignKeyConstraints: object[],
  * keyConstraints: object[],
@@ -102,7 +104,9 @@ const getDividedForeignKeyConstraints = ({ foreignKeyConstraints }) => {
  *
  * @returns {string}
  */
-const getTableProps = ({ columns, foreignKeyConstraints, keyConstraints, checkConstraints, isActivated }) => {
+const getTableProps = ({ app, columns, foreignKeyConstraints, keyConstraints, checkConstraints, isActivated }) => {
+	const { joinActivatedAndDeactivatedStatements } = app.require('@hackolade/ddl-fe-utils');
+
 	const dividedKeysConstraints = getDividedKeysConstraints({ keyConstraints, isActivated });
 	const dividedForeignKeyConstraints = getDividedForeignKeyConstraints({ foreignKeyConstraints });
 	const keyConstraintsString = generateConstraintsString({
@@ -117,7 +121,17 @@ const getTableProps = ({ columns, foreignKeyConstraints, keyConstraints, checkCo
 		dividedConstraints: { activatedItems: checkConstraints, deactivatedItems: [] },
 		isParentActivated: isActivated,
 	});
-	const columnsString = joinStatements({ statements: columns });
+	const columnStatementDtos = columns.map(column => {
+		return {
+			statement: column,
+			isActivated: !column.startsWith(INLINE_COMMENT),
+		};
+	});
+	const columnsString = joinActivatedAndDeactivatedStatements({
+		statementDtos: columnStatementDtos,
+		delimiter: ',',
+		indent: '\n\t',
+	});
 	const tableProps = assignTemplates({
 		template: templates.createTableProps,
 		templateData: {

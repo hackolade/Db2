@@ -360,6 +360,7 @@ module.exports = (baseProvider, options, app) => {
 			}
 
 			const tableProps = getTableProps({
+				app,
 				columns,
 				foreignKeyConstraints,
 				keyConstraints,
