@@ -431,7 +431,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Not null constraint name",
@@ -980,7 +1000,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Identity",
@@ -1667,7 +1707,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Primary key",
@@ -2192,7 +2252,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Primary key",
@@ -2898,7 +2978,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Not null constraint name",
@@ -3396,7 +3496,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Not null constraint name",
@@ -3971,7 +4091,27 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Not null",
 				"propertyKeyword": "required",
 				"enableForReference": true,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"dependency": {
+					"key": "primaryKey",
+					"value": true
+				},
+				"disabled": true,
+				"defaultValue": true
+			},
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox",
+				"dependency": {
+					"type": "not",
+					"values": {
+						"key": "primaryKey",
+						"value": true
+					}
+				},
+				"defaultValue": false
 			},
 			{
 				"propertyName": "Row GUID Column",
