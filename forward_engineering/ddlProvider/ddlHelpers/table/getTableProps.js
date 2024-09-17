@@ -8,6 +8,7 @@ const {
 	divideIntoActivatedAndDeactivated,
 } = require('../../../utils/general');
 const { getOptionsString } = require('../constraint/getOptionsString');
+const { joinActivatedAndDeactivatedColumnStatements } = require('../../../utils/joinActivatedAndDeactivatedStatements');
 const { INLINE_COMMENT } = require('../../../../constants/constants');
 
 /**
@@ -104,9 +105,7 @@ const getDividedForeignKeyConstraints = ({ foreignKeyConstraints }) => {
  *
  * @returns {string}
  */
-const getTableProps = ({ app, columns, foreignKeyConstraints, keyConstraints, checkConstraints, isActivated }) => {
-	const { joinActivatedAndDeactivatedStatements } = app.require('@hackolade/ddl-fe-utils');
-
+const getTableProps = ({ columns, foreignKeyConstraints, keyConstraints, checkConstraints, isActivated }) => {
 	const dividedKeysConstraints = getDividedKeysConstraints({ keyConstraints, isActivated });
 	const dividedForeignKeyConstraints = getDividedForeignKeyConstraints({ foreignKeyConstraints });
 	const keyConstraintsString = generateConstraintsString({
@@ -121,17 +120,7 @@ const getTableProps = ({ app, columns, foreignKeyConstraints, keyConstraints, ch
 		dividedConstraints: { activatedItems: checkConstraints, deactivatedItems: [] },
 		isParentActivated: isActivated,
 	});
-	const columnStatementDtos = columns.map(column => {
-		return {
-			statement: column,
-			isActivated: !column.startsWith(INLINE_COMMENT),
-		};
-	});
-	const columnsString = joinActivatedAndDeactivatedStatements({
-		statementDtos: columnStatementDtos,
-		delimiter: ',',
-		indent: '\n\t',
-	});
+	const columnsString = joinActivatedAndDeactivatedColumnStatements({ columns });
 	const tableProps = assignTemplates({
 		template: templates.createTableProps,
 		templateData: {

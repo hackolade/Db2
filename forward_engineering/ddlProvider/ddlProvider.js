@@ -30,14 +30,13 @@ const { getIndexOptions } = require('./ddlHelpers/index/getIndexOptions.js');
 const { getTableType } = require('./ddlHelpers/table/getTableType.js');
 const { getName } = require('./ddlHelpers/jsonSchema/jsonSchemaHelper.js');
 const { hydrateAuxiliaryTableData } = require('./ddlHelpers/table/hydrateAuxiliaryTableData.js');
+const { joinActivatedAndDeactivatedStatements } = require('../utils/joinActivatedAndDeactivatedStatements');
 
 /**
  * @param {{ columns: object[] }}
  * @returns {string}
  */
-const getViewColumnsAsString = ({ app, columns }) => {
-	const { joinActivatedAndDeactivatedStatements } = app.require('@hackolade/ddl-fe-utils');
-
+const getViewColumnsAsString = ({ columns }) => {
 	const statementDtos = columns.map(({ statement, isActivated }) => {
 		return {
 			statement: commentIfDeactivated(statement, { isActivated, isPartOfLine: false }),
@@ -352,7 +351,6 @@ module.exports = (baseProvider, options, app) => {
 			}
 
 			const tableProps = getTableProps({
-				app,
 				columns,
 				foreignKeyConstraints,
 				keyConstraints,
@@ -438,7 +436,7 @@ module.exports = (baseProvider, options, app) => {
 			const orReplace = viewData.orReplace ? ' OR REPLACE' : '';
 
 			const { columns, tables } = getViewData({ keys: viewData.keys });
-			const columnsAsString = getViewColumnsAsString({ app, columns });
+			const columnsAsString = getViewColumnsAsString({ columns });
 			const commentStatement = getTableCommentStatement({
 				tableName: viewName,
 				description: viewData.description,
