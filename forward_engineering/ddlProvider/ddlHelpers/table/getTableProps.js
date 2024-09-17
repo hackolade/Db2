@@ -8,7 +8,7 @@ const {
 	divideIntoActivatedAndDeactivated,
 } = require('../../../utils/general');
 const { getOptionsString } = require('../constraint/getOptionsString');
-const { joinActivatedAndDeactivatedColumnStatements } = require('../../../utils/joinActivatedAndDeactivatedStatements');
+const { joinActivatedAndDeactivatedStatements } = require('../../../utils/joinActivatedAndDeactivatedStatements');
 const { INLINE_COMMENT } = require('../../../../constants/constants');
 
 /**
@@ -119,7 +119,8 @@ const getTableProps = ({ columns, foreignKeyConstraints, keyConstraints, checkCo
 		dividedConstraints: { activatedItems: checkConstraints, deactivatedItems: [] },
 		isParentActivated: isActivated,
 	});
-	const columnsString = joinActivatedAndDeactivatedColumnStatements({ columns });
+	const columnsString = joinActivatedAndDeactivatedStatements({ statements: columns, indent: '\n\t' });
+
 	const tableProps = assignTemplates({
 		template: templates.createTableProps,
 		templateData: {

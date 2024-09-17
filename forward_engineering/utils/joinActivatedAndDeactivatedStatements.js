@@ -1,10 +1,6 @@
 const { INLINE_COMMENT } = require('../../constants/constants');
 
 /**
- * @typedef {{ statement: string; isActivated: boolean; }} StatementDto
- */
-
-/**
  * @param {{
  * index: number;
  * numberOfStatements: number;
@@ -26,18 +22,18 @@ const getDelimiter = ({ index, numberOfStatements, lastIndexOfActivatedStatement
 
 /**
  * @param {{
- * statementDtos: StatementDto[];
+ * statements: string[];
  * delimiter?: string;
  * indent?: string;
  * }}
  * @return {string}
  * */
-const joinActivatedAndDeactivatedStatements = ({ statementDtos, delimiter = ',', indent = '\n' }) => {
-	const lastIndexOfActivatedStatement = statementDtos.findLastIndex(({ isActivated }) => isActivated);
-	const numberOfStatements = statementDtos.length;
+const joinActivatedAndDeactivatedStatements = ({ statements, delimiter = ',', indent = '\n' }) => {
+	const lastIndexOfActivatedStatement = statements.findLastIndex(statement => !statement.startsWith(INLINE_COMMENT));
+	const numberOfStatements = statements.length;
 
-	return statementDtos
-		.map(({ statement }, index) => {
+	return statements
+		.map((statement, index) => {
 			const currentDelimiter = getDelimiter({
 				index,
 				numberOfStatements,
@@ -50,22 +46,6 @@ const joinActivatedAndDeactivatedStatements = ({ statementDtos, delimiter = ',',
 		.join(indent);
 };
 
-/**
- * @param {{ columns?: string[] }}
- * @returns {string}
- */
-const joinActivatedAndDeactivatedColumnStatements = ({ columns = [] }) => {
-	const statementDtos = columns.map(column => {
-		return {
-			statement: column,
-			isActivated: !column.startsWith(INLINE_COMMENT),
-		};
-	});
-
-	return joinActivatedAndDeactivatedStatements({ statementDtos, delimiter: ',', indent: '\n\t' });
-};
-
 module.exports = {
 	joinActivatedAndDeactivatedStatements,
-	joinActivatedAndDeactivatedColumnStatements,
 };

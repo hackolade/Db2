@@ -37,16 +37,12 @@ const { joinActivatedAndDeactivatedStatements } = require('../utils/joinActivate
  * @returns {string}
  */
 const getViewColumnsAsString = ({ columns }) => {
-	const statementDtos = columns.map(({ statement, isActivated }) => {
-		return {
-			statement: commentIfDeactivated(statement, { isActivated, isPartOfLine: false }),
-			isActivated,
-		};
-	});
 	const indent = '\n\t\t';
-	const statements = joinActivatedAndDeactivatedStatements({ statementDtos, delimiter: ',', indent });
+	const statements = columns.map(({ statement, isActivated }) => {
+		return commentIfDeactivated(statement, { isActivated, isPartOfLine: false });
+	});
 
-	return indent + statements;
+	return indent + joinActivatedAndDeactivatedStatements({ statements, delimiter: ',', indent });
 };
 
 module.exports = (baseProvider, options, app) => {
