@@ -96,7 +96,6 @@ const getDividedForeignKeyConstraints = ({ foreignKeyConstraints }) => {
 
 /**
  * @param {{
- * app: { require: (moduleName: string) => any; }
  * columns: string[],
  * foreignKeyConstraints: object[],
  * keyConstraints: object[],
