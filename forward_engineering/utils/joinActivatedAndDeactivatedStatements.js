@@ -13,8 +13,12 @@ const getDelimiter = ({ index, numberOfStatements, lastIndexOfActivatedStatement
 	const isLastStatement = index === numberOfStatements - 1;
 	const isLastActivatedStatement = index === lastIndexOfActivatedStatement;
 
-	if (isLastStatement || isLastActivatedStatement) {
+	if (isLastStatement) {
 		return '';
+	}
+
+	if (isLastActivatedStatement) {
+		return ' --' + delimiter;
 	}
 
 	return delimiter;
