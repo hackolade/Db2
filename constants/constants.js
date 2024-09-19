@@ -11,7 +11,10 @@ const TABLE_TYPE = {
 	view: 'VIEW',
 };
 
+const INLINE_COMMENT = '--';
+
 module.exports = {
 	ERROR_MESSAGE,
 	TABLE_TYPE,
+	INLINE_COMMENT,
 };

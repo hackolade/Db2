@@ -1,4 +1,5 @@
 const { toLower } = require('lodash');
+const { INLINE_COMMENT } = require('../../constants/constants');
 
 /**
  * @param {{ text: string, tab: string }}
@@ -53,7 +54,7 @@ const divideIntoActivatedAndDeactivated = ({ items, mapFunction }) => {
  * @param {{ isActivated: boolean, isPartOfLine: boolean, inlineComment: string }}
  * @returns {string}
  */
-const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComment = '--' }) => {
+const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComment = INLINE_COMMENT }) => {
 	if (isActivated !== false) {
 		return statement;
 	}

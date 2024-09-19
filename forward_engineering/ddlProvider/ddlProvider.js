@@ -30,32 +30,19 @@ const { getIndexOptions } = require('./ddlHelpers/index/getIndexOptions.js');
 const { getTableType } = require('./ddlHelpers/table/getTableType.js');
 const { getName } = require('./ddlHelpers/jsonSchema/jsonSchemaHelper.js');
 const { hydrateAuxiliaryTableData } = require('./ddlHelpers/table/hydrateAuxiliaryTableData.js');
+const { joinActivatedAndDeactivatedStatements } = require('../utils/joinActivatedAndDeactivatedStatements');
 
 /**
  * @param {{ columns: object[] }}
  * @returns {string}
  */
 const getViewColumnsAsString = ({ columns }) => {
-	const statements = columns.map(({ statement, isActivated }) =>
-		commentIfDeactivated(statement, { isActivated, isPartOfLine: false }),
-	);
-	const lastNonCommentIndex = statements.findLastIndex(statement => !statement.startsWith('--'));
+	const indent = '\n\t\t';
+	const statements = columns.map(({ statement, isActivated }) => {
+		return commentIfDeactivated(statement, { isActivated, isPartOfLine: false });
+	});
 
-	if (lastNonCommentIndex === -1) {
-		return statements.join('\n');
-	}
-
-	return statements
-		.map((st, index) => {
-			const isNotLast = index !== statements.length - 1;
-
-			if (lastNonCommentIndex === index && isNotLast) {
-				return `${st} -- ,`;
-			}
-
-			return `${st}${isNotLast ? ',' : ''}`;
-		})
-		.join('\n\t\t');
+	return indent + joinActivatedAndDeactivatedStatements({ statements, delimiter: ',', indent });
 };
 
 module.exports = (baseProvider, options, app) => {
