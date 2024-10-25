@@ -79,7 +79,7 @@ const wrapInQuotes = ({ name }) => `"${name}"`;
  * @param {{ name: string }}
  * @returns {string}
  */
-const wrapInSingleQuotes = ({ name }) => `'${name.replace(/'/g, "''")}'`;
+const wrapInSingleQuotes = ({ name }) => `'${name}'`;
 
 /**
  * @param {{ name: string, schemaName?: string }}

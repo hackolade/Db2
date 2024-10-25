@@ -13,6 +13,12 @@ const OBJECT_TYPE = {
 };
 
 /**
+ * @param {string} description
+ * @returns {string}
+ */
+const escapeSpecialCharacters = description => description.replace(/'/g, "''");
+
+/**
  * @param {{ objectName: string, objectType: OBJECT_TYPE, description?: string }}
  * @returns {string}
  */
@@ -23,7 +29,11 @@ const getCommentStatement = ({ objectName, objectType, description }) => {
 
 	return assignTemplates({
 		template: templates.comment,
-		templateData: { objectType, objectName: trim(objectName), comment: wrapInSingleQuotes({ name: description }) },
+		templateData: {
+			objectType,
+			objectName: trim(objectName),
+			comment: wrapInSingleQuotes({ name: escapeSpecialCharacters(description) }),
+		},
 	});
 };
 
