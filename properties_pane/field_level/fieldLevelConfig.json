@@ -2653,10 +2653,6 @@ making sure that you maintain a proper JSON format.
 			"maxItems",
 			"uniqueItems",
 			"additionalItems",
-			"pattern",
-			"format",
-			"enum",
-			"sample",
 			"fakerFunction",
 			{
 				"propertyName": "Remarks",
