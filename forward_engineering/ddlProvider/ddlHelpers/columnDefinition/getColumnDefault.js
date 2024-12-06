@@ -36,16 +36,6 @@ const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle }) => 
 };
 
 /**
- * @param {{ defaultValue: DefaultValue, type: string }}
- * @returns {DefaultValue}
- */
-const wrapInQuotesDefaultValue = ({ defaultValue, type }) => {
-	const isStringDataType = STRING_DATA_TYPES.includes(toUpper(type));
-
-	return isStringDataType ? wrapInSingleQuotes({ name: defaultValue }) : defaultValue;
-};
-
-/**
  * @param {{ default?: DefaultValue, identity?: object }}
  * @returns {string}
  */
@@ -59,9 +49,7 @@ const getColumnDefault = ({ default: defaultValue, identity, type }) => {
 	}
 
 	if (defaultValue || defaultValue === 0) {
-		const value = wrapInQuotesDefaultValue({ defaultValue, type });
-
-		return ` WITH DEFAULT ${value}`;
+		return ` WITH DEFAULT ${defaultValue}`;
 	}
 	return '';
 };
