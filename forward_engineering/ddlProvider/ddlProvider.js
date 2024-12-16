@@ -386,7 +386,7 @@ module.exports = (baseProvider, options, app) => {
 		createIndex(tableName, index) {
 			const indexName = getIndexName({ index });
 
-			if (!indexName.trim() || !index.indxKey.length) {
+			if (!index.indxName || !index.indxKey.length) {
 				return '';
 			}
 
