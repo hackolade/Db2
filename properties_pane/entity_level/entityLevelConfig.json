@@ -401,7 +401,10 @@ making sure that you maintain a proper JSON format.
 						"propertyName": "Name",
 						"propertyKeyword": "indxName",
 						"propertyTooltip": "",
-						"propertyType": "text"
+						"propertyType": "text",
+						"validation": {
+							"required": true
+						}
 					},
 					{
 						"propertyName": "Activated",
@@ -421,7 +424,11 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "indxKey",
 						"propertyType": "fieldList",
 						"template": "orderedList",
-						"attributeList": ["asc", "desc", "random"]
+						"attributeList": ["asc", "desc", "random"],
+						"validation": {
+							"minLength": 1,
+							"required": true
+						}
 					},
 					{
 						"propertyName": "Include keys",

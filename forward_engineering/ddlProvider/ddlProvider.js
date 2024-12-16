@@ -385,6 +385,11 @@ module.exports = (baseProvider, options, app) => {
 
 		createIndex(tableName, index) {
 			const indexName = getIndexName({ index });
+
+			if (!index.indxName || !index.indxKey.length) {
+				return '';
+			}
+
 			const indexType = getIndexType({ index });
 			const indexOptions = getIndexOptions({ index });
 			const indexTableName = getNamePrefixedWithSchemaName({ name: tableName, schemaName: index.schemaName });
