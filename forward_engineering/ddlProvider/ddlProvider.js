@@ -64,10 +64,11 @@ module.exports = (baseProvider, options, app) => {
 				schemaName: containerData.name,
 				authorizationName: containerData.authorizationName,
 				dataCapture: containerData.dataCapture,
+				isActivated: containerData.isActivated,
 			};
 		},
 
-		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture }) {
+		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture, isActivated = true }) {
 			const schemaStatement = assignTemplates({
 				template: templates.createSchema,
 				templateData: {
@@ -77,7 +78,7 @@ module.exports = (baseProvider, options, app) => {
 				},
 			});
 
-			return schemaStatement;
+			return commentIfDeactivated(schemaStatement, { isActivated });
 		},
 
 		hydrateColumn({ columnDefinition, jsonSchema, schemaData, definitionJsonSchema = {} }) {
