@@ -68,7 +68,7 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture, isActivated }) {
+		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture, isActivated = true }) {
 			const schemaStatement = assignTemplates({
 				template: templates.createSchema,
 				templateData: {
