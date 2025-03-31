@@ -45,6 +45,16 @@
 					"length": 32704
 				}
 			},
+			{
+				"from": {
+					"type": "varchar",
+					"mode": "char",
+					"hasMaxLength": true
+				},
+				"to": {
+					"length": 255
+				}
+			},
             {
 				"from": {
 					"type": "nvarchar",
@@ -52,6 +62,16 @@
 				},
 				"to": {
 					"length": 32704
+				}
+			},
+			{
+				"from": {
+					"type": "nvarchar",
+					"mode": "nchar",
+					"hasMaxLength": true
+				},
+				"to": {
+					"length": 255
 				}
 			},
             {
