@@ -62,7 +62,25 @@
 				"to": {
 					"hasMaxLength": true
 				}
-			}
+			},
+			{
+				"from": {
+					"mode": "char",
+					"length": 255
+				},
+				"to": {
+					"hasMaxLength": true
+				}
+			},
+			{
+				"from": {
+					"mode": "nchar",
+					"length": 255
+				},
+				"to": {
+					"hasMaxLength": true
+				}
+			},
 		]
 	}
 }
