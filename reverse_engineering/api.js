@@ -49,8 +49,6 @@ const testConnection = async (connectionInfo, appLogger, callback, app) => {
 	});
 
 	try {
-		logger.info(connectionInfo);
-
 		const connection = await connectionHelper.connect({ connectionInfo, logger });
 		const version = await instanceHelper.getDbVersion({ connection });
 		await connectionHelper.disconnect();
@@ -101,9 +99,6 @@ const getDbCollectionsNames = async (connectionInfo, appLogger, callback, app) =
 	});
 
 	try {
-		logger.info('Get table and schema names');
-		logger.info(connectionInfo);
-
 		const connection = await connectionHelper.connect({ connectionInfo, logger });
 		const tableNames = await instanceHelper.getDatabasesWithTableNames({
 			connection,
