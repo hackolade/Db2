@@ -1,6 +1,6 @@
 {
     "name": "Db2",
-    "version": "0.2.21",
+    "version": "0.2.22",
     "author": "hackolade",
     "engines": {
         "hackolade": "7.7.10",
@@ -13,7 +13,7 @@
             "versions": [
                 "v11.7",
                 "v11.5",
-				"v12.x"
+                "v12.x"
             ]
         },
         "features": {
