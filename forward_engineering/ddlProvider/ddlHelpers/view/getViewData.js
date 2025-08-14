@@ -29,7 +29,10 @@ const getViewData = ({ keys }) => {
 	return keys.reduce(
 		(result, key) => {
 			if (!key.tableName) {
-				result.columns.push(getKeyWithAlias({ key }));
+				result.columns.push({
+					statement: getKeyWithAlias({ key }),
+					isActivated: key.isActivated,
+				});
 
 				return result;
 			}
