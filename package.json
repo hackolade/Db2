@@ -1,6 +1,6 @@
 {
     "name": "Db2",
-    "version": "0.2.18",
+    "version": "0.2.23",
     "author": "hackolade",
     "engines": {
         "hackolade": "7.7.10",
@@ -12,7 +12,8 @@
             "title": "Db2",
             "versions": [
                 "v11.7",
-                "v11.5"
+                "v11.5",
+                "v12.x"
             ]
         },
         "features": {
@@ -39,7 +40,8 @@
             "views": {
                 "enabled": true,
                 "viewLevel": "model",
-                "disablePipelines": true
+                "disablePipelines": true,
+                "includeViews": true
             },
             "relationships": {
                 "compositeRelationships": {

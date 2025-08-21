@@ -1,7 +1,7 @@
 {
 	"model": {
 		"modelName": "new_model",
-		"dbVersion": "v11.5",
+		"dbVersion": "v12.x",
 		"dbVendor": "Db2"
 	},
 	"container": {

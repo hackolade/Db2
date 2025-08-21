@@ -383,6 +383,13 @@ making sure that you maintain a proper JSON format.
 						"templateOptions": {
 							"editorDialect": "markdown"
 						}
+					},
+					{
+						"propertyName": "Alternate key",
+						"propertyKeyword": "alternateKey",
+						"propertyTooltip": "",
+						"propertyType": "checkbox",
+						"setFieldPropertyBy": "compositeUniqueKey"
 					}
 				]
 			}
