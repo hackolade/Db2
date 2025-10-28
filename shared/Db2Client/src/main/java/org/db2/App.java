@@ -37,6 +37,7 @@ public class App {
 			JSONObject errorObj = new JSONObject();
 			errorObj.put("message", e.getMessage());
 			errorObj.put("stack", e.getStackTrace());
+			errorObj.put("query", query);
 
 			result.put("error", errorObj);
 		} finally {
@@ -46,7 +47,7 @@ public class App {
 	}
 
 	private static String cleanStringValue(String value) {
-		return value.replace("<\\$>", "\"");
+		return value.replace("__PERCENT__", "%");
 	}
 
 	private static String findArgument(String[] args, Argument argument) {

@@ -101,10 +101,13 @@ const getDbCollectionsNames = async (connectionInfo, appLogger, callback, app) =
 	});
 
 	try {
+		const connection = await connectionHelper.connect({ connectionInfo, logger });
+		const dbVersion = await instanceHelper.getDbVersion({ connection });
+		logger.info('Db version: ' + dbVersion);
+
 		logger.info('Get table and schema names');
 		logger.info(connectionInfo);
 
-		const connection = await connectionHelper.connect({ connectionInfo, logger });
 		const tableNames = await instanceHelper.getDatabasesWithTableNames({
 			connection,
 			tableType: TABLE_TYPE.table,

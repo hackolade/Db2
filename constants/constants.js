@@ -13,8 +13,11 @@ const TABLE_TYPE = {
 
 const INLINE_COMMENT = '--';
 
+const PERSENT = '__PERCENT__';
+
 module.exports = {
 	ERROR_MESSAGE,
 	TABLE_TYPE,
 	INLINE_COMMENT,
+	PERSENT,
 };
