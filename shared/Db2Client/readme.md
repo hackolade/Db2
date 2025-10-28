@@ -19,13 +19,9 @@ For compiling client Using Maven plugin execute:
 Lifecycle methods:
 
 -   `mvn clean`
--   `mvn compile`
-
-Plugins:
-
--   `mvn assembly:single`
+-   `mvn package`
 
 ### Built artifacts
 
-The built JAR file you can find following by `./target/Db2Client-1.0-jar-with-dependencies.jar`
+The built JAR file you can find following by `./target/Db2Client-1.0-jar-with-dependencies.jar`, **NOT `Db2Client-1.0.jar`!!!**
 For use in Db2 plugin rename this JAR file to `Db2Client.jar` and put to `shared/addons/Db2Client.jar`
