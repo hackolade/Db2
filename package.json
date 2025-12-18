@@ -36,7 +36,7 @@
 			"reverseSchemaIntoOneColumn": true,
 			"disableDenormalization": true,
 			"enableComplexTypesNormalization": true,
-			"enableManyToManyRelationshipsNormalization": true,
+			"generateAssociativeEntitiesForManyToManyRelationships": true,
 			"restrictNestedFieldsAsPrimaryKey": false,
 			"views": {
 				"enabled": true,
