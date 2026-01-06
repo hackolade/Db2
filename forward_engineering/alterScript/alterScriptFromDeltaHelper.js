@@ -5,7 +5,7 @@ const {
 } = require('./alterScriptHelpers/alterEntityHelper');
 const { getModifyViewScriptDtos } = require('./alterScriptHelpers/alterViewHelper');
 
-const getItems = data => data?.items || [];
+const getItems = data => [data?.items].flat().filter(Boolean);
 
 const getAlterCollectionScriptDtos = ({
 	collection,
@@ -15,9 +15,9 @@ const getAlterCollectionScriptDtos = ({
 	internalDefinitions,
 	externalDefinitions,
 }) => {
-	const modifyScriptsData = getItems(collection.properties?.entities?.properties?.modified)
-		.filter(Boolean)
-		.map(item => Object.values(item.properties)[0]);
+	const modifyScriptsData = getItems(collection.properties?.entities?.properties?.modified).map(
+		item => Object.values(item.properties)[0],
+	);
 
 	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos({ dbVersion }));
 	const modifyCollectionKeysScriptDtos = modifyScriptsData.flatMap(getModifyCollectionKeysScriptDtos({ dbVersion }));
@@ -33,7 +33,6 @@ const getAlterCollectionScriptDtos = ({
 
 const getAlterViewScriptDtos = (collection, app) => {
 	const modifyViewScriptDtos = getItems(collection.properties?.views?.properties?.modified)
-		.filter(Boolean)
 		.map(viewWrapper => Object.values(viewWrapper.properties)[0])
 		.map(view => ({ ...view, ...(view.role || {}) }))
 		.flatMap(view => getModifyViewScriptDtos(view));
