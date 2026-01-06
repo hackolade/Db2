@@ -27,6 +27,15 @@ const joinAlterScriptDtosIntoScript = (dtos, shouldApplyDropStatements) => {
 		.join('\n\n');
 };
 
+const doesEntityLevelAlterScriptContainDropStatements = (data, app) => {
+	const alterScriptDtos = getAlterScriptDtos(data, app);
+	return alterScriptDtos.some(
+		alterScriptDto =>
+			alterScriptDto.isActivated &&
+			alterScriptDto.scripts.some(scriptModificationDto => scriptModificationDto.isDropScript),
+	);
+};
+
 const mapCoreDataForContainerLevelScripts = data => {
 	return {
 		...data,
@@ -45,6 +54,18 @@ const buildContainerLevelAlterScript = (data, app) => {
 	return joinAlterScriptDtosIntoScript(alterScriptDtos, shouldApplyDropStatements);
 };
 
+const doesContainerLevelAlterScriptContainDropStatements = (data, app) => {
+	const preparedData = mapCoreDataForContainerLevelScripts(data);
+	const alterScriptDtos = getAlterScriptDtos(preparedData, app);
+	return alterScriptDtos.some(
+		alterScriptDto =>
+			alterScriptDto.isActivated &&
+			alterScriptDto.scripts.some(scriptModificationDto => scriptModificationDto.isDropScript),
+	);
+};
+
 module.exports = {
+	doesEntityLevelAlterScriptContainDropStatements,
 	buildContainerLevelAlterScript,
+	doesContainerLevelAlterScriptContainDropStatements,
 };

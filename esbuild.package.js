@@ -31,6 +31,7 @@ esbuild
 	.build({
 		entryPoints: [
 			path.resolve(__dirname, 'forward_engineering', 'api.js'),
+			path.resolve(__dirname, 'api', 'fe.js'),
 			path.resolve(__dirname, 'forward_engineering', 'ddlProvider.js'),
 			path.resolve(__dirname, 'reverse_engineering', 'api.js'),
 		],

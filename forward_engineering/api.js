@@ -1,5 +1,3 @@
-const { generateContainerScript } = require('./api/generateContainerScript');
-
 module.exports = {
 	generateScript(data, logger, callback, app) {
 		throw new Error('Not implemented');
@@ -9,7 +7,9 @@ module.exports = {
 		throw new Error('Not implemented');
 	},
 
-	generateContainerScript,
+	generateContainerScript(data, logger, callback, app) {
+		throw new Error('Not implemented');
+	},
 
 	getDatabases(connectionInfo, logger, callback, app) {
 		throw new Error('Not implemented');
