@@ -1,3 +1,6 @@
+const { generateContainerScript } = require('./api/generateContainerScript');
+const { isDropInStatements } = require('./api/isDropInStatements');
+
 module.exports = {
 	generateScript(data, logger, callback, app) {
 		throw new Error('Not implemented');
@@ -7,9 +10,7 @@ module.exports = {
 		throw new Error('Not implemented');
 	},
 
-	generateContainerScript(data, logger, callback, app) {
-		throw new Error('Not implemented');
-	},
+	generateContainerScript,
 
 	getDatabases(connectionInfo, logger, callback, app) {
 		throw new Error('Not implemented');
@@ -23,7 +24,5 @@ module.exports = {
 		throw new Error('Not implemented');
 	},
 
-	isDropInStatements(data, logger, callback, app) {
-		throw new Error('Not implemented');
-	},
+	isDropInStatements,
 };
