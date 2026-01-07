@@ -274,6 +274,14 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
+		dropForeignKey(tableName, fkConstraintName) {
+			const templateConfig = {
+				tableName,
+				fkConstraintName,
+			};
+			return assignTemplates(templates.dropForeignKey, templateConfig);
+		},
+
 		hydrateTable({ tableData, entityData, jsonSchema }) {
 			const detailsTab = entityData[0];
 			const superTableId = detailsTab.underSuperTable?.[0]?.parentTable;

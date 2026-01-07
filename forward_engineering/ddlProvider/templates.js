@@ -14,6 +14,8 @@ module.exports = {
 	createForeignKey:
 		'ALTER TABLE ${foreignTable} ADD CONSTRAINT ${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete};',
 
+	dropForeignKey: 'ALTER TABLE {$tableName} DROP FOREIGN KEY ${constraintName};',
+
 	createForeignKeyConstraint:
 		'${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete}',
 

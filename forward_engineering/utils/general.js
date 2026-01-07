@@ -81,6 +81,8 @@ const wrapInQuotes = ({ name }) => `"${name}"`;
  */
 const wrapInSingleQuotes = ({ name }) => `'${name}'`;
 
+const removeAllQuotes = str => str.replaceAll(/['"]/g, '');
+
 /**
  * @param {{ name: string, schemaName?: string }}
  * @returns {string}
@@ -149,6 +151,7 @@ module.exports = {
 	commentIfDeactivated,
 	wrapInQuotes,
 	wrapInSingleQuotes,
+	removeAllQuotes,
 	getNamePrefixedWithSchemaName,
 	getColumnsList,
 	toArray,
