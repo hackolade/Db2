@@ -10,7 +10,6 @@ const {
 	isObjectInDeltaModelActivated,
 } = require('../../../utils/general');
 const { alterPkConstraint, dropPK } = require('../../../ddlProvider/ddlHelpers/key/constraintsHelper');
-const { areConstraintOptionsEqual } = require('./areConstraintOptionsEqual');
 const { KEY_TYPE } = require('../../../ddlProvider/ddlHelpers/key/keyHelper');
 
 const amountOfColumnsInRegularPk = 1;
@@ -68,7 +67,7 @@ const wasCompositePkChangedInTransitionFromCompositeToRegular = collection => {
 		const oldCompositePkAsRegularPkOptions =
 			getCustomPropertiesOfCompositePkForComparisonWithRegularPkOptions(compositePk);
 
-		return areConstraintOptionsEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
+		return _.isEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
 	});
 
 	return PrimaryKeyTransitionDto.transition(!areOptionsEqual);
@@ -108,7 +107,7 @@ const wasCompositePkChangedInTransitionFromRegularToComposite = collection => {
 		const oldCompositePkAsRegularPkOptions =
 			getCustomPropertiesOfCompositePkForComparisonWithRegularPkOptions(compositePk);
 
-		return areConstraintOptionsEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
+		return _.isEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
 	});
 
 	return PrimaryKeyTransitionDto.transition(!areOptionsEqual);
@@ -288,7 +287,7 @@ const wasRegularPkChangedInTransitionFromCompositeToRegular = (columnJsonSchema,
 			const oldCompositePkAsRegularPkOptions =
 				getCustomPropertiesOfCompositePkForComparisonWithRegularPkOptions(oldCompositePk);
 
-			return areConstraintOptionsEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
+			return _.isEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
 		});
 		return PrimaryKeyTransitionDto.transition(!areOptionsEqual);
 	}
@@ -331,7 +330,7 @@ const wasRegularPkChangedInTransitionFromRegularToComposite = (columnJsonSchema,
 			const oldCompositePkAsRegularPkOptions =
 				getCustomPropertiesOfCompositePkForComparisonWithRegularPkOptions(oldCompositePk);
 
-			return areConstraintOptionsEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
+			return _.isEqual(oldCompositePkAsRegularPkOptions, constraintOptions);
 		});
 		return PrimaryKeyTransitionDto.transition(!areOptionsEqual);
 	}
@@ -362,7 +361,7 @@ const wasRegularPkModified = (columnJsonSchema, collection) => {
 	const constraintOptions = getCustomPropertiesOfRegularPkForComparisonWithRegularPkOptions(columnJsonSchema);
 	const oldConstraintOptions = getCustomPropertiesOfRegularPkForComparisonWithRegularPkOptions(oldJsonSchema);
 
-	return !areConstraintOptionsEqual(oldConstraintOptions, constraintOptions);
+	return !_.isEqual(oldConstraintOptions, constraintOptions);
 };
 
 const getAddPkScriptDtos = collection => {
