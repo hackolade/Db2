@@ -20,7 +20,7 @@ const getAlterCollectionScriptDtos = ({
 	);
 
 	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos({ dbVersion }));
-	const modifyCollectionKeysScriptDtos = modifyScriptsData.flatMap(getModifyCollectionKeysScriptDtos({ dbVersion }));
+	const modifyCollectionKeysScriptDtos = modifyScriptsData.flatMap(getModifyCollectionKeysScriptDtos);
 
 	const modifyColumnScriptDtos = modifyScriptsData.flatMap(
 		getModifyColumnScriptDtos({ app, dbVersion, modelDefinitions, internalDefinitions, externalDefinitions }),
@@ -34,7 +34,7 @@ const getAlterCollectionScriptDtos = ({
 const getAlterViewScriptDtos = (collection, app) => {
 	const modifyViewScriptDtos = getItems(collection.properties?.views?.properties?.modified)
 		.map(viewWrapper => Object.values(viewWrapper.properties)[0])
-		.map(view => ({ ...view, ...(view.role || {}) }))
+		.map(view => ({ ...view, ...view.role }))
 		.flatMap(view => getModifyViewScriptDtos(view));
 
 	return [...modifyViewScriptDtos].filter(Boolean);

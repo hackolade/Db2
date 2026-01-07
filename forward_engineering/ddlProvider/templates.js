@@ -26,4 +26,8 @@ module.exports = {
 	viewSelectStatement: 'SELECT ${keys}\n\tFROM ${tableName}',
 
 	createIndex: 'CREATE${indexType} INDEX${indexName} ON ${indexTableName}${indexOptions};\n',
+
+	alterPkConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} PRIMARY KEY${columns}${options};',
+
+	dropPK: 'ALTER TABLE ${tableName} DROP PRIMARY KEY;',
 };

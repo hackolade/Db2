@@ -1,3 +1,5 @@
+const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
+
 const getModifyCollectionScriptDtos =
 	({}) =>
 	collection => {
@@ -9,16 +11,14 @@ const getModifyCollectionScriptDtos =
 		].filter(Boolean);
 	};
 
-const getModifyCollectionKeysScriptDtos =
-	({}) =>
-	collection => {
-		// const modifyPkConstraintDtos = getModifyPkConstraintScriptDtos(...);
-		// const modifyUkConstraintDtos = getModifyUkConstraintsScriptDtos(...);
-		return [
-			// ...modifyPkConstraintDtos,
-			// ...modifyUniqueKeyConstraintDtos,
-		].filter(Boolean);
-	};
+const getModifyCollectionKeysScriptDtos = collection => {
+	const modifyPkConstraintDtos = getModifyPkConstraintsScriptDtos(collection);
+	// const modifyUkConstraintDtos = getModifyUkConstraintsScriptDtos(...);
+	return [
+		...modifyPkConstraintDtos,
+		// ...modifyUniqueKeyConstraintDtos,
+	].filter(Boolean);
+};
 
 const getModifyColumnScriptDtos =
 	({}) =>

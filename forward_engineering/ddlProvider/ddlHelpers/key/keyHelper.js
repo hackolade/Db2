@@ -218,4 +218,5 @@ module.exports = {
 	foreignKeysToString,
 	foreignActiveKeysToString,
 	customPropertiesForForeignKey,
+	KEY_TYPE,
 };

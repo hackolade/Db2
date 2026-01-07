@@ -46,7 +46,7 @@ const mapCoreDataForContainerLevelScripts = data => {
 
 const buildContainerLevelAlterScript = (data, app) => {
 	const preparedData = mapCoreDataForContainerLevelScripts(data);
-	const alterScriptDtos = [];
+	const alterScriptDtos = getAlterScriptDtos(preparedData, app);
 	const shouldApplyDropStatements = preparedData.options?.additionalOptions?.some(
 		option => option.id === 'applyDropStatements' && option.value,
 	);
