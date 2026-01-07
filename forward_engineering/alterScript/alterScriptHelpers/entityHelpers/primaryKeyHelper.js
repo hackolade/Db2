@@ -438,7 +438,7 @@ const sortModifyPkConstraints = constraintDtos => {
 			return Number(c2.isDropScript) - Number(c1.isDropScript);
 		}
 		// This sorts all statements based on full table name, ASC
-		return c1.fullTableName < c2.fullTableName;
+		return c1.fullTableName.localeCompare(c2.fullTableName);
 	});
 };
 
