@@ -1,4 +1,4 @@
-const { toLower } = require('lodash');
+const { toLower, omit } = require('lodash');
 const { INLINE_COMMENT } = require('../../constants/constants');
 
 /**
@@ -116,6 +116,30 @@ const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, map
  */
 const toArray = ({ value }) => (Array.isArray(value) ? value : [value]);
 
+const getEntityName = entityData => {
+	return (entityData && (entityData.code || entityData.collectionName)) || '';
+};
+
+const getFullCollectionName = collectionSchema => {
+	const name = getEntityName(collectionSchema);
+	const schemaName = collectionSchema.compMod?.keyspaceName;
+	return getNamePrefixedWithSchemaName({ name, schemaName });
+};
+
+const getSchemaOfAlterCollection = collection => {
+	return { ...collection, ...(omit(collection?.role, 'properties') || {}) };
+};
+
+const isObjectInDeltaModelActivated = modelObject => {
+	return modelObject.compMod?.isActivated?.new ?? modelObject.role?.isActivated;
+};
+
+const isParentContainerActivated = collection => {
+	return (
+		collection?.compMod?.bucketProperties?.isActivated ?? collection?.role?.compMod?.bucketProperties?.isActivated
+	);
+};
+
 module.exports = {
 	setTab,
 	hasType,
@@ -128,4 +152,9 @@ module.exports = {
 	getNamePrefixedWithSchemaName,
 	getColumnsList,
 	toArray,
+	getFullCollectionName,
+	getEntityName,
+	getSchemaOfAlterCollection,
+	isObjectInDeltaModelActivated,
+	isParentContainerActivated,
 };
