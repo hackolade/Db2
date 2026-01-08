@@ -32,11 +32,11 @@ const getAlterCollectionScriptDtos = ({
 	);
 };
 
-const getAlterViewScriptDtos = (collection, app) => {
+const getAlterViewScriptDtos = collection => {
 	const modifyViewScriptDtos = getItems(collection.properties?.views?.properties?.modified)
 		.map(viewWrapper => Object.values(viewWrapper.properties)[0])
 		.map(view => ({ ...view, ...view.role }))
-		.flatMap(view => getModifyViewScriptDtos(view));
+		.flatMap(getModifyViewScriptDtos);
 
 	return [...modifyViewScriptDtos].filter(Boolean);
 };
@@ -135,7 +135,7 @@ const getAlterScriptDtos = (data, app) => {
 		externalDefinitions,
 	});
 
-	const viewScriptDtos = getAlterViewScriptDtos({ collection, app });
+	const viewScriptDtos = getAlterViewScriptDtos(collection);
 
 	const relationshipScriptDtos = getAlterRelationshipsScriptDtos({
 		collection,
