@@ -2,6 +2,7 @@ const { getModifyNonNullColumnsScriptDtos } = require('./columnHelpers/nonNullCo
 const { getModifyCheckConstraintScriptDtos } = require('./entityHelpers/checkConstraintHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
 const { getModifyUkConstraintsScriptDtos } = require('./entityHelpers/uniqueKeyHelper');
+const { getModifiedDefaultColumnValueScriptDtos } = require('./columnHelpers/defaultValueHelper');
 
 const getModifyCollectionScriptDtos = collection => {
 	const modifyCheckConstraintScriptDtos = getModifyCheckConstraintScriptDtos(collection);
@@ -21,11 +22,11 @@ const getModifyCollectionKeysScriptDtos = collection => {
 const getModifyColumnScriptDtos = collection => {
 	const modifyNotNullScriptDtos = getModifyNonNullColumnsScriptDtos(collection);
 	// const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(...);
-	// const modifyDefaultColumnValueScriptDtos = getModifiedDefaultColumnValueScriptDtos(...);
+	const modifyDefaultColumnValueScriptDtos = getModifiedDefaultColumnValueScriptDtos({ collection });
 
 	return [
 		...modifyNotNullScriptDtos,
-		// ...modifyDefaultColumnValueScriptDtos,
+		...modifyDefaultColumnValueScriptDtos,
 		// ...modifyCommentScriptDtos,
 	].filter(Boolean);
 };

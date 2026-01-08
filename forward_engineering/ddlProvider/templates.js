@@ -44,4 +44,8 @@ module.exports = {
 	alterCheckConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} CHECK (${expression});',
 
 	dropCheckConstraint: 'ALTER TABLE ${tableName} DROP CHECK ${constraintName};',
+
+	updateColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET DEFAULT ${defaultValue};',
+
+	dropColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP DEFAULT;',
 };
