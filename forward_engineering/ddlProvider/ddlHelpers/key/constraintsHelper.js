@@ -9,7 +9,7 @@ const { assignTemplates } = require('../../../utils/assignTemplates');
 const templates = require('../../templates');
 
 const getKeyOptions = (keyData, isParentActivated) => {
-	const constraintName = wrapInQuotes({ name: keyData.name.trim() });
+	const constraintName = wrapInQuotes(keyData.name.trim());
 	const isAllColumnsDeactivated = checkAllKeysDeactivated(keyData.columns || []);
 	const columns = _.isEmpty(keyData.columns)
 		? ''

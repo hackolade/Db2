@@ -66,7 +66,7 @@ const getModifyNonNullColumnsScriptDtos = collection => {
 		})
 		.map(([name, jsonSchema]) => {
 			const isActivated = isContainerActivated && isCollectionActivated && jsonSchema.isActivated;
-			return { script: setNotNullConstraint(fullTableName, wrapInQuotes({ name })), isActivated };
+			return { script: setNotNullConstraint(fullTableName, wrapInQuotes(name)), isActivated };
 		})
 		.map(({ script, isActivated }) => AlterScriptDto.getInstance([script], isActivated, false));
 
@@ -79,7 +79,7 @@ const getModifyNonNullColumnsScriptDtos = collection => {
 		})
 		.map(([name, jsonSchema]) => {
 			const isActivated = isContainerActivated && isCollectionActivated && jsonSchema.isActivated;
-			return { script: dropNotNullConstraint(fullTableName, wrapInQuotes({ name })), isActivated };
+			return { script: dropNotNullConstraint(fullTableName, wrapInQuotes(name)), isActivated };
 		})
 		.map(({ script, isActivated }) => AlterScriptDto.getInstance([script], isActivated, true));
 

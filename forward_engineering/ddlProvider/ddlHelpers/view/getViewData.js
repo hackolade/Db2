@@ -10,9 +10,9 @@ const getKeyWithAlias = ({ key }) => {
 	}
 
 	if (key.alias) {
-		return `${wrapInQuotes({ name: key.name })} as ${wrapInQuotes({ name: key.alias })}`;
+		return `${wrapInQuotes(key.name)} as ${wrapInQuotes(key.alias)}`;
 	} else {
-		return wrapInQuotes({ name: key.name });
+		return wrapInQuotes(key.name);
 	}
 };
 
@@ -37,7 +37,7 @@ const getViewData = ({ keys }) => {
 				return result;
 			}
 
-			const tableName = `${wrapInQuotes({ name: key.dbName })}.${wrapInQuotes({ name: key.tableName })}`;
+			const tableName = `${wrapInQuotes(key.dbName)}.${wrapInQuotes(key.tableName)}`;
 
 			if (!result.tables.includes(tableName)) {
 				result.tables.push(tableName);

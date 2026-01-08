@@ -40,4 +40,8 @@ module.exports = {
 	alterUkConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} UNIQUE${columns}${options};',
 
 	dropUkConstraint: 'ALTER TABLE ${tableName} DROP UNIQUE ${constraintName};',
+
+	alterCheckConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} CHECK (${expression});',
+
+	dropCheckConstraint: 'ALTER TABLE ${tableName} DROP CHECK ${constraintName};',
 };

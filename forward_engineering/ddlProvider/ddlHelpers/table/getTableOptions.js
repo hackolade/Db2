@@ -20,7 +20,7 @@ const getTableOptions = tableData => {
 			getValue: getBasicValue({
 				prefix: 'UNDER',
 				postfix: 'INHERIT SELECT PRIVILEGES',
-				modifier: name => wrapInQuotes({ name }),
+				modifier: wrapInQuotes,
 			}),
 		},
 		{
@@ -41,7 +41,7 @@ const getTableOptions = tableData => {
 		},
 		{
 			key: 'auxiliaryBaseColumn',
-			getValue: getBasicValue({ prefix: 'COLUMN', modifier: name => wrapInQuotes({ name }) }),
+			getValue: getBasicValue({ prefix: 'COLUMN', modifier: wrapInQuotes }),
 		},
 		{
 			key: 'auxiliaryPart',

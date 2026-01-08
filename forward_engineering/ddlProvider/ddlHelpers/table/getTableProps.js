@@ -58,9 +58,7 @@ const createKeyConstraint = ({ keyData, isParentActivated }) => {
 	const isAllColumnsDeactivated = checkAllKeysDeactivated({ keys: keyData.columns });
 	const columns = getColumnsList(keyData.columns, isAllColumnsDeactivated, isParentActivated);
 	const options = getOptionsString(keyData).statement;
-	const constraintName = keyData.constraintName
-		? `CONSTRAINT ${wrapInQuotes({ name: keyData.constraintName })} `
-		: '';
+	const constraintName = keyData.constraintName ? `CONSTRAINT ${wrapInQuotes(keyData.constraintName)} ` : '';
 
 	return {
 		statement: assignTemplates({
