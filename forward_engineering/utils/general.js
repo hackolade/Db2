@@ -122,14 +122,14 @@ const getEntityName = entityData => {
 	return (entityData && (entityData.code || entityData.collectionName)) || '';
 };
 
-const getFullCollectionName = collectionSchema => {
-	const name = getEntityName(collectionSchema);
-	const schemaName = collectionSchema.compMod?.keyspaceName;
-	return getNamePrefixedWithSchemaName({ name, schemaName });
-};
-
 const getSchemaNameFromCollection = ({ collection }) => {
 	return collection.compMod?.keyspaceName;
+};
+
+const getFullCollectionName = collectionSchema => {
+	const name = getEntityName(collectionSchema);
+	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
+	return getNamePrefixedWithSchemaName({ name, schemaName });
 };
 
 const getFullTableName = collection => {
