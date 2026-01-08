@@ -454,20 +454,6 @@ making sure that you maintain a proper JSON format.
 				"defaultValue": false
 			},
 			{
-				"propertyName": "Not null constraint name",
-				"propertyKeyword": "notNullConstraintName",
-				"propertyType": "text",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "required",
-							"value": true
-						}
-					]
-				}
-			},
-			{
 				"propertyName": "Primary key",
 				"propertyKeyword": "compositePrimaryKey",
 				"propertyNameFull": "Composite Primary Key",
@@ -2948,20 +2934,6 @@ making sure that you maintain a proper JSON format.
 					}
 				},
 				"defaultValue": false
-			},
-			{
-				"propertyName": "Not null constraint name",
-				"propertyKeyword": "notNullConstraintName",
-				"propertyType": "text",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "required",
-							"value": true
-						}
-					]
-				}
 			},
 			"minItems",
 			"maxItems",

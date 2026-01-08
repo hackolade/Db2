@@ -128,6 +128,17 @@ const getFullCollectionName = collectionSchema => {
 	return getNamePrefixedWithSchemaName({ name, schemaName });
 };
 
+const getSchemaNameFromCollection = ({ collection }) => {
+	return collection.compMod?.keyspaceName;
+};
+
+const getFullTableName = collection => {
+	const collectionSchema = { ...collection, ...(omit(collection?.role, 'properties') || {}) };
+	const name = getEntityName(collectionSchema);
+	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
+	return getNamePrefixedWithSchemaName({ name, schemaName });
+};
+
 const getSchemaOfAlterCollection = collection => {
 	return { ...collection, ...(omit(collection?.role, 'properties') || {}) };
 };
@@ -156,6 +167,7 @@ module.exports = {
 	getColumnsList,
 	toArray,
 	getFullCollectionName,
+	getFullTableName,
 	getEntityName,
 	getSchemaOfAlterCollection,
 	isObjectInDeltaModelActivated,
