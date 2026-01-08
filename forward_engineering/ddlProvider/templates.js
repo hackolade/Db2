@@ -32,4 +32,8 @@ module.exports = {
 	alterPkConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} PRIMARY KEY${columns}${options};',
 
 	dropPK: 'ALTER TABLE ${tableName} DROP PRIMARY KEY;',
+
+	alterNotNull: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET NOT NULL;',
+
+	dropNotNull: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP NOT NULL;',
 };

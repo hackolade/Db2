@@ -24,12 +24,9 @@ const getAlterCollectionScriptDtos = ({
 		item => Object.values(item.properties)[0],
 	);
 
-	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos({ dbVersion }));
+	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos);
 	const modifyCollectionKeysScriptDtos = modifyScriptsData.flatMap(getModifyCollectionKeysScriptDtos);
-
-	const modifyColumnScriptDtos = modifyScriptsData.flatMap(
-		getModifyColumnScriptDtos({ app, dbVersion, modelDefinitions, internalDefinitions, externalDefinitions }),
-	);
+	const modifyColumnScriptDtos = modifyScriptsData.flatMap(getModifyColumnScriptDtos);
 
 	return [...modifyCollectionScriptDtos, ...modifyColumnScriptDtos, ...modifyCollectionKeysScriptDtos].filter(
 		Boolean,

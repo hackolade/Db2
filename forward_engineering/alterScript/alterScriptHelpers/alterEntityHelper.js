@@ -1,15 +1,14 @@
+const { getModifyNonNullColumnsScriptDtos } = require('./columnHelpers/nonNullConstraintHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
 
-const getModifyCollectionScriptDtos =
-	({}) =>
-	collection => {
-		// const modifyCheckConstraintScriptDtos = getModifyCheckConstraintScriptDtos(...);
-		// const modifyCommentScriptDtos = getModifyEntityCommentsScriptDtos(...);
-		return [
-			// ...modifyCheckConstraintScriptDtos,
-			// ...modifyCommentScriptDtos,
-		].filter(Boolean);
-	};
+const getModifyCollectionScriptDtos = collection => {
+	// const modifyCheckConstraintScriptDtos = getModifyCheckConstraintScriptDtos(...);
+	// const modifyCommentScriptDtos = getModifyEntityCommentsScriptDtos(...);
+	return [
+		// ...modifyCheckConstraintScriptDtos,
+		// ...modifyCommentScriptDtos,
+	].filter(Boolean);
+};
 
 const getModifyCollectionKeysScriptDtos = collection => {
 	const modifyPkConstraintDtos = getModifyPkConstraintsScriptDtos(collection);
@@ -20,19 +19,17 @@ const getModifyCollectionKeysScriptDtos = collection => {
 	].filter(Boolean);
 };
 
-const getModifyColumnScriptDtos =
-	({}) =>
-	collection => {
-		// const modifyNotNullScriptDtos = getModifyNonNullColumnScriptDtos(...);
-		// const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(...);
-		// const modifyDefaultColumnValueScriptDtos = getModifiedDefaultColumnValueScriptDtos(...);
+const getModifyColumnScriptDtos = collection => {
+	const modifyNotNullScriptDtos = getModifyNonNullColumnsScriptDtos(collection);
+	// const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(...);
+	// const modifyDefaultColumnValueScriptDtos = getModifiedDefaultColumnValueScriptDtos(...);
 
-		return [
-			// ...modifyNotNullScriptDtos,
-			// ...modifyDefaultColumnValueScriptDtos,
-			// ...modifyCommentScriptDtos,
-		].filter(Boolean);
-	};
+	return [
+		...modifyNotNullScriptDtos,
+		// ...modifyDefaultColumnValueScriptDtos,
+		// ...modifyCommentScriptDtos,
+	].filter(Boolean);
+};
 
 module.exports = {
 	getModifyCollectionScriptDtos,
