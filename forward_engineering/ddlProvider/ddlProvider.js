@@ -72,7 +72,7 @@ module.exports = (baseProvider, options, app) => {
 			const schemaStatement = assignTemplates({
 				template: templates.createSchema,
 				templateData: {
-					schemaName: wrapInQuotes({ name: schemaName }),
+					schemaName: wrapInQuotes(schemaName),
 					authorization: authorizationName ? ' AUTHORIZATION ' + authorizationName : '',
 					dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
 				},
@@ -128,7 +128,7 @@ module.exports = (baseProvider, options, app) => {
 			const statement = assignTemplates({
 				template,
 				templateData: {
-					name: wrapInQuotes({ name: columnDefinition.name }),
+					name: wrapInQuotes(columnDefinition.name),
 					type: getColumnType(columnDefinition),
 					default: getColumnDefault(columnDefinition),
 					constraints: getColumnConstraints(columnDefinition),
@@ -151,7 +151,7 @@ module.exports = (baseProvider, options, app) => {
 			return assignTemplates({
 				template: templates.checkConstraint,
 				templateData: {
-					name: name ? `CONSTRAINT ${wrapInQuotes({ name })} ` : '',
+					name: name ? `CONSTRAINT ${wrapInQuotes(name)} ` : '',
 					expression: trim(expression).replace(/^\(([\s\S]*)\)$/, '$1'),
 				},
 			});
@@ -187,7 +187,7 @@ module.exports = (baseProvider, options, app) => {
 				name: primaryTable,
 				schemaName: primarySchemaName || schemaData.schemaName,
 			});
-			const constraintName = name ? `CONSTRAINT ${wrapInQuotes({ name })}` : '';
+			const constraintName = name ? `CONSTRAINT ${wrapInQuotes(name)}` : '';
 			const foreignKeyName = isActivated
 				? keyHelper.foreignKeysToString({ keys: foreignKeys })
 				: keyHelper.foreignActiveKeysToString({ keys: foreignKeys });
@@ -248,7 +248,7 @@ module.exports = (baseProvider, options, app) => {
 				name: foreignTable,
 				schemaName: foreignSchemaName || schemaData.schemaName,
 			});
-			const constraintName = name ? wrapInQuotes({ name }) : '';
+			const constraintName = name ? wrapInQuotes(name) : '';
 			const foreignKeyName = isActivated
 				? keyHelper.foreignKeysToString({ keys: foreignKeys })
 				: keyHelper.foreignActiveKeysToString({ keys: foreignKeys });
@@ -272,14 +272,6 @@ module.exports = (baseProvider, options, app) => {
 				statement: trim(foreignKeyStatement) + '\n',
 				isActivated,
 			};
-		},
-
-		dropForeignKey(tableName, fkConstraintName) {
-			const templateConfig = {
-				tableName,
-				fkConstraintName,
-			};
-			return assignTemplates(templates.dropForeignKey, templateConfig);
 		},
 
 		hydrateTable({ tableData, entityData, jsonSchema }) {

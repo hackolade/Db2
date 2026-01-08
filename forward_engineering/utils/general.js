@@ -73,7 +73,7 @@ const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComm
  * @param {{ name: string }}
  * @returns {string}
  */
-const wrapInQuotes = ({ name }) => `"${name}"`;
+const wrapInQuotes = str => `"${str}"`;
 
 /**
  * @param {{ name: string }}
@@ -89,13 +89,13 @@ const removeAllQuotes = str => str.replaceAll(/['"]/g, '');
  */
 const getNamePrefixedWithSchemaName = ({ name, schemaName }) => {
 	if (schemaName) {
-		return `${wrapInQuotes({ name: schemaName })}.${wrapInQuotes({ name })}`;
+		return `${wrapInQuotes(schemaName)}.${wrapInQuotes(name)}`;
 	}
 
-	return wrapInQuotes({ name });
+	return wrapInQuotes(name);
 };
 
-const columnMapToString = ({ name }) => wrapInQuotes({ name });
+const columnMapToString = ({ name }) => wrapInQuotes(name);
 
 const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, mapColumn = columnMapToString) => {
 	const dividedColumns = divideIntoActivatedAndDeactivated({ items: columns, mapFunction: mapColumn });

@@ -15,7 +15,6 @@ const getItems = data => [data?.items].flat().filter(Boolean);
 const getAlterCollectionScriptDtos = ({
 	collection,
 	app,
-	dbVersion,
 	modelDefinitions,
 	internalDefinitions,
 	externalDefinitions,
@@ -43,8 +42,6 @@ const getAlterViewScriptDtos = (collection, app) => {
 };
 
 const getAlterRelationshipsScriptDtos = ({ collection, app, ignoreRelationshipIDs = [] }) => {
-	const ddlProvider = require('../ddlProvider/ddlProvider')(null, null, app);
-
 	const addedRelationships = getItems(collection.properties?.relationships?.properties?.added)
 		.filter(Boolean)
 		.map(item => Object.values(item.properties)[0])
@@ -69,9 +66,9 @@ const getAlterRelationshipsScriptDtos = ({ collection, app, ignoreRelationshipID
 				relationship?.role?.compMod?.modified && !ignoreRelationshipIDs.includes(relationship?.role?.id),
 		);
 
-	const deleteFkScriptDtos = getDeleteForeignKeyScriptDtos(ddlProvider)(deletedRelationships);
-	const addFkScriptDtos = getAddForeignKeyScriptDtos(ddlProvider)(addedRelationships);
-	const modifiedFkScriptDtos = getModifyForeignKeyScriptDtos(ddlProvider)(modifiedRelationships);
+	const deleteFkScriptDtos = getDeleteForeignKeyScriptDtos(deletedRelationships);
+	const addFkScriptDtos = getAddForeignKeyScriptDtos(addedRelationships);
+	const modifiedFkScriptDtos = getModifyForeignKeyScriptDtos(modifiedRelationships);
 
 	return [...deleteFkScriptDtos, ...addFkScriptDtos, ...modifiedFkScriptDtos].filter(Boolean);
 };
@@ -126,7 +123,6 @@ const getAlterScriptDtos = (data, app) => {
 	const modelDefinitions = JSON.parse(data.modelDefinitions);
 	const internalDefinitions = JSON.parse(data.internalDefinitions);
 	const externalDefinitions = JSON.parse(data.externalDefinitions);
-	const dbVersion = data.modelData[0]?.dbVersion;
 
 	const inlineDeltaRelationships = getInlineRelationships({ collection, options: data.options });
 	const ignoreRelationshipIDs = inlineDeltaRelationships.map(relationship => relationship.role.id);
@@ -134,7 +130,6 @@ const getAlterScriptDtos = (data, app) => {
 	const collectionsScriptDtos = getAlterCollectionScriptDtos({
 		collection,
 		app,
-		dbVersion,
 		modelDefinitions,
 		internalDefinitions,
 		externalDefinitions,

@@ -37,6 +37,14 @@ module.exports = {
 
 	dropNotNull: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP NOT NULL;',
 
+	alterUkConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} UNIQUE${columns}${options};',
+
+	dropUkConstraint: 'ALTER TABLE ${tableName} DROP UNIQUE ${constraintName};',
+
+	alterCheckConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} CHECK (${expression});',
+
+	dropCheckConstraint: 'ALTER TABLE ${tableName} DROP CHECK ${constraintName};',
+
 	updateColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET DEFAULT ${defaultValue};',
 
 	dropColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP DEFAULT;',
