@@ -433,8 +433,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -447,25 +460,24 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
-			},
-			{
-				"propertyName": "Not null constraint name",
-				"propertyKeyword": "notNullConstraintName",
-				"propertyType": "text",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "required",
-							"value": true
-						}
-					]
-				}
 			},
 			{
 				"propertyName": "Primary key",
@@ -1046,8 +1058,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -1060,8 +1085,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -1797,8 +1835,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -1811,8 +1862,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -2386,8 +2450,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -2400,8 +2477,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -2929,8 +3019,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -2943,25 +3046,24 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
-			},
-			{
-				"propertyName": "Not null constraint name",
-				"propertyKeyword": "notNullConstraintName",
-				"propertyType": "text",
-				"dependency": {
-					"type": "and",
-					"values": [
-						{
-							"key": "required",
-							"value": true
-						}
-					]
-				}
 			},
 			"minItems",
 			"maxItems",
@@ -3186,8 +3288,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -3200,8 +3315,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false

@@ -42,7 +42,7 @@ const getCommentStatement = ({ objectName, objectType, description }) => {
  * @returns {string}
  */
 const getColumnCommentStatement = ({ tableName, columnName, description }) => {
-	const objectName = tableName + '.' + wrapInQuotes({ name: columnName });
+	const objectName = tableName + '.' + wrapInQuotes(columnName);
 	return getCommentStatement({ objectName, objectType: OBJECT_TYPE.column, description });
 };
 

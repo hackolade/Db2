@@ -1,4 +1,4 @@
-const { toLower } = require('lodash');
+const { toLower, omit } = require('lodash');
 const { INLINE_COMMENT } = require('../../constants/constants');
 
 /**
@@ -73,7 +73,7 @@ const commentIfDeactivated = (statement, { isActivated, isPartOfLine, inlineComm
  * @param {{ name: string }}
  * @returns {string}
  */
-const wrapInQuotes = ({ name }) => `"${name}"`;
+const wrapInQuotes = str => `"${str}"`;
 
 /**
  * @param {{ name: string }}
@@ -81,19 +81,21 @@ const wrapInQuotes = ({ name }) => `"${name}"`;
  */
 const wrapInSingleQuotes = ({ name }) => `'${name}'`;
 
+const removeAllQuotes = str => str.replaceAll(/['"]/g, '');
+
 /**
  * @param {{ name: string, schemaName?: string }}
  * @returns {string}
  */
 const getNamePrefixedWithSchemaName = ({ name, schemaName }) => {
 	if (schemaName) {
-		return `${wrapInQuotes({ name: schemaName })}.${wrapInQuotes({ name })}`;
+		return `${wrapInQuotes(schemaName)}.${wrapInQuotes(name)}`;
 	}
 
-	return wrapInQuotes({ name });
+	return wrapInQuotes(name);
 };
 
-const columnMapToString = ({ name }) => wrapInQuotes({ name });
+const columnMapToString = ({ name }) => wrapInQuotes(name);
 
 const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, mapColumn = columnMapToString) => {
 	const dividedColumns = divideIntoActivatedAndDeactivated({ items: columns, mapFunction: mapColumn });
@@ -116,6 +118,34 @@ const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, map
  */
 const toArray = ({ value }) => (Array.isArray(value) ? value : [value]);
 
+const getEntityName = entityData => {
+	return entityData?.code || entityData?.collectionName || entityData?.name || '';
+};
+
+const getSchemaNameFromCollection = ({ collection }) => {
+	return collection.compMod?.keyspaceName;
+};
+
+const getFullCollectionName = collectionSchema => {
+	const name = getEntityName(collectionSchema);
+	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
+	return getNamePrefixedWithSchemaName({ name, schemaName });
+};
+
+const getSchemaOfAlterCollection = collection => {
+	return { ...collection, ...(omit(collection?.role, 'properties') || {}) };
+};
+
+const isObjectInDeltaModelActivated = modelObject => {
+	return modelObject.compMod?.isActivated?.new ?? modelObject.role?.isActivated;
+};
+
+const isParentContainerActivated = collection => {
+	return (
+		collection?.compMod?.bucketProperties?.isActivated ?? collection?.role?.compMod?.bucketProperties?.isActivated
+	);
+};
+
 module.exports = {
 	setTab,
 	hasType,
@@ -125,7 +155,14 @@ module.exports = {
 	commentIfDeactivated,
 	wrapInQuotes,
 	wrapInSingleQuotes,
+	removeAllQuotes,
 	getNamePrefixedWithSchemaName,
 	getColumnsList,
 	toArray,
+	getFullCollectionName,
+	getEntityName,
+	getSchemaOfAlterCollection,
+	isObjectInDeltaModelActivated,
+	isParentContainerActivated,
+	getSchemaNameFromCollection,
 };
