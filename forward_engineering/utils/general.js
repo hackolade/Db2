@@ -119,7 +119,7 @@ const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, map
 const toArray = ({ value }) => (Array.isArray(value) ? value : [value]);
 
 const getEntityName = entityData => {
-	return (entityData && (entityData.code || entityData.collectionName)) || '';
+	return entityData?.code || entityData?.collectionName || '';
 };
 
 const getSchemaNameFromCollection = ({ collection }) => {
@@ -127,13 +127,6 @@ const getSchemaNameFromCollection = ({ collection }) => {
 };
 
 const getFullCollectionName = collectionSchema => {
-	const name = getEntityName(collectionSchema);
-	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
-	return getNamePrefixedWithSchemaName({ name, schemaName });
-};
-
-const getFullTableName = collection => {
-	const collectionSchema = { ...collection, ...(omit(collection?.role, 'properties') || {}) };
 	const name = getEntityName(collectionSchema);
 	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
 	return getNamePrefixedWithSchemaName({ name, schemaName });
@@ -167,9 +160,9 @@ module.exports = {
 	getColumnsList,
 	toArray,
 	getFullCollectionName,
-	getFullTableName,
 	getEntityName,
 	getSchemaOfAlterCollection,
 	isObjectInDeltaModelActivated,
 	isParentContainerActivated,
+	getSchemaNameFromCollection,
 };

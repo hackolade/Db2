@@ -1,10 +1,11 @@
 const _ = require('lodash');
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
 const {
-	getFullTableName,
+	getFullCollectionName,
 	wrapInQuotes,
 	isObjectInDeltaModelActivated,
 	isParentContainerActivated,
+	getSchemaOfAlterCollection,
 } = require('../../../utils/general');
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const templates = require('../../../ddlProvider/templates');
@@ -44,7 +45,8 @@ const dropNotNullConstraint = (tableName, columnName) => {
  * @return {AlterScriptDto[]}
  * */
 const getModifyNonNullColumnsScriptDtos = collection => {
-	const fullTableName = getFullTableName(collection);
+	const collectionSchema = getSchemaOfAlterCollection(collection);
+	const fullTableName = getFullCollectionName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
