@@ -36,4 +36,8 @@ module.exports = {
 	alterNotNull: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET NOT NULL;',
 
 	dropNotNull: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP NOT NULL;',
+
+	alterUkConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} UNIQUE${columns}${options};',
+
+	dropUkConstraint: 'ALTER TABLE ${tableName} DROP UNIQUE ${constraintName};',
 };

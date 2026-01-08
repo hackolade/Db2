@@ -433,8 +433,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -447,8 +460,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -1032,8 +1058,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -1046,8 +1085,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -1783,8 +1835,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -1797,8 +1862,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -2372,8 +2450,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -2386,8 +2477,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -2915,8 +3019,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -2929,8 +3046,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false
@@ -3158,8 +3288,21 @@ making sure that you maintain a proper JSON format.
 				"enableForReference": true,
 				"propertyType": "checkbox",
 				"dependency": {
-					"key": "primaryKey",
-					"value": true
+					"type": "or",
+					"values": [
+						{
+							"key": "primaryKey",
+							"value": true
+						},
+						{
+							"key": "unique",
+							"value": true
+						},
+						{
+							"key": "compositeUniqueKey",
+							"value": true
+						}
+					]
 				},
 				"disabled": true,
 				"defaultValue": true
@@ -3172,8 +3315,21 @@ making sure that you maintain a proper JSON format.
 				"dependency": {
 					"type": "not",
 					"values": {
-						"key": "primaryKey",
-						"value": true
+						"type": "or",
+						"values": [
+							{
+								"key": "primaryKey",
+								"value": true
+							},
+							{
+								"key": "unique",
+								"value": true
+							},
+							{
+								"key": "compositeUniqueKey",
+								"value": true
+							}
+						]
 					}
 				},
 				"defaultValue": false

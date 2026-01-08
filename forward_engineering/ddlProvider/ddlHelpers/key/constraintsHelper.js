@@ -8,7 +8,7 @@ const {
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const templates = require('../../templates');
 
-const alterPkConstraint = (tableName, isParentActivated, keyData) => {
+const getKeyOptions = (keyData, isParentActivated) => {
 	const constraintName = wrapInQuotes({ name: keyData.name.trim() });
 	const isAllColumnsDeactivated = checkAllKeysDeactivated(keyData.columns || []);
 	const columns = _.isEmpty(keyData.columns)
@@ -22,16 +22,25 @@ const alterPkConstraint = (tableName, isParentActivated, keyData) => {
 		.join('');
 
 	return {
+		constraintName,
+		columns,
+		options,
+		isActivated: !isAllColumnsDeactivated && isParentActivated,
+	};
+};
+
+const alterPkConstraint = (tableName, isParentActivated, keyData) => {
+	const { isActivated, ...templateData } = getKeyOptions(keyData, isParentActivated);
+
+	return {
 		statement: assignTemplates({
 			template: templates.alterPkConstraint,
 			templateData: {
 				tableName,
-				constraintName,
-				columns,
-				options,
+				...templateData,
 			},
 		}),
-		isActivated: !isAllColumnsDeactivated && isParentActivated,
+		isActivated,
 	};
 };
 
@@ -40,7 +49,36 @@ const dropPK = tableName => {
 	return assignTemplates(templates.dropPK, templatesConfig);
 };
 
+const alterUkConstraint = (tableName, isParentActivated, keyData) => {
+	const { isActivated, ...templateData } = getKeyOptions(keyData, isParentActivated);
+
+	return {
+		statement: assignTemplates({
+			template: templates.alterUkConstraint,
+			templateData: {
+				tableName,
+				...templateData,
+			},
+		}),
+		isActivated,
+	};
+};
+
+/**
+ * @param tableName {string}
+ * @param constraintName {string}
+ * */
+const dropUkConstraint = (tableName, constraintName) => {
+	const templatesConfig = {
+		tableName,
+		constraintName,
+	};
+	return assignTemplates(templates.dropUkConstraint, templatesConfig);
+};
+
 module.exports = {
 	alterPkConstraint,
 	dropPK,
+	alterUkConstraint,
+	dropUkConstraint,
 };
