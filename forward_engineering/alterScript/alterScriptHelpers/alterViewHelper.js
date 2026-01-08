@@ -1,11 +1,9 @@
-// const { getModifyViewCommentsScriptDtos } = require('./viewHelpers/commentsHelper');
+const { getModifyViewCommentsScriptDtos } = require('./viewHelpers/commentsHelper');
 
 const getModifyViewScriptDtos = view => {
-	// const modifyCommentsScriptDtos = getModifyViewCommentsScriptDtos(...);
+	const modifyCommentsScriptDtos = getModifyViewCommentsScriptDtos(view);
 
-	return [
-		// ...modifyCommentsScriptDtos,
-	].filter(Boolean);
+	return [...modifyCommentsScriptDtos].filter(Boolean);
 };
 
 module.exports = {

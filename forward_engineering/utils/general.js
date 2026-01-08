@@ -119,7 +119,7 @@ const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, map
 const toArray = ({ value }) => (Array.isArray(value) ? value : [value]);
 
 const getEntityName = entityData => {
-	return entityData?.code || entityData?.collectionName || '';
+	return entityData?.code || entityData?.collectionName || entityData?.name || '';
 };
 
 const getSchemaNameFromCollection = ({ collection }) => {
