@@ -11,11 +11,12 @@ const {
 } = require('../../../utils/general');
 const { alterPkConstraint, dropPK } = require('../../../ddlProvider/ddlHelpers/key/constraintsHelper');
 const { KEY_TYPE } = require('../../../ddlProvider/ddlHelpers/key/keyHelper');
+const { CONSTRAINT_POSTFIX } = require('../../../../constants/constants');
 
 const amountOfColumnsInRegularPk = 1;
 
 const getDefaultConstraintName = entityName => {
-	return `${entityName}_pkey`;
+	return [entityName, CONSTRAINT_POSTFIX.primaryKey].join('_');
 };
 
 const extractOptionsForComparisonWithRegularPkOptions = (optionHolder = {}) => {

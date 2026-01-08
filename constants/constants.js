@@ -15,9 +15,19 @@ const INLINE_COMMENT = '--';
 
 const PERSENT = '__PERCENT__';
 
+const CONSTRAINT_POSTFIX = {
+	primaryKey: 'pk',
+	foreignKey: 'fk',
+	uniqueKey: 'uk',
+	notNull: 'nn',
+	check: 'check',
+	default: 'default',
+};
+
 module.exports = {
 	ERROR_MESSAGE,
 	TABLE_TYPE,
 	INLINE_COMMENT,
 	PERSENT,
+	CONSTRAINT_POSTFIX,
 };
