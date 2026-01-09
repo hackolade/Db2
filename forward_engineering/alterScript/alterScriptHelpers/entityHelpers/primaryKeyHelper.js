@@ -32,12 +32,12 @@ const extractOptionsForComparisonWithRegularPkOptions = (optionHolder = {}) => {
 };
 
 const getCustomPropertiesOfRegularPkForComparisonWithRegularPkOptions = columnJsonSchema => {
-	return extractOptionsForComparisonWithRegularPkOptions(columnJsonSchema.primaryKeyOptions);
+	return extractOptionsForComparisonWithRegularPkOptions(columnJsonSchema.primaryKeyOptions || {});
 };
 
 const getCustomPropertiesOfCompositePkForComparisonWithRegularPkOptions = compositePk => {
 	const optionsForComparison = extractOptionsForComparisonWithRegularPkOptions(compositePk);
-	return [optionsForComparison].filter(o => Object.values(o).some(Boolean));
+	return optionsForComparison;
 };
 
 const wasCompositePkChangedInTransitionFromCompositeToRegular = collection => {
