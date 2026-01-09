@@ -26,7 +26,15 @@ const isWindows = () => os.platform() === 'win32';
  * @param {string | number} argValue
  * @returns {string}
  */
-const createArgument = (argKey, argValue) => ` --${argKey}="${argValue}"`;
+const createArgument = (argKey, argValue) => {
+	// base64 encode to preserve quotes and special characters
+	// to avoid shell interpretation issues in command line args
+	if (argKey === 'query') {
+		const encoded = Buffer.from(String(argValue), 'utf8').toString('base64');
+		return ` --${argKey}="${encoded}"`;
+	}
+	return ` --${argKey}="${argValue}"`;
+};
 
 /**
  * @param {{ [argKey: string]: string }} queryData

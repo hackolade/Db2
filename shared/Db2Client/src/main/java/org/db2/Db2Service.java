@@ -30,6 +30,67 @@ public class Db2Service {
 		return mapper.convertToJson(response);
 	}
 
+	public Object execute(String query) throws SQLException {
+		this.statement = connection.createStatement();
+		String[] statements = splitStatements(query);
+
+		java.util.ArrayList<String> selectStatements = new java.util.ArrayList<>();
+		java.util.ArrayList<String> ddlDmlStatements = new java.util.ArrayList<>();
+
+		for (String sqlStatement : statements) {
+			sqlStatement = sqlStatement.trim();
+			if (sqlStatement.isEmpty()) {
+				continue;
+			}
+
+			String upperStatement = sqlStatement.toUpperCase().trim();
+			if (upperStatement.startsWith("SELECT") || upperStatement.startsWith("WITH")) {
+				selectStatements.add(sqlStatement);
+			} else {
+				ddlDmlStatements.add(sqlStatement);
+			}
+		}
+
+		Object lastResult = null;
+
+		for (String sqlStatement : ddlDmlStatements) {
+			lastResult = executeStatement(sqlStatement);
+		}
+
+		for (String sqlStatement : selectStatements) {
+			lastResult = executeStatement(sqlStatement);
+		}
+
+		return lastResult != null ? lastResult : 0;
+	}
+
+	private Object executeStatement(String sqlStatement) throws SQLException {
+		boolean hasResultSet = statement.execute(sqlStatement);
+		if (hasResultSet) {
+			this.response = statement.getResultSet();
+			Object result = mapper.convertToJson(response);
+			if (this.response != null) {
+				this.response.close();
+				this.response = null;
+			}
+			return result;
+		} else {
+			return statement.getUpdateCount();
+		}
+	}
+
+	private String[] splitStatements(String query) {
+		String[] parts = query.trim().split(";\\s+", -1);
+		java.util.ArrayList<String> statements = new java.util.ArrayList<>();
+		for (String part : parts) {
+			part = part.trim();
+			if (!part.isEmpty()) {
+				statements.add(part);
+			}
+		}
+		return statements.toArray(new String[0]);
+	}
+
 	public int executeCallableQuery(String query, String inParam) throws SQLException {
 		this.callableStatement = connection.prepareCall(query);
 
@@ -56,25 +117,25 @@ public class Db2Service {
 		if (response != null) {
 			try {
 				response.close();
-			} catch (SQLException e) {
+			} catch (SQLException _) {
 				/* Ignored */}
 		}
 		if (statement != null) {
 			try {
 				statement.close();
-			} catch (SQLException e) {
+			} catch (SQLException _) {
 				/* Ignored */}
 		}
 		if (callableStatement != null) {
 			try {
 				callableStatement.close();
-			} catch (SQLException e) {
+			} catch (SQLException _) {
 				/* Ignored */}
 		}
 		if (connection != null) {
 			try {
 				connection.close();
-			} catch (SQLException e) {
+			} catch (SQLException _) {
 				/* Ignored */}
 		}
 	}

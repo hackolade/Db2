@@ -91,12 +91,19 @@ const getTableDdl = async ({ connection, schemaName, tableName, tableType, logge
 	}
 };
 
+/**
+ * @param {{ connection: Connection }}
+ * @returns {Promise<void>}
+ */
+const executeQuery = async ({ connection, query }) => await connection.execute({ query });
+
 const instanceHelper = {
 	getDbVersion,
 	getSchemaNames,
 	getSchemaProperties,
 	getDatabasesWithTableNames,
 	getTableDdl,
+	executeQuery,
 };
 
 module.exports = {

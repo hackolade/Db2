@@ -30,7 +30,7 @@ public class App {
 				int queryResult = db2Service.executeCallableQuery(query, inParam);
 				result.put("data", queryResult);
 			} else {
-				JSONArray queryResult = db2Service.executeQuery(query);
+				Object queryResult = db2Service.execute(query);
 				result.put("data", queryResult);
 			}
 		} catch (SQLException e) {
@@ -47,15 +47,36 @@ public class App {
 	}
 
 	private static String cleanStringValue(String value) {
-		return value.replace("__PERCENT__", "%");
+		value = value.replace("__PERCENT__", "%");
+
+		// Check if the value is base64 encoded (query arguments are base64 encoded to preserve quotes)
+		if (value.length() > 20 && value.matches("^[A-Za-z0-9+/=]+$")) {
+			try {
+				// preserve quotes and special characters
+				byte[] decodedBytes = java.util.Base64.getDecoder().decode(value);
+				value = new String(decodedBytes, java.nio.charset.StandardCharsets.UTF_8);
+			} catch (Exception _) {
+				// use the original value for backward compatibility,
+				// handles cases where the value isn't actually base64 encoded
+			}
+		}
+
+		value = value.replace("\\\"", "\"");
+		return value;
 	}
 
 	private static String findArgument(String[] args, Argument argument) {
-		return Arrays.stream(args)
+		String value = Arrays.stream(args)
 				.filter(arg -> arg.startsWith(argument.getPrefix()))
 				.map(arg -> arg.substring(argument.getStartValueIndex()))
 				.findFirst()
 				.orElse("");
+
+		if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+			value = value.substring(1, value.length() - 1);
+		}
+
+		return value;
 	}
 
 	private static void print(String value) {
