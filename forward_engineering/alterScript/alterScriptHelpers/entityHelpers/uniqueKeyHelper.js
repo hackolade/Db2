@@ -32,12 +32,12 @@ const extractOptionsForComparisonWithRegularUniqueKeyOptions = optionHolder => {
 };
 
 const getCustomPropertiesOfRegularUniqueKeyForComparisonWithRegularUniqueKeyOptions = columnJsonSchema => {
-	return extractOptionsForComparisonWithRegularUniqueKeyOptions(columnJsonSchema.uniqueKeyOptions);
+	return extractOptionsForComparisonWithRegularUniqueKeyOptions(columnJsonSchema.uniqueKeyOptions || {});
 };
 
 const getCustomPropertiesOfCompositeUniqueKeyForComparisonWithRegularUniqueKeyOptions = compositeUniqueKey => {
 	const optionsForComparison = extractOptionsForComparisonWithRegularUniqueKeyOptions(compositeUniqueKey);
-	return [optionsForComparison].filter(o => Object.values(o).some(Boolean));
+	return optionsForComparison;
 };
 
 const wasCompositeUniqueKeyChangedInTransitionFromCompositeToRegular = collection => {
