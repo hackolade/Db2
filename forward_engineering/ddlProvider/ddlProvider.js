@@ -81,6 +81,16 @@ module.exports = (baseProvider, options, app) => {
 			return commentIfDeactivated(schemaStatement, { isActivated });
 		},
 
+		dropSchema({ name, isActivated = true }) {
+			const dropSchemaStatement = assignTemplates({
+				template: templates.dropSchema,
+				templateData: {
+					schemaName: wrapInQuotes(name),
+				},
+			});
+
+			return commentIfDeactivated(dropSchemaStatement, { isActivated });
+		},
 		hydrateColumn({ columnDefinition, jsonSchema, schemaData, definitionJsonSchema = {} }) {
 			const isUDTRef = !!jsonSchema.$ref;
 			const type = isUDTRef ? columnDefinition.type : toUpper(jsonSchema.mode || jsonSchema.type);
