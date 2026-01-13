@@ -8,12 +8,12 @@ const {
 const { wrapInQuotes, getIsChangeProperties, getUpdatedProperties } = require('../../utils/general');
 const { getModifiedCommentOnSchemaScriptDtos } = require('./containerHelpers/commentsHelper');
 
-const getSchemaName = containerData => containerData.role.name;
+const extractSchemaName = containerData => containerData.role.name;
 
 const getAddContainerScriptDto = ddlProvider => containerData => {
 	const schemaData = {
 		...containerData.role,
-		schemaName: getSchemaName(containerData),
+		schemaName: extractSchemaName(containerData),
 	};
 	const script = ddlProvider.createSchema(schemaData);
 
@@ -21,7 +21,7 @@ const getAddContainerScriptDto = ddlProvider => containerData => {
 };
 
 const getDeleteContainerScriptDto = ddlProvider => containerData => {
-	const script = ddlProvider.dropSchema({ name: getSchemaName(containerData) });
+	const script = ddlProvider.dropSchema({ name: extractSchemaName(containerData) });
 
 	return AlterScriptDto.getInstance([script], true, true);
 };
@@ -29,7 +29,8 @@ const getDeleteContainerScriptDto = ddlProvider => containerData => {
 const getModifyContainerScriptDto = ddlProvider => containerData => {
 	const scripts = [];
 	const compMod = containerData.role?.compMod || {};
-	const schemaName = getSchemaName(containerData);
+	const schemaName = extractSchemaName(containerData);
+	const wrappedSchemaName = wrapInQuotes(schemaName);
 	const isActivated = containerData.isActivated !== false;
 	const updatedProperties = getUpdatedProperties(compMod, ['dataCapture']);
 
@@ -38,13 +39,17 @@ const getModifyContainerScriptDto = ddlProvider => containerData => {
 		scripts.push(AlterScriptDto.getInstance([alterDataCaptureScript], isActivated, false));
 	}
 
-	const commentScripts = getModifiedCommentOnSchemaScriptDtos({
-		schemaName,
+	const commentScript = getModifiedCommentOnSchemaScriptDtos({
+		schemaName: wrappedSchemaName,
 		compMod,
 		isActivated,
 	});
 
-	return [...scripts, ...commentScripts].filter(Boolean);
+	if (commentScript) {
+		scripts.push(commentScript);
+	}
+
+	return scripts;
 };
 
 const getContainersScripts = app => {

@@ -36,15 +36,12 @@ const getCommentStatement = ({ objectName, objectType, description, mode = COMME
 		return '';
 	}
 
-	const commentValue =
-		mode === COMMENT_MODE.remove ? 'NULL' : wrapInSingleQuotes({ name: escapeSpecialCharacters(description) });
-
 	return assignTemplates({
 		template: templates.comment,
 		templateData: {
 			objectType,
 			objectName: trim(objectName),
-			comment: commentValue,
+			comment: wrapInSingleQuotes({ name: escapeSpecialCharacters(description || '') }),
 		},
 	});
 };
@@ -122,43 +119,6 @@ const getColumnComments = ({ tableName, columnDefinitions = [] }) => {
 };
 
 /**
- * @param {{ tableName: string, columnName: string }}
- * @returns {string}
- */
-const dropColumnCommentStatement = ({ tableName, columnName }) => {
-	const objectName = tableName + '.' + wrapInQuotes(columnName);
-	return getCommentStatement({
-		objectName,
-		objectType: OBJECT_TYPE.column,
-		mode: COMMENT_MODE.remove,
-	});
-};
-
-/**
- * @param {{ tableName: string }}
- * @returns {string}
- */
-const dropTableCommentStatement = ({ tableName }) => {
-	return getCommentStatement({
-		objectName: tableName,
-		objectType: OBJECT_TYPE.table,
-		mode: COMMENT_MODE.remove,
-	});
-};
-
-/**
- * @param {{ indexName: string }}
- * @returns {string}
- */
-const dropIndexCommentStatement = ({ indexName }) => {
-	return getCommentStatement({
-		objectName: indexName,
-		objectType: OBJECT_TYPE.index,
-		mode: COMMENT_MODE.remove,
-	});
-};
-
-/**
  * @param {{ schemaName: string }}
  * @returns {string}
  */
@@ -178,7 +138,4 @@ module.exports = {
 	getIndexCommentStatement,
 
 	dropSchemaCommentStatement,
-	dropColumnCommentStatement,
-	dropTableCommentStatement,
-	dropIndexCommentStatement,
 };

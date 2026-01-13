@@ -6,20 +6,19 @@ const {
 const { wrapInQuotes } = require('../../../utils/general');
 
 const getModifiedCommentOnSchemaScriptDtos = ({ schemaName, compMod, isActivated }) => {
-	const scripts = [];
 	const description = compMod.description || {};
 
 	if (description.new && description.new !== description.old) {
 		const script = getSchemaCommentStatement({ schemaName, description: description.new });
-		scripts.push(AlterScriptDto.getInstance([script], isActivated, false));
+		return AlterScriptDto.getInstance([script], isActivated, false);
 	}
 
 	if (description.old && !description.new) {
 		const script = dropSchemaCommentStatement({ schemaName });
-		scripts.push(AlterScriptDto.getInstance([script], isActivated, true));
+		return AlterScriptDto.getInstance([script], isActivated, true);
 	}
 
-	return scripts;
+	return undefined;
 };
 
 module.exports = {

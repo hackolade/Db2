@@ -1,4 +1,3 @@
-const { isObjectInDeltaModelActivated } = require('../utils/general');
 const { getContainersScripts } = require('./alterScriptHelpers/alterContainerHelper');
 const {
 	getModifyCollectionScriptDtos,
