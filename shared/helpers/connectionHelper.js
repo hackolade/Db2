@@ -71,6 +71,7 @@ const createConnection = async ({ connectionInfo, logger }) => {
 			return new Promise((resolve, reject) => {
 				const queryResult = spawn(`"${javaPath}"`, clientCommandArguments, {
 					shell: true,
+					stdio: 'pipe',
 				});
 
 				queryResult.on('error', error => {
