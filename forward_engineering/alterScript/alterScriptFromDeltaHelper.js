@@ -21,9 +21,10 @@ const getItems = data => [data?.items].flat().filter(Boolean);
  * @return {AlterScriptDto[]}
  * */
 const getAlterContainersScriptDtos = ({ collection, app }) => {
-	const addedContainers = getItems(collection.properties?.containers?.properties?.added);
-	const deletedContainers = getItems(collection.properties?.containers?.properties?.deleted);
-	const modifiedContainers = getItems(collection.properties?.containers?.properties?.modified);
+	const { added, deleted, modified } = collection.properties?.containers?.properties || {};
+	const addedContainers = getItems(added);
+	const deletedContainers = getItems(deleted);
+	const modifiedContainers = getItems(modified);
 
 	const { getAddContainerScriptDto, getDeleteContainerScriptDto, getModifyContainerScriptDto } =
 		getContainersScripts(app);
