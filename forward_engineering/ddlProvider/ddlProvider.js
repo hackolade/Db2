@@ -98,12 +98,12 @@ module.exports = (baseProvider, options, app) => {
 			return commentIfDeactivated(dropSchemaStatement, { isActivated });
 		},
 
-		alterSchema(schemaName, dataCapture) {
+		alterSchema(schemaName, { dataCapture }) {
 			return assignTemplates({
 				template: templates.alterSchema,
 				templateData: {
 					schemaName: wrapInQuotes(schemaName),
-					dataCapture,
+					dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
 				},
 			});
 		},

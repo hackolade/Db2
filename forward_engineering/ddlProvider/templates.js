@@ -3,7 +3,7 @@ module.exports = {
 
 	dropSchema: 'DROP SCHEMA ${schemaName} RESTRICT',
 
-	alterSchema: 'ALTER SCHEMA ${schemaName} DATA CAPTURE ${dataCapture};',
+	alterSchema: 'ALTER SCHEMA ${schemaName}${dataCapture};',
 
 	createTable: 'CREATE${tableType} TABLE${ifNotExists} ${name}${tableProps}${tableOptions};',
 
