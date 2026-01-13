@@ -1,4 +1,4 @@
-const { toLower, omit } = require('lodash');
+const { toLower, omit, isEqual } = require('lodash');
 const { INLINE_COMMENT } = require('../../constants/constants');
 
 /**
@@ -146,6 +146,33 @@ const isParentContainerActivated = collection => {
 	);
 };
 
+/**
+ *
+ * @template {object} T
+ * @param {{ new: T, old: T }}
+ * @returns {boolean}
+ */
+const compareProperties = ({ new: newProperty, old: oldProperty }) => {
+	if (!newProperty && !oldProperty) {
+		return;
+	}
+	return !isEqual(newProperty, oldProperty);
+};
+
+/**
+ * @param {object} compMod
+ * @param {string[]} properties
+ * @returns {object} Only changed properties with their new values
+ */
+const getUpdatedProperties = (compMod, properties) =>
+	properties.reduce((acc, property) => {
+		const propCompMod = compMod[property] || {};
+		if (compareProperties(propCompMod) && propCompMod.new !== undefined) {
+			acc[property] = propCompMod.new;
+		}
+		return acc;
+	}, {});
+
 module.exports = {
 	setTab,
 	hasType,
@@ -165,4 +192,5 @@ module.exports = {
 	isObjectInDeltaModelActivated,
 	isParentContainerActivated,
 	getSchemaNameFromCollection,
+	getUpdatedProperties,
 };

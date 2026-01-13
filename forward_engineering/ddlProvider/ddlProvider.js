@@ -20,6 +20,7 @@ const {
 	getTableCommentStatement,
 	getColumnComments,
 	getIndexCommentStatement,
+	getSchemaCommentStatement,
 } = require('./ddlHelpers/comment/commentHelper.js');
 const { getTableProps } = require('./ddlHelpers/table/getTableProps.js');
 const { getTableOptions } = require('./ddlHelpers/table/getTableOptions.js');
@@ -65,20 +66,46 @@ module.exports = (baseProvider, options, app) => {
 				authorizationName: containerData.authorizationName,
 				dataCapture: containerData.dataCapture,
 				isActivated: containerData.isActivated,
+				description: containerData.description,
 			};
 		},
 
-		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture, isActivated = true }) {
+		createSchema({ schemaName, ifNotExist, authorizationName, dataCapture, description, isActivated = true }) {
+			const wrappedSchemaName = wrapInQuotes(schemaName);
 			const schemaStatement = assignTemplates({
 				template: templates.createSchema,
 				templateData: {
-					schemaName: wrapInQuotes(schemaName),
+					schemaName: wrappedSchemaName,
 					authorization: authorizationName ? ' AUTHORIZATION ' + authorizationName : '',
 					dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
 				},
 			});
 
-			return commentIfDeactivated(schemaStatement, { isActivated });
+			const comment = getSchemaCommentStatement({ schemaName: wrappedSchemaName, description });
+			const commentStatement = comment ? '\n' + comment + '\n' : '\n';
+
+			return commentIfDeactivated(schemaStatement + commentStatement, { isActivated });
+		},
+
+		dropSchema({ name, isActivated = true }) {
+			const dropSchemaStatement = assignTemplates({
+				template: templates.dropSchema,
+				templateData: {
+					schemaName: wrapInQuotes(name),
+				},
+			});
+
+			return commentIfDeactivated(dropSchemaStatement, { isActivated });
+		},
+
+		alterSchema(schemaName, { dataCapture }) {
+			return assignTemplates({
+				template: templates.alterSchema,
+				templateData: {
+					schemaName: wrapInQuotes(schemaName),
+					dataCapture: dataCapture ? ' DATA CAPTURE ' + dataCapture : '',
+				},
+			});
 		},
 
 		hydrateColumn({ columnDefinition, jsonSchema, schemaData, definitionJsonSchema = {} }) {
