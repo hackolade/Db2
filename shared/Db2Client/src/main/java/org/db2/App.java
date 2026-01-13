@@ -51,10 +51,12 @@ public class App {
 		}
 	}
 
-	private static String readStdin() {
-		Scanner scanner = new Scanner(System.in).useDelimiter("\\A");
-		return scanner.hasNext() ? scanner.next() : "{}";
-	}
+	private static String readStdin() throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            String result = reader.lines().collect(Collectors.joining("\n"));
+            return result.isEmpty() ? "{}" : result;
+        }
+    }
 
 	private static void print(String value) {
 		System.out.println(String.format("<hackolade>%s</hackolade>", value));
