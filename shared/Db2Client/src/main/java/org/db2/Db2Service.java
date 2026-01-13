@@ -3,6 +3,7 @@ package org.db2;
 import org.json.JSONArray;
 
 import java.sql.*;
+import java.util.regex.*;
 
 public class Db2Service {
 	final String DB_URL;
@@ -30,6 +31,90 @@ public class Db2Service {
 		return mapper.convertToJson(response);
 	}
 
+	public int applyScript(String script) throws SQLException {
+		String[] statements = splitStatements(script);
+		int totalUpdateCount = 0;
+
+		for (String statement : statements) {
+			statement = statement.trim();
+
+			if (statement.isEmpty()) {
+				continue;
+			}
+
+			Statement statementInstance = connection.createStatement();
+
+			try {
+				statementInstance.execute(statement);
+				totalUpdateCount += statementInstance.getUpdateCount();
+			} catch (SQLException e) {
+				int reorgPendingErrorCode = -668;
+
+				if (e.getErrorCode() == reorgPendingErrorCode) {
+					String tableName = extractTableNameFromError(e.getMessage());
+					if (tableName != null) {
+						reorganizeTable(tableName, statementInstance);
+
+						// retry
+						statementInstance.execute(statement);
+						totalUpdateCount += statementInstance.getUpdateCount();
+					} else {
+						throw e;
+					}
+				} else {
+					throw e;
+				}
+			} finally {
+				statementInstance.close();
+			}
+		}
+
+		return totalUpdateCount;
+	}
+
+	private String[] splitStatements(String query) {
+		String[] parts = query.trim().split(";\\s+", -1);
+		java.util.ArrayList<String> statements = new java.util.ArrayList<>();
+		for (String part : parts) {
+			part = part.trim();
+			if (!part.isEmpty()) {
+				statements.add(part);
+			}
+		}
+		return statements.toArray(new String[0]);
+	}
+
+	private void reorganizeTable(String tableName, Statement stmt) throws SQLException {
+		// Use ADMIN_CMD to execute REORG TABLE command
+		// Escape single quotes in table name for the command string
+		String escapedTableName = tableName.replace("'", "''");
+		String reorgSql = "CALL SYSPROC.ADMIN_CMD('REORG TABLE " + escapedTableName + "')";
+		stmt.execute(reorgSql);
+		if (!connection.getAutoCommit()) {
+			connection.commit();
+		}
+	}
+
+
+	private String extractTableNameFromError(String errorMessage) {
+		// Extract table name from error message like: SQLERRMC=7;db1.table2
+		Pattern pattern = Pattern.compile("SQLERRMC=\\d+;([^,;\\s]+)");
+		Matcher matcher = pattern.matcher(errorMessage);
+		if (matcher.find()) {
+			String tableName = matcher.group(1).trim();
+			// Quote the table name properly for REORG statement
+			// If it contains a dot, split into schema.table and quote both parts
+			if (tableName.contains(".")) {
+				String[] parts = tableName.split("\\.", 2);
+				if (parts.length == 2) {
+					return "\"" + parts[0] + "\".\"" + parts[1] + "\"";
+				}
+			}
+			return "\"" + tableName + "\"";
+		}
+		return null;
+	}
+
 	public int executeCallableQuery(String query, String inParam) throws SQLException {
 		this.callableStatement = connection.prepareCall(query);
 
@@ -53,29 +138,33 @@ public class Db2Service {
 	}
 
 	public void closeConnection() {
-		if (response != null) {
+		if (this.response != null) {
 			try {
-				response.close();
-			} catch (SQLException e) {
-				/* Ignored */}
+				this.response.close();
+			} catch (SQLException _) {
+				/* Ignored */
+			}
 		}
-		if (statement != null) {
+		if (this.statement != null) {
 			try {
-				statement.close();
-			} catch (SQLException e) {
-				/* Ignored */}
+				this.statement.close();
+			} catch (SQLException _) {
+				/* Ignored */
+			}
 		}
-		if (callableStatement != null) {
+		if (this.callableStatement != null) {
 			try {
-				callableStatement.close();
-			} catch (SQLException e) {
-				/* Ignored */}
+				this.callableStatement.close();
+			} catch (SQLException _) {
+				/* Ignored */
+			}
 		}
-		if (connection != null) {
+		if (this.connection != null) {
 			try {
-				connection.close();
-			} catch (SQLException e) {
-				/* Ignored */}
+				this.connection.close();
+			} catch (SQLException _) {
+				/* Ignored */
+			}
 		}
 	}
 

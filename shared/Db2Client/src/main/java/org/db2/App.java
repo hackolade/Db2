@@ -1,62 +1,63 @@
 package org.db2;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.sql.SQLException;
-import java.util.Arrays;
+import java.io.*;
+import java.util.stream.Collectors;
 
 public class App {
 	public static void main(String[] args) {
-		String host = findArgument(args, Argument.HOST);
-		String port = findArgument(args, Argument.PORT);
-		String database = findArgument(args, Argument.DATABASE);
-		String user = findArgument(args, Argument.USER);
-		String password = findArgument(args, Argument.PASSWORD);
-		String query = cleanStringValue(findArgument(args, Argument.QUERY));
-		String callable = findArgument(args, Argument.CALLABLE);
-		String inParam = findArgument(args, Argument.IN_PARAM);
-
-		Db2Service db2Service = new Db2Service(host, port, database, user, password, new ResponseMapper());
-
 		JSONObject result = new JSONObject();
+		String query = "";
+		Db2Service db2Service = null;
 
 		try {
+			String jsonInput = readStdin();
+			JSONObject input = new JSONObject(jsonInput);
+
+			String host = input.optString("host", "");
+			String port = input.optString("port", "");
+			String database = input.optString("database", "");
+			String user = input.optString("user", "");
+			String password = input.optString("password", "");
+			query = input.optString("query", "");
+			boolean callable = input.optBoolean("callable", false);
+			String inParam = input.optString("inParam", "");
+			boolean ddl = input.optBoolean("ddl", false);
+
+			db2Service = new Db2Service(host, port, database, user, password, new ResponseMapper());
 			db2Service.openConnection();
 
-			boolean isCallableQuery = Boolean.parseBoolean(callable);
-
-			if (isCallableQuery) {
+			if (callable) {
 				int queryResult = db2Service.executeCallableQuery(query, inParam);
 				result.put("data", queryResult);
+			} else if (ddl) {
+				int queryResult = db2Service.applyScript(query);
+				result.put("data", queryResult);
 			} else {
-				JSONArray queryResult = db2Service.executeQuery(query);
+				org.json.JSONArray queryResult = db2Service.executeQuery(query);
 				result.put("data", queryResult);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			JSONObject errorObj = new JSONObject();
 			errorObj.put("message", e.getMessage());
 			errorObj.put("stack", e.getStackTrace());
 			errorObj.put("query", query);
-
 			result.put("error", errorObj);
 		} finally {
-			db2Service.closeConnection();
+			if (db2Service != null) {
+				db2Service.closeConnection();
+			}
 			print(result.toString());
 		}
 	}
 
-	private static String cleanStringValue(String value) {
-		return value.replace("__PERCENT__", "%");
-	}
-
-	private static String findArgument(String[] args, Argument argument) {
-		return Arrays.stream(args)
-				.filter(arg -> arg.startsWith(argument.getPrefix()))
-				.map(arg -> arg.substring(argument.getStartValueIndex()))
-				.findFirst()
-				.orElse("");
-	}
+	private static String readStdin() throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            String result = reader.lines().collect(Collectors.joining("\n"));
+            return result.isEmpty() ? "{}" : result;
+        }
+    }
 
 	private static void print(String value) {
 		System.out.println(String.format("<hackolade>%s</hackolade>", value));

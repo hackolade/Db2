@@ -22,36 +22,11 @@ let connection;
 const isWindows = () => os.platform() === 'win32';
 
 /**
- * @param {string} argKey
- * @param {string | number} argValue
- * @returns {string}
- */
-const createArgument = (argKey, argValue) => ` --${argKey}="${argValue}"`;
-
-/**
- * @param {{ [argKey: string]: string }} queryData
+ * @param {{ clientPath: string }}
  * @returns {string[]}
  */
-const getQueryArguments = queryData => {
-	return Object.entries(queryData).reduce((result, [argKey, argValue]) => {
-		return [...result, createArgument(argKey, argValue)];
-	}, []);
-};
-
-/**
- * @param {{ clientPath: string, connectionInfo: ConnectionInfo }}
- * @returns {string[]}
- */
-const buildCommand = ({ clientPath, connectionInfo }) => {
-	let commandArgs = ['-jar', clientPath];
-
-	connectionInfo.host && commandArgs.push(createArgument('host', connectionInfo.host));
-	connectionInfo.port && commandArgs.push(createArgument('port', connectionInfo.port));
-	connectionInfo.database && commandArgs.push(createArgument('database', connectionInfo.database));
-	connectionInfo.userName && commandArgs.push(createArgument('user', connectionInfo.userName));
-	connectionInfo.userPassword && commandArgs.push(createArgument('pass', connectionInfo.userPassword));
-
-	return commandArgs;
+const buildCommand = ({ clientPath }) => {
+	return ['-jar', clientPath];
 };
 
 /**
@@ -89,14 +64,14 @@ const createConnection = async ({ connectionInfo, logger }) => {
 
 	// If you need to change this clientPath, please ensure that your changes work in the packaged plugin
 	const clientPath = path.resolve(__dirname, '..', 'addons', 'Db2Client.jar');
-	const clientCommandArguments = buildCommand({ clientPath, connectionInfo });
+	const clientCommandArguments = buildCommand({ clientPath });
 
 	return {
 		execute: queryData => {
 			return new Promise((resolve, reject) => {
-				const queryArguments = getQueryArguments(queryData);
-				const queryResult = spawn(`"${javaPath}"`, [...clientCommandArguments, ...queryArguments], {
+				const queryResult = spawn(`"${javaPath}"`, clientCommandArguments, {
 					shell: true,
+					stdio: 'pipe',
 				});
 
 				queryResult.on('error', error => {
@@ -112,6 +87,25 @@ const createConnection = async ({ connectionInfo, logger }) => {
 				queryResult.stdout.on('data', data => {
 					resultData.push(data);
 				});
+
+				const inputJson = JSON.stringify({
+					host: connectionInfo.host || '',
+					port: connectionInfo.port || '',
+					database: connectionInfo.database || '',
+					user: connectionInfo.userName || '',
+					password: connectionInfo.userPassword || '',
+					query: queryData.query || '',
+					callable: queryData.callable || false,
+					inParam: queryData.inparam ? String(queryData.inparam) : '',
+					ddl: queryData.ddl || false,
+				});
+
+				queryResult.stdin.on('error', error => {
+					reject(error);
+				});
+
+				queryResult.stdin.write(inputJson, 'utf8');
+				queryResult.stdin.end();
 
 				queryResult.on('close', code => {
 					if (code !== 0) {

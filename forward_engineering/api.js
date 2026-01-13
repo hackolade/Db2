@@ -1,5 +1,7 @@
 const { generateContainerScript } = require('./api/generateContainerScript');
 const { isDropInStatements } = require('./api/isDropInStatements');
+const { testConnection } = require('../shared/api/testConnection');
+const { applyToInstance } = require('./api/applyToInstance');
 
 module.exports = {
 	generateScript(data, logger, callback, app) {
@@ -16,13 +18,9 @@ module.exports = {
 		throw new Error('Not implemented');
 	},
 
-	applyToInstance(connectionInfo, logger, callback, app) {
-		throw new Error('Not implemented');
-	},
+	applyToInstance,
 
-	testConnection(connectionInfo, logger, callback, app) {
-		throw new Error('Not implemented');
-	},
+	testConnection,
 
 	isDropInStatements,
 };

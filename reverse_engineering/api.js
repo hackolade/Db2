@@ -13,6 +13,7 @@ const { instanceHelper } = require('../shared/helpers/instanceHelper');
 const { logHelper } = require('../shared/helpers/logHelper');
 const { TABLE_TYPE } = require('../constants/constants');
 const { nameHelper } = require('../shared/helpers/nameHelper');
+const { testConnection } = require('../shared/api/testConnection');
 
 /**
  * @param {ConnectionInfo} connectionInfo
@@ -30,34 +31,6 @@ const disconnect = async (connectionInfo, appLogger, callback) => {
 			logger: appLogger,
 		});
 
-		logger.error(error);
-		callback(error);
-	}
-};
-
-/**
- * @param {ConnectionInfo} connectionInfo
- * @param {AppLogger} appLogger
- * @param {Callback} callback
- * @param {App} app
- */
-const testConnection = async (connectionInfo, appLogger, callback, app) => {
-	const logger = logHelper.createLogger({
-		title: 'Test database connection',
-		hiddenKeys: connectionInfo.hiddenKeys,
-		logger: appLogger,
-	});
-
-	try {
-		logger.info(connectionInfo);
-
-		const connection = await connectionHelper.connect({ connectionInfo, logger });
-		const version = await instanceHelper.getDbVersion({ connection });
-		await connectionHelper.disconnect();
-
-		logger.info('Db version: ' + version);
-		callback();
-	} catch (error) {
 		logger.error(error);
 		callback(error);
 	}
