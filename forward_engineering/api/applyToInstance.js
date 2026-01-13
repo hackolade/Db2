@@ -11,7 +11,7 @@ async function applyToInstance(connectionInfo, logger, callback, app) {
 
 	try {
 		const connection = await connectionHelper.connect({ connectionInfo, logger: applyToInstanceLogger });
-		await instanceHelper.executeQuery({ connection, query: connectionInfo.script });
+		await instanceHelper.executeQuery({ connection, query: connectionInfo.script, ddl: true });
 
 		callback();
 	} catch (err) {

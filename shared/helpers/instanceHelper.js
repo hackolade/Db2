@@ -92,10 +92,10 @@ const getTableDdl = async ({ connection, schemaName, tableName, tableType, logge
 };
 
 /**
- * @param {{ connection: Connection }}
+ * @param {{ connection: Connection, query: string, ddl?: boolean }}
  * @returns {Promise<void>}
  */
-const executeQuery = async ({ connection, query }) => await connection.execute({ query });
+const executeQuery = async ({ connection, query, ddl = false }) => await connection.execute({ query, ddl });
 
 const instanceHelper = {
 	getDbVersion,

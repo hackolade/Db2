@@ -30,53 +30,45 @@ public class Db2Service {
 		return mapper.convertToJson(response);
 	}
 
-	public Object execute(String query) throws SQLException {
-		this.statement = connection.createStatement();
-		String[] statements = splitStatements(query);
+	public int applyScript(String script) throws SQLException {
+		String[] statements = splitStatements(script);
+		int totalUpdateCount = 0;
 
-		java.util.ArrayList<String> selectStatements = new java.util.ArrayList<>();
-		java.util.ArrayList<String> ddlDmlStatements = new java.util.ArrayList<>();
+		for (String statement : statements) {
+			statement = statement.trim();
 
-		for (String sqlStatement : statements) {
-			sqlStatement = sqlStatement.trim();
-			if (sqlStatement.isEmpty()) {
+			if (statement.isEmpty()) {
 				continue;
 			}
 
-			String upperStatement = sqlStatement.toUpperCase().trim();
-			if (upperStatement.startsWith("SELECT") || upperStatement.startsWith("WITH")) {
-				selectStatements.add(sqlStatement);
-			} else {
-				ddlDmlStatements.add(sqlStatement);
+			Statement statementInstance = connection.createStatement();
+
+			try {
+				statementInstance.execute(statement);
+				totalUpdateCount += statementInstance.getUpdateCount();
+			} catch (SQLException e) {
+				int reorgPendingErrorCode = -668;
+
+				if (e.getErrorCode() == reorgPendingErrorCode) {
+					String tableName = extractTableNameFromError(e.getMessage());
+					if (tableName != null) {
+						reorganizeTable(tableName, statementInstance);
+
+						// retry
+						statementInstance.execute(statement);
+						totalUpdateCount += statementInstance.getUpdateCount();
+					} else {
+						throw e;
+					}
+				} else {
+					throw e;
+				}
+			} finally {
+				statementInstance.close();
 			}
 		}
 
-		Object lastResult = null;
-
-		for (String sqlStatement : ddlDmlStatements) {
-			lastResult = executeStatement(sqlStatement);
-		}
-
-		for (String sqlStatement : selectStatements) {
-			lastResult = executeStatement(sqlStatement);
-		}
-
-		return lastResult != null ? lastResult : 0;
-	}
-
-	private Object executeStatement(String sqlStatement) throws SQLException {
-		boolean hasResultSet = statement.execute(sqlStatement);
-		if (hasResultSet) {
-			this.response = statement.getResultSet();
-			Object result = mapper.convertToJson(response);
-			if (this.response != null) {
-				this.response.close();
-				this.response = null;
-			}
-			return result;
-		} else {
-			return statement.getUpdateCount();
-		}
+		return totalUpdateCount;
 	}
 
 	private String[] splitStatements(String query) {
@@ -89,6 +81,37 @@ public class Db2Service {
 			}
 		}
 		return statements.toArray(new String[0]);
+	}
+
+	private void reorganizeTable(String tableName, Statement stmt) throws SQLException {
+		// Use ADMIN_CMD to execute REORG TABLE command
+		// Escape single quotes in table name for the command string
+		String escapedTableName = tableName.replace("'", "''");
+		String reorgSql = "CALL SYSPROC.ADMIN_CMD('REORG TABLE " + escapedTableName + "')";
+		stmt.execute(reorgSql);
+		if (!connection.getAutoCommit()) {
+			connection.commit();
+		}
+	}
+
+
+	private String extractTableNameFromError(String errorMessage) {
+		// Extract table name from error message like: SQLERRMC=7;db1.table2
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("SQLERRMC=\\d+;([^,;\\s]+)");
+		java.util.regex.Matcher matcher = pattern.matcher(errorMessage);
+		if (matcher.find()) {
+			String tableName = matcher.group(1).trim();
+			// Quote the table name properly for REORG statement
+			// If it contains a dot, split into schema.table and quote both parts
+			if (tableName.contains(".")) {
+				String[] parts = tableName.split("\\.", 2);
+				if (parts.length == 2) {
+					return "\"" + parts[0] + "\".\"" + parts[1] + "\"";
+				}
+			}
+			return "\"" + tableName + "\"";
+		}
+		return null;
 	}
 
 	public int executeCallableQuery(String query, String inParam) throws SQLException {
@@ -114,29 +137,33 @@ public class Db2Service {
 	}
 
 	public void closeConnection() {
-		if (response != null) {
+		if (this.response != null) {
 			try {
-				response.close();
+				this.response.close();
 			} catch (SQLException _) {
-				/* Ignored */}
+				/* Ignored */
+			}
 		}
-		if (statement != null) {
+		if (this.statement != null) {
 			try {
-				statement.close();
+				this.statement.close();
 			} catch (SQLException _) {
-				/* Ignored */}
+				/* Ignored */
+			}
 		}
-		if (callableStatement != null) {
+		if (this.callableStatement != null) {
 			try {
-				callableStatement.close();
+				this.callableStatement.close();
 			} catch (SQLException _) {
-				/* Ignored */}
+				/* Ignored */
+			}
 		}
-		if (connection != null) {
+		if (this.connection != null) {
 			try {
-				connection.close();
+				this.connection.close();
 			} catch (SQLException _) {
-				/* Ignored */}
+				/* Ignored */
+			}
 		}
 	}
 
