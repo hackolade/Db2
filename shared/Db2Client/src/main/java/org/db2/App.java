@@ -2,7 +2,8 @@ package org.db2;
 
 import org.json.JSONObject;
 
-import java.util.Scanner;
+import java.io.*;
+import java.util.stream.Collectors;
 
 public class App {
 	public static void main(String[] args) {

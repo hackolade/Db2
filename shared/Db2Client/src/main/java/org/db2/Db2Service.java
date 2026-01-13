@@ -3,6 +3,7 @@ package org.db2;
 import org.json.JSONArray;
 
 import java.sql.*;
+import java.util.regex.*;
 
 public class Db2Service {
 	final String DB_URL;
@@ -97,8 +98,8 @@ public class Db2Service {
 
 	private String extractTableNameFromError(String errorMessage) {
 		// Extract table name from error message like: SQLERRMC=7;db1.table2
-		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("SQLERRMC=\\d+;([^,;\\s]+)");
-		java.util.regex.Matcher matcher = pattern.matcher(errorMessage);
+		Pattern pattern = Pattern.compile("SQLERRMC=\\d+;([^,;\\s]+)");
+		Matcher matcher = pattern.matcher(errorMessage);
 		if (matcher.find()) {
 			String tableName = matcher.group(1).trim();
 			// Quote the table name properly for REORG statement
