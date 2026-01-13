@@ -1,7 +1,12 @@
 const _ = require('lodash');
 const ddlProvider = require('../../ddlProvider');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
-const { getSchemaCommentStatement } = require('../../ddlProvider/ddlHelpers/comment/commentHelper');
+const {
+	getSchemaCommentStatement,
+	getDeleteCommentStatement,
+} = require('../../ddlProvider/ddlHelpers/comment/commentHelper');
+const { wrapInQuotes } = require('../../utils/general');
+const { getModifiedCommentOnSchemaScriptDtos } = require('./containerHelpers/commentsHelper');
 
 const getSchemaName = containerData => containerData.role.name;
 
@@ -33,7 +38,13 @@ const getModifyContainerScriptDto = ddlProvider => containerData => {
 		scripts.push(AlterScriptDto.getInstance([alterDataCaptureScript], isActivated, false));
 	}
 
-	return scripts.filter(Boolean);
+	const commentScripts = getModifiedCommentOnSchemaScriptDtos({
+		schemaName,
+		compMod,
+		isActivated,
+	});
+
+	return [...scripts, ...commentScripts].filter(Boolean);
 };
 
 const getContainersScripts = app => {
