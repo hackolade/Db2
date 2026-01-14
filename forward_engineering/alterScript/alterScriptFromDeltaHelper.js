@@ -49,8 +49,8 @@ const getAlterCollectionScriptDtos = ({
 	inlineDeltaRelationships = [],
 }) => {
 	const { added, deleted, modified } = collection.properties?.entities?.properties || {};
-	const addedContainers = getItems(added);
-	const deletedContainers = getItems(deleted);
+	const addedCollections = getItems(added);
+	const deletedCollections = getItems(deleted);
 	const modifyScriptsData = getItems(modified).map(item => Object.values(item.properties)[0]);
 
 	const {
@@ -61,12 +61,14 @@ const getAlterCollectionScriptDtos = ({
 		getModifyColumnScriptDtos,
 	} = getEntitiesScripts(app, inlineDeltaRelationships);
 
-	const addedCollectionScriptDtos = addedContainers
-		.map(container => Object.values(container.properties)[0])
+	const addedCollectionScriptDtos = addedCollections
+		.map(collection => Object.values(collection.properties)[0])
+		.filter(collection => collection.role.compMod.created)
 		.flatMap(getAddCollectionScriptDto);
 
-	const deletedCollectionScriptDtos = deletedContainers
-		.map(container => Object.values(container.properties)[0])
+	const deletedCollectionScriptDtos = deletedCollections
+		.map(collection => Object.values(collection.properties)[0])
+		.filter(collection => collection.role.compMod.deleted)
 		.flatMap(getDeleteCollectionScriptDto);
 
 	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos);
