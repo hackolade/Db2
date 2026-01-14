@@ -24,20 +24,26 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 
 	const relationshipName = getRelationshipName(relationship);
 	const ddlProvider = require('../../ddlProvider/ddlProvider')();
+	const schemaData = {
+		schemaName: compMod.child.bucket.name,
+	};
 
-	return ddlProvider.createForeignKey({
-		name: relationshipName,
-		foreignKey: compMod.child.collection.fkFields,
-		primaryKey: compMod.parent.collection.fkFields,
-		customProperties: compMod.customProperties?.new,
-		foreignTable: compMod.child.collection.name,
-		foreignSchemaName: compMod.child.bucket.name,
-		foreignTableActivated: compMod.child.collection.isActivated,
-		primaryTable: compMod.parent.collection.name,
-		primarySchemaName: compMod.parent.bucket.name,
-		primaryTableActivated: compMod.parent.collection.isActivated,
-		isActivated: Boolean(relationship.role?.compMod?.isActivated?.new),
-	});
+	return ddlProvider.createForeignKey(
+		{
+			name: relationshipName,
+			foreignKey: compMod.child.collection.fkFields,
+			primaryKey: compMod.parent.collection.fkFields,
+			customProperties: compMod.customProperties?.new,
+			foreignTable: compMod.child.collection.name,
+			foreignSchemaName: compMod.child.bucket.name,
+			foreignTableActivated: compMod.child.collection.isActivated,
+			primaryTable: compMod.parent.collection.name,
+			primarySchemaName: compMod.parent.bucket.name,
+			primaryTableActivated: compMod.parent.collection.isActivated,
+		},
+		{},
+		schemaData,
+	);
 };
 
 const canRelationshipBeAdded = relationship => {

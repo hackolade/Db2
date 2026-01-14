@@ -1,9 +1,5 @@
 const { getContainersScripts } = require('./alterScriptHelpers/alterContainerHelper');
-const {
-	getModifyCollectionScriptDtos,
-	getModifyCollectionKeysScriptDtos,
-	getModifyColumnScriptDtos,
-} = require('./alterScriptHelpers/alterEntityHelper');
+const { getEntitiesScripts } = require('./alterScriptHelpers/alterEntityHelper');
 const {
 	getDeleteForeignKeyScriptDtos,
 	getAddForeignKeyScriptDtos,
@@ -50,18 +46,40 @@ const getAlterCollectionScriptDtos = ({
 	modelDefinitions,
 	internalDefinitions,
 	externalDefinitions,
+	inlineDeltaRelationships = [],
 }) => {
-	const modifyScriptsData = getItems(collection.properties?.entities?.properties?.modified).map(
-		item => Object.values(item.properties)[0],
-	);
+	const { added, deleted, modified } = collection.properties?.entities?.properties || {};
+	const addedContainers = getItems(added);
+	const deletedContainers = getItems(deleted);
+	const modifyScriptsData = getItems(modified).map(item => Object.values(item.properties)[0]);
+
+	const {
+		getAddCollectionScriptDto,
+		getDeleteCollectionScriptDto,
+		getModifyCollectionScriptDtos,
+		getModifyCollectionKeysScriptDtos,
+		getModifyColumnScriptDtos,
+	} = getEntitiesScripts(app, inlineDeltaRelationships);
+
+	const addedCollectionScriptDtos = addedContainers
+		.map(container => Object.values(container.properties)[0])
+		.flatMap(getAddCollectionScriptDto);
+
+	const deletedCollectionScriptDtos = deletedContainers
+		.map(container => Object.values(container.properties)[0])
+		.flatMap(getDeleteCollectionScriptDto);
 
 	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos);
 	const modifyCollectionKeysScriptDtos = modifyScriptsData.flatMap(getModifyCollectionKeysScriptDtos);
 	const modifyColumnScriptDtos = modifyScriptsData.flatMap(getModifyColumnScriptDtos);
 
-	return [...modifyCollectionScriptDtos, ...modifyColumnScriptDtos, ...modifyCollectionKeysScriptDtos].filter(
-		Boolean,
-	);
+	return [
+		...deletedCollectionScriptDtos,
+		...addedCollectionScriptDtos,
+		...modifyCollectionScriptDtos,
+		...modifyColumnScriptDtos,
+		...modifyCollectionKeysScriptDtos,
+	].filter(Boolean);
 };
 
 const getAlterViewScriptDtos = collection => {
@@ -167,6 +185,7 @@ const getAlterScriptDtos = (data, app) => {
 		modelDefinitions,
 		internalDefinitions,
 		externalDefinitions,
+		inlineDeltaRelationships,
 	});
 
 	const viewScriptDtos = getAlterViewScriptDtos(collection);

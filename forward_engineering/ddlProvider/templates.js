@@ -7,6 +7,8 @@ module.exports = {
 
 	createTable: 'CREATE${tableType} TABLE${ifNotExists} ${name}${tableProps}${tableOptions};',
 
+	dropTable: 'DROP TABLE ${tableName};',
+
 	createAuxiliaryTable: 'CREATE${tableType} TABLE ${name}${tableOptions};',
 
 	comment: '\nCOMMENT ON ${objectType} ${objectName} IS ${comment};\n',

@@ -407,6 +407,10 @@ module.exports = (baseProvider, options, app) => {
 			});
 		},
 
+		dropTable({ tableName }) {
+			return assignTemplates({ template: templates.dropTable, templateData: { tableName } });
+		},
+
 		hydrateIndex(indexData, tableData, schemaData) {
 			return { ...indexData, schemaName: schemaData.schemaName };
 		},
