@@ -45,10 +45,10 @@ const alterPkConstraint = (tableName, isParentActivated, keyData) => {
 };
 
 const dropPK = tableName => {
-	const templatesConfig = { tableName };
+	const templateData = { tableName };
 	return assignTemplates({
 		templates: templates.dropPK,
-		templatesConfig,
+		templateData,
 	});
 };
 
@@ -72,11 +72,14 @@ const alterUkConstraint = (tableName, isParentActivated, keyData) => {
  * @param constraintName {string}
  * */
 const dropUkConstraint = (tableName, constraintName) => {
-	const templatesConfig = {
+	const templateData = {
 		tableName,
 		constraintName,
 	};
-	return assignTemplates(templates.dropUkConstraint, templatesConfig);
+	return assignTemplates({
+		template: templates.dropUkConstraint,
+		templateData,
+	});
 };
 
 module.exports = {
