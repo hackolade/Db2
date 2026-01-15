@@ -9,6 +9,10 @@ module.exports = {
 
 	dropTable: 'DROP TABLE ${tableName};',
 
+	addColumn: 'ALTER TABLE ${tableName} ADD COLUMN ${columnDefinition};',
+
+	dropColumn: 'ALTER TABLE ${tableName} DROP COLUMN ${columnName};',
+
 	createAuxiliaryTable: 'CREATE${tableType} TABLE ${name}${tableOptions};',
 
 	comment: '\nCOMMENT ON ${objectType} ${objectName} IS ${comment};\n',

@@ -37,7 +37,10 @@ const getAlterContainersScriptDtos = ({ collection, app }) => {
 		.map(containerWrapper => Object.values(containerWrapper.properties)[0])
 		.flatMap(getModifyContainerScriptDto);
 
-	return [...addContainersScriptDtos, ...deleteContainersScriptDtos, ...modifyContainersScriptDtos].filter(Boolean);
+	return {
+		deletedContainersScriptDtos: deleteContainersScriptDtos,
+		upsertedContainersScriptDtos: [...addContainersScriptDtos, ...modifyContainersScriptDtos],
+	};
 };
 
 const getAlterCollectionScriptDtos = ({
@@ -59,6 +62,8 @@ const getAlterCollectionScriptDtos = ({
 		getModifyCollectionScriptDtos,
 		getModifyCollectionKeysScriptDtos,
 		getModifyColumnScriptDtos,
+		getAddColumnScriptDtos,
+		getDeleteColumnScriptDtos,
 	} = getEntitiesScripts(app, inlineDeltaRelationships);
 
 	const addedCollectionScriptDtos = addedCollections
@@ -66,10 +71,18 @@ const getAlterCollectionScriptDtos = ({
 		.filter(collection => collection.role.compMod.created)
 		.flatMap(getAddCollectionScriptDto);
 
+	const addedColumnScriptDtos = addedCollections
+		.map(collection => Object.values(collection.properties)[0])
+		.flatMap(getAddColumnScriptDtos);
+
 	const deletedCollectionScriptDtos = deletedCollections
 		.map(collection => Object.values(collection.properties)[0])
 		.filter(collection => collection.role.compMod.deleted)
 		.flatMap(getDeleteCollectionScriptDto);
+
+	const deletedColumnScriptDtos = deletedCollections
+		.map(collection => Object.values(collection.properties)[0])
+		.flatMap(getDeleteColumnScriptDtos);
 
 	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos);
 	const modifyCollectionKeysScriptDtos = modifyScriptsData.flatMap(getModifyCollectionKeysScriptDtos);
@@ -79,6 +92,8 @@ const getAlterCollectionScriptDtos = ({
 		...deletedCollectionScriptDtos,
 		...addedCollectionScriptDtos,
 		...modifyCollectionScriptDtos,
+		...deletedColumnScriptDtos,
+		...addedColumnScriptDtos,
 		...modifyColumnScriptDtos,
 		...modifyCollectionKeysScriptDtos,
 	].filter(Boolean);
@@ -179,7 +194,10 @@ const getAlterScriptDtos = (data, app) => {
 	const inlineDeltaRelationships = getInlineRelationships({ collection, options: data.options });
 	const ignoreRelationshipIDs = inlineDeltaRelationships.map(relationship => relationship.role.id);
 
-	const containersScriptDtos = getAlterContainersScriptDtos({ collection, app });
+	const { deletedContainersScriptDtos, upsertedContainersScriptDtos } = getAlterContainersScriptDtos({
+		collection,
+		app,
+	});
 
 	const collectionsScriptDtos = getAlterCollectionScriptDtos({
 		collection,
@@ -198,7 +216,13 @@ const getAlterScriptDtos = (data, app) => {
 		ignoreRelationshipIDs,
 	});
 
-	return [...containersScriptDtos, ...collectionsScriptDtos, ...viewScriptDtos, ...relationshipScriptDtos]
+	return [
+		...upsertedContainersScriptDtos,
+		...collectionsScriptDtos,
+		...viewScriptDtos,
+		...relationshipScriptDtos,
+		...deletedContainersScriptDtos,
+	]
 		.filter(Boolean)
 		.map(dto => dto && prettifyAlterScriptDto(dto))
 		.filter(Boolean);

@@ -12,6 +12,7 @@ const {
 	getSchemaNameFromCollection,
 	getSchemaOfAlterCollection,
 	getFullCollectionName,
+	wrapInQuotes,
 } = require('../../utils/general');
 const { getRelationshipName } = require('./alterForeignKeyHelper');
 const { createColumnDefinitionBySchema } = require('./createColumnDefinition');
@@ -91,6 +92,43 @@ const getModifyCollectionKeysScriptDtos = collection => {
 	return [...modifyPkConstraintDtos, ...modifyUkConstraintDtos].filter(Boolean);
 };
 
+const getAddColumnScriptDtos = ddlProvider => collection => {
+	const collectionSchema = getSchemaOfAlterCollection(collection);
+	const fullTableName = getFullCollectionName(collectionSchema);
+	const schemaName = getSchemaNameFromCollection({ collection });
+	const schemaData = { schemaName };
+
+	return toPairs(collection.properties)
+		.filter(([name, jsonSchema]) => !jsonSchema.compMod)
+		.map(([name, jsonSchema]) => {
+			const columnDefinition = createColumnDefinitionBySchema({
+				name,
+				jsonSchema,
+				parentJsonSchema: collectionSchema,
+				ddlProvider,
+				schemaData,
+			});
+			const columnDef = ddlProvider.convertColumnDefinition(columnDefinition);
+			const script = ddlProvider.addColumn({ tableName: fullTableName, columnDefinition });
+			return AlterScriptDto.getInstance([script], true, false);
+		})
+		.filter(Boolean);
+};
+
+const getDeleteColumnScriptDtos = ddlProvider => collection => {
+	const collectionSchema = getSchemaOfAlterCollection(collection);
+	const fullTableName = getFullCollectionName(collectionSchema);
+
+	return toPairs(collection.properties)
+		.filter(([name, jsonSchema]) => !jsonSchema.compMod)
+		.map(([name]) => {
+			const columnName = wrapInQuotes(name);
+			const script = ddlProvider.dropColumn({ tableName: fullTableName, columnName });
+			return AlterScriptDto.getInstance([script], true, true);
+		})
+		.filter(Boolean);
+};
+
 const getModifyColumnScriptDtos = collection => {
 	const modifyNotNullScriptDtos = getModifyNonNullColumnsScriptDtos(collection);
 	const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(collection);
@@ -110,6 +148,8 @@ const getEntitiesScripts = (app, inlineDeltaRelationships) => {
 		getModifyCollectionScriptDtos,
 		getModifyColumnScriptDtos,
 		getModifyCollectionKeysScriptDtos,
+		getAddColumnScriptDtos: getAddColumnScriptDtos(ddlProvider),
+		getDeleteColumnScriptDtos: getDeleteColumnScriptDtos(ddlProvider),
 	};
 };
 
