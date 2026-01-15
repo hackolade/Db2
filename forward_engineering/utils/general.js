@@ -146,6 +146,10 @@ const isParentContainerActivated = collection => {
 	);
 };
 
+const checkFieldPropertiesChanged = (compMod, propertiesToCheck) => {
+	return propertiesToCheck.some(prop => compMod?.oldField[prop] !== compMod?.newField[prop]);
+};
+
 /**
  *
  * @template {object} T
@@ -193,4 +197,5 @@ module.exports = {
 	isParentContainerActivated,
 	getSchemaNameFromCollection,
 	getUpdatedProperties,
+	checkFieldPropertiesChanged,
 };

@@ -55,6 +55,8 @@ module.exports = {
 
 	dropCheckConstraint: 'ALTER TABLE ${tableName} DROP CHECK ${constraintName};',
 
+	updateColumnType: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET DATA TYPE ${dataType};',
+
 	updateColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET DEFAULT ${defaultValue};',
 
 	dropColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP DEFAULT;',

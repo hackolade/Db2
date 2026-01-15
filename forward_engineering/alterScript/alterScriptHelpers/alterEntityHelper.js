@@ -2,6 +2,7 @@ const { omit, toPairs } = require('lodash');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
 const { getModifiedCommentOnColumnScriptDtos } = require('./columnHelpers/commentsHelper');
 const { getModifyNonNullColumnsScriptDtos } = require('./columnHelpers/nonNullConstraintHelper');
+const { getUpdateTypesScriptDtos } = require('./columnHelpers/alterTypeHelper');
 const { getModifyCheckConstraintScriptDtos } = require('./entityHelpers/checkConstraintHelper');
 const { getModifyEntityCommentsScriptDtos } = require('./entityHelpers/commentsHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
@@ -108,8 +109,10 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
 				ddlProvider,
 				schemaData,
 			});
-			const columnDef = ddlProvider.convertColumnDefinition(columnDefinition);
-			const script = ddlProvider.addColumn({ tableName: fullTableName, columnDefinition });
+			const script = ddlProvider.addColumn({
+				tableName: fullTableName,
+				columnDefinition: ddlProvider.convertColumnDefinition(columnDefinition),
+			});
 			return AlterScriptDto.getInstance([script], true, false);
 		})
 		.filter(Boolean);
@@ -129,14 +132,18 @@ const getDeleteColumnScriptDtos = ddlProvider => collection => {
 		.filter(Boolean);
 };
 
-const getModifyColumnScriptDtos = collection => {
+const getModifyColumnScriptDtos = ddlProvider => collection => {
 	const modifyNotNullScriptDtos = getModifyNonNullColumnsScriptDtos(collection);
 	const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(collection);
 	const modifyDefaultColumnValueScriptDtos = getModifiedDefaultColumnValueScriptDtos({ collection });
+	const modifyTypeScriptDtos = getUpdateTypesScriptDtos(ddlProvider)(collection);
 
-	return [...modifyNotNullScriptDtos, ...modifyDefaultColumnValueScriptDtos, ...modifyCommentScriptDtos].filter(
-		Boolean,
-	);
+	return [
+		...modifyTypeScriptDtos,
+		...modifyNotNullScriptDtos,
+		...modifyDefaultColumnValueScriptDtos,
+		...modifyCommentScriptDtos,
+	].filter(Boolean);
 };
 
 const getEntitiesScripts = (app, inlineDeltaRelationships) => {
@@ -146,7 +153,7 @@ const getEntitiesScripts = (app, inlineDeltaRelationships) => {
 		getAddCollectionScriptDto: getAddCollectionScriptDto(ddlProvider, inlineDeltaRelationships),
 		getDeleteCollectionScriptDto: getDeleteCollectionScriptDto(ddlProvider),
 		getModifyCollectionScriptDtos,
-		getModifyColumnScriptDtos,
+		getModifyColumnScriptDtos: getModifyColumnScriptDtos(ddlProvider),
 		getModifyCollectionKeysScriptDtos,
 		getAddColumnScriptDtos: getAddColumnScriptDtos(ddlProvider),
 		getDeleteColumnScriptDtos: getDeleteColumnScriptDtos(ddlProvider),
