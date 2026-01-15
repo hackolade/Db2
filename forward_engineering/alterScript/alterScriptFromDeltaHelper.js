@@ -25,21 +25,21 @@ const getAlterContainersScriptDtos = ({ collection, app }) => {
 	const { getAddContainerScriptDto, getDeleteContainerScriptDto, getModifyContainerScriptDto } =
 		getContainersScripts(app);
 
-	const addContainersScriptDtos = addedContainers
+	const addedContainersScriptDtos = addedContainers
 		.map(container => Object.values(container.properties)[0])
 		.flatMap(getAddContainerScriptDto);
 
-	const deleteContainersScriptDtos = deletedContainers
+	const deletedContainersScriptDtos = deletedContainers
 		.map(container => Object.values(container.properties)[0])
 		.flatMap(getDeleteContainerScriptDto);
 
-	const modifyContainersScriptDtos = modifiedContainers
+	const modifiedContainersScriptDtos = modifiedContainers
 		.map(containerWrapper => Object.values(containerWrapper.properties)[0])
 		.flatMap(getModifyContainerScriptDto);
 
 	return {
-		deletedContainersScriptDtos: deleteContainersScriptDtos,
-		upsertedContainersScriptDtos: [...addContainersScriptDtos, ...modifyContainersScriptDtos],
+		deletedContainersScriptDtos,
+		upsertedContainersScriptDtos: [...addedContainersScriptDtos, ...modifiedContainersScriptDtos],
 	};
 };
 
@@ -82,6 +82,7 @@ const getAlterCollectionScriptDtos = ({
 
 	const deletedColumnScriptDtos = deletedCollections
 		.map(collection => Object.values(collection.properties)[0])
+		.filter(collection => !collection.role.compMod.deleted)
 		.flatMap(getDeleteColumnScriptDtos);
 
 	const modifyCollectionScriptDtos = modifyScriptsData.flatMap(getModifyCollectionScriptDtos);
