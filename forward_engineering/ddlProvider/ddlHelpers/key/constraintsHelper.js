@@ -47,7 +47,7 @@ const alterPkConstraint = (tableName, isParentActivated, keyData) => {
 const dropPK = tableName => {
 	const templateData = { tableName };
 	return assignTemplates({
-		templates: templates.dropPK,
+		template: templates.dropPK,
 		templateData,
 	});
 };
