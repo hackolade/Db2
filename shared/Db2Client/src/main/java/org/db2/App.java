@@ -20,7 +20,7 @@ public class App {
 			String database = input.optString("database", "");
 			String user = input.optString("user", "");
 			String password = input.optString("password", "");
-			query = input.optString("query", "");
+			query = cleanStringValue(input.optString("query", ""));
 			boolean callable = input.optBoolean("callable", false);
 			String inParam = input.optString("inParam", "");
 			boolean ddl = input.optBoolean("ddl", false);
@@ -58,6 +58,10 @@ public class App {
             return result.isEmpty() ? "{}" : result;
         }
     }
+
+	private static String cleanStringValue(String value) {
+		return value.replace("__PERCENT__", "%");
+	}
 
 	private static void print(String value) {
 		System.out.println(String.format("<hackolade>%s</hackolade>", value));

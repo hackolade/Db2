@@ -1,4 +1,4 @@
-const { TABLE_TYPE, PERSENT } = require('../../constants/constants');
+const { TABLE_TYPE, PERCENT } = require('../../constants/constants');
 
 /**
  * @param {{ query: string }}
@@ -13,16 +13,16 @@ const cleanUpQuery = ({ query = '' }) => query.replaceAll(/\s+/g, ' ');
 const getNonSystemSchemaWhereClause = ({ query, schemaNameKeyword }) => {
 	// On Windows (cmd.exe), environment variables can be referenced using syntax like %PATH%.
 	// When a command contains such patterns, cmd.exe automatically replaces them with the corresponding environment variable values.
-	// To prevent this automatic substitution, a placeholder string (PERSENT) is used here instead,
+	// To prevent this automatic substitution, a placeholder string (PERCENT) is used here instead,
 	// which will later be replaced with the % symbol inside the Db2Client Java client.
 	const whereClause = `
-	  WHERE ${schemaNameKeyword} NOT LIKE 'SYS${PERSENT}'
-	  AND ${schemaNameKeyword} NOT LIKE '${PERSENT}SYSCAT${PERSENT}'
-	  AND ${schemaNameKeyword} NOT LIKE '${PERSENT}SYSIBM${PERSENT}'
-	  AND ${schemaNameKeyword} NOT LIKE '${PERSENT}SYSSTAT${PERSENT}'
-	  AND ${schemaNameKeyword} NOT LIKE '${PERSENT}SYSTOOLS${PERSENT}'
-	  AND ${schemaNameKeyword} NOT LIKE '${PERSENT}NULLID${PERSENT}'
-	  AND ${schemaNameKeyword} NOT LIKE '${PERSENT}SQLJ${PERSENT}';`;
+	  WHERE ${schemaNameKeyword} NOT LIKE 'SYS${PERCENT}'
+	  AND ${schemaNameKeyword} NOT LIKE '${PERCENT}SYSCAT${PERCENT}'
+	  AND ${schemaNameKeyword} NOT LIKE '${PERCENT}SYSIBM${PERCENT}'
+	  AND ${schemaNameKeyword} NOT LIKE '${PERCENT}SYSSTAT${PERCENT}'
+	  AND ${schemaNameKeyword} NOT LIKE '${PERCENT}SYSTOOLS${PERCENT}'
+	  AND ${schemaNameKeyword} NOT LIKE '${PERCENT}NULLID${PERCENT}'
+	  AND ${schemaNameKeyword} NOT LIKE '${PERCENT}SQLJ${PERCENT}';`;
 
 	const clause = query.includes('WHERE') ? whereClause.replace('WHERE', 'AND') : whereClause;
 
