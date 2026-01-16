@@ -13,8 +13,6 @@ const TABLE_TYPE = {
 
 const INLINE_COMMENT = '--';
 
-const PERCENT = '__PERCENT__';
-
 const CONSTRAINT_POSTFIX = {
 	primaryKey: 'pk',
 	foreignKey: 'fk',
@@ -28,6 +26,5 @@ module.exports = {
 	ERROR_MESSAGE,
 	TABLE_TYPE,
 	INLINE_COMMENT,
-	PERCENT,
 	CONSTRAINT_POSTFIX,
 };
