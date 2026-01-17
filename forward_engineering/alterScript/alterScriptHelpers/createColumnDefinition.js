@@ -80,7 +80,7 @@ const getType = jsonSchema => {
 
 const createColumnDefinitionBySchema = ({ name, jsonSchema, parentJsonSchema, ddlProvider, schemaData }) => {
 	const columnDefinition = createColumnDefinition({
-		name: name,
+		name,
 		type: getType(jsonSchema),
 		nullable: isNullable(parentJsonSchema, name),
 		default: getDefault(jsonSchema),

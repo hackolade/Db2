@@ -69,7 +69,7 @@ const getUpdateTypesScriptDtos = ddlProvider => collection => {
 	const schemaData = { schemaName };
 
 	return toPairs(collection.properties)
-		.filter(([name, jsonSchema]) => {
+		.filter(([_, jsonSchema]) => {
 			if (!jsonSchema.compMod) {
 				return false;
 			}
@@ -91,7 +91,6 @@ const getUpdateTypesScriptDtos = ddlProvider => collection => {
 				schemaData,
 			});
 
-			// Get the formatted data type using the helper function
 			const dataType = getColumnType(columnDefinition).trim();
 
 			const columnNameQuoted = wrapInQuotes(columnName);
