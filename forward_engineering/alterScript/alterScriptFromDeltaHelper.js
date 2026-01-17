@@ -7,14 +7,18 @@ const {
 } = require('./alterScriptHelpers/alterForeignKeyHelper');
 const { getModifyViewScriptDtos } = require('./alterScriptHelpers/alterViewHelper');
 
+/**
+ * @param {T} data
+ * @return {Array<T>}
+ */
 const getItems = data => [data?.items].flat().filter(Boolean);
 
 /**
- * @param dto {{
+ * @param {{
  *     collection: Object,
  *     app: App
- * }}
- * @return {AlterScriptDto[]}
+ * }} param
+ * @return {Array<AlterScriptDto>}
  * */
 const getAlterContainersScriptDtos = ({ collection, app }) => {
 	const { added, deleted, modified } = collection.properties?.containers?.properties || {};
@@ -43,6 +47,10 @@ const getAlterContainersScriptDtos = ({ collection, app }) => {
 	};
 };
 
+/**
+ * @param {{collection: Object, app: App, modelDefinitions: Object, internalDefinitions: Object, externalDefinitions: Object, inlineDeltaRelationships?: any[]}} param
+ * @return {Array<AlterScriptDto>}
+ */
 const getAlterCollectionScriptDtos = ({
 	collection,
 	app,
@@ -52,8 +60,8 @@ const getAlterCollectionScriptDtos = ({
 	inlineDeltaRelationships = [],
 }) => {
 	const { added, deleted, modified } = collection.properties?.entities?.properties || {};
-	const addedCollections = getItems(added);
-	const deletedCollections = getItems(deleted);
+	const addedCollections = getItems(added).map(item => Object.values(item.properties)[0]);
+	const deletedCollections = getItems(deleted).map(item => Object.values(item.properties)[0]);
 	const modifyScriptsData = getItems(modified).map(item => Object.values(item.properties)[0]);
 
 	const {
@@ -67,21 +75,16 @@ const getAlterCollectionScriptDtos = ({
 	} = getEntitiesScripts(app, inlineDeltaRelationships);
 
 	const addedCollectionScriptDtos = addedCollections
-		.map(collection => Object.values(collection.properties)[0])
 		.filter(collection => collection.role.compMod.created)
-		.flatMap(getAddCollectionScriptDto);
+		.map(getAddCollectionScriptDto);
 
-	const addedColumnScriptDtos = addedCollections
-		.map(collection => Object.values(collection.properties)[0])
-		.flatMap(getAddColumnScriptDtos);
+	const addedColumnScriptDtos = addedCollections.flatMap(getAddColumnScriptDtos);
 
 	const deletedCollectionScriptDtos = deletedCollections
-		.map(collection => Object.values(collection.properties)[0])
 		.filter(collection => collection.role.compMod.deleted)
-		.flatMap(getDeleteCollectionScriptDto);
+		.map(getDeleteCollectionScriptDto);
 
 	const deletedColumnScriptDtos = deletedCollections
-		.map(collection => Object.values(collection.properties)[0])
 		.filter(collection => !collection.role.compMod.deleted)
 		.flatMap(getDeleteColumnScriptDtos);
 
@@ -100,6 +103,10 @@ const getAlterCollectionScriptDtos = ({
 	].filter(Boolean);
 };
 
+/**
+ * @param {Object} collection
+ * @return {Array<AlterScriptDto>}
+ */
 const getAlterViewScriptDtos = collection => {
 	const modifyViewScriptDtos = getItems(collection.properties?.views?.properties?.modified)
 		.map(viewWrapper => Object.values(viewWrapper.properties)[0])
@@ -109,6 +116,10 @@ const getAlterViewScriptDtos = collection => {
 	return [...modifyViewScriptDtos].filter(Boolean);
 };
 
+/**
+ * @param {{collection: Object, app: App, ignoreRelationshipIDs?: string[]}} param
+ * @return {Array<AlterScriptDto>}
+ */
 const getAlterRelationshipsScriptDtos = ({ collection, app, ignoreRelationshipIDs = [] }) => {
 	const addedRelationships = getItems(collection.properties?.relationships?.properties?.added)
 		.filter(Boolean)
@@ -141,6 +152,10 @@ const getAlterRelationshipsScriptDtos = ({ collection, app, ignoreRelationshipID
 	return [...deleteFkScriptDtos, ...addFkScriptDtos, ...modifiedFkScriptDtos].filter(Boolean);
 };
 
+/**
+ * @param {{collection: Object, options: Object}} param
+ * @return {Array<Object>}
+ */
 const getInlineRelationships = ({ collection, options }) => {
 	if (options?.scriptGenerationOptions?.feActiveOptions?.foreignKeys !== 'inline') {
 		return [];
@@ -157,13 +172,17 @@ const getInlineRelationships = ({ collection, options }) => {
 	return addedRelationships;
 };
 
+/**
+ * @param {AlterScriptDto} dto
+ * @return {AlterScriptDto | undefined}
+ */
 const prettifyAlterScriptDto = dto => {
 	if (!dto) {
 		return undefined;
 	}
 	/**
 	 * @type {Array<ModificationScript>}
-	 * */
+	 */
 	const nonEmptyScriptModificationDtos = dto.scripts
 		.map(scriptDto => ({
 			...scriptDto,
@@ -179,6 +198,11 @@ const prettifyAlterScriptDto = dto => {
 	};
 };
 
+/**
+ * @param {Object} data
+ * @param {App} app
+ * @return {Array<AlterScriptDto>}
+ */
 const getAlterScriptDtos = (data, app) => {
 	const collection = JSON.parse(data.jsonSchema);
 

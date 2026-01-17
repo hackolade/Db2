@@ -98,8 +98,7 @@ const getUpdateTypesScriptDtos = ddlProvider => collection => {
 			const isActivated = isContainerActivated && isCollectionActivated && jsonSchema.isActivated;
 
 			return AlterScriptDto.getInstance([script], isActivated, false);
-		})
-		.filter(Boolean);
+		});
 };
 
 module.exports = {

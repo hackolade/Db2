@@ -19,6 +19,11 @@ const {
 const { getRelationshipName } = require('./alterForeignKeyHelper');
 const { createColumnDefinitionBySchema } = require('./createColumnDefinition');
 
+/**
+ * @param {Object} ddlProvider
+ * @param {Array<Object>} inlineDeltaRelationships
+ * @returns {(collection: Object) => AlterScriptDto}
+ */
 const getAddCollectionScriptDto = (ddlProvider, inlineDeltaRelationships) => collection => {
 	const jsonSchema = { ...collection, ...(omit(collection?.role, 'properties') || {}) };
 	const schemaName = getSchemaNameFromCollection({ collection });
@@ -74,6 +79,10 @@ const getAddCollectionScriptDto = (ddlProvider, inlineDeltaRelationships) => col
 	return AlterScriptDto.getInstance([script], true, false);
 };
 
+/**
+ * @param {Object} ddlProvider
+ * @returns {(collection: Object) => AlterScriptDto}
+ */
 const getDeleteCollectionScriptDto = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);
@@ -82,18 +91,30 @@ const getDeleteCollectionScriptDto = ddlProvider => collection => {
 	return AlterScriptDto.getInstance([script], true, true);
 };
 
+/**
+ * @param {Object} collection
+ * @returns {Array<AlterScriptDto>}
+ */
 const getModifyCollectionScriptDtos = collection => {
 	const modifyCheckConstraintScriptDtos = getModifyCheckConstraintScriptDtos(collection);
 	const modifyCommentScriptDtos = getModifyEntityCommentsScriptDtos(collection);
 	return [...modifyCheckConstraintScriptDtos, ...modifyCommentScriptDtos].filter(Boolean);
 };
 
+/**
+ * @param {Object} collection
+ * @returns {Array<AlterScriptDto>}
+ */
 const getModifyCollectionKeysScriptDtos = collection => {
 	const modifyPkConstraintDtos = getModifyPkConstraintsScriptDtos(collection);
 	const modifyUkConstraintDtos = getModifyUkConstraintsScriptDtos(collection);
 	return [...modifyPkConstraintDtos, ...modifyUkConstraintDtos].filter(Boolean);
 };
 
+/**
+ * @param {Object} ddlProvider
+ * @returns {(collection: Object) => Array<AlterScriptDto>}
+ */
 const getAddColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);
@@ -119,6 +140,10 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
 		.filter(Boolean);
 };
 
+/**
+ * @param {Object} ddlProvider
+ * @returns {(collection: Object) => Array<AlterScriptDto>}
+ */
 const getDeleteColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);
@@ -133,22 +158,30 @@ const getDeleteColumnScriptDtos = ddlProvider => collection => {
 		.filter(Boolean);
 };
 
+/**
+ * @param {Object} ddlProvider
+ * @returns {(collection: Object) => Array<AlterScriptDto>}
+ */
 const getModifyColumnScriptDtos = ddlProvider => collection => {
 	const renamedColumnsScriptDtos = getRenameColumnScriptDtos(ddlProvider)(collection);
+	const updateTypeScriptDtos = getUpdateTypesScriptDtos(ddlProvider)(collection);
 	const modifyNotNullScriptDtos = getModifyNonNullColumnsScriptDtos(collection);
 	const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(collection);
 	const modifyDefaultColumnValueScriptDtos = getModifiedDefaultColumnValueScriptDtos({ collection });
-	const modifyTypeScriptDtos = getUpdateTypesScriptDtos(ddlProvider)(collection);
 
 	return [
 		...renamedColumnsScriptDtos,
-		...modifyTypeScriptDtos,
+		...updateTypeScriptDtos,
 		...modifyNotNullScriptDtos,
 		...modifyDefaultColumnValueScriptDtos,
 		...modifyCommentScriptDtos,
 	].filter(Boolean);
 };
 
+/**
+ * @param {App} app
+ * @param {Array} inlineDeltaRelationships
+ */
 const getEntitiesScripts = (app, inlineDeltaRelationships) => {
 	const ddlProvider = require('../../ddlProvider/ddlProvider')(null, null, app);
 
