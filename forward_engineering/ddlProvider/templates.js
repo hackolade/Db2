@@ -1,7 +1,7 @@
 module.exports = {
 	createSchema: 'CREATE SCHEMA ${schemaName}${authorization}${dataCapture};',
 
-	dropSchema: 'DROP SCHEMA ${schemaName} RESTRICT',
+	dropSchema: 'DROP SCHEMA ${schemaName} RESTRICT;',
 
 	alterSchema: 'ALTER SCHEMA ${schemaName}${dataCapture};',
 
@@ -24,7 +24,7 @@ module.exports = {
 	createForeignKey:
 		'ALTER TABLE ${foreignTable} ADD CONSTRAINT ${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete};',
 
-	dropForeignKey: 'ALTER TABLE {$tableName} DROP FOREIGN KEY ${constraintName};',
+	dropForeignKey: 'ALTER TABLE ${tableName} DROP FOREIGN KEY ${constraintName};',
 
 	createForeignKeyConstraint:
 		'${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete}',
