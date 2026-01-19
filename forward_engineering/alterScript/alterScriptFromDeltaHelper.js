@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('../../shared/types').App} App
+ * @typedef {import('./types/AlterScriptDto').AlterScriptDto} AlterScriptDto
+ */
 const { getContainersScripts } = require('./alterScriptHelpers/alterContainerHelper');
 const { getEntitiesScripts } = require('./alterScriptHelpers/alterEntityHelper');
 const {

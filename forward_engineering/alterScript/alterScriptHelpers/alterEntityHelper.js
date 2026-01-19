@@ -1,3 +1,6 @@
+/**
+ * @typedef {import('../../../shared/types').App} App
+ */
 const { omit, toPairs } = require('lodash');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
 const { getModifiedCommentOnColumnScriptDtos } = require('./columnHelpers/commentsHelper');
@@ -163,7 +166,7 @@ const getDeleteColumnScriptDtos = ddlProvider => collection => {
  * @returns {(collection: Object) => Array<AlterScriptDto>}
  */
 const getModifyColumnScriptDtos = ddlProvider => collection => {
-	const renamedColumnsScriptDtos = getRenameColumnScriptDtos(ddlProvider)(collection);
+	const renamedColumnsScriptDtos = getRenameColumnScriptDtos(collection);
 	const updateTypeScriptDtos = getUpdateTypesScriptDtos(ddlProvider)(collection);
 	const modifyNotNullScriptDtos = getModifyNonNullColumnsScriptDtos(collection);
 	const modifyCommentScriptDtos = getModifiedCommentOnColumnScriptDtos(collection);

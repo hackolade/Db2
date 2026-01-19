@@ -4,7 +4,6 @@ const {
 	getFullCollectionName,
 	isParentContainerActivated,
 	isObjectInDeltaModelActivated,
-	getSchemaNameFromCollection,
 	wrapInQuotes,
 } = require('../../../utils/general');
 const templates = require('../../../ddlProvider/templates');
@@ -29,10 +28,10 @@ const alterColumnName = (tableName, oldColumnName, newColumnName) => {
 };
 
 /**
- * @param {Object} ddlProvider
- * @return {(collection: Object) => Array<AlterScriptDto>}
+ * @param {Object} collection
+ * @return {Array<AlterScriptDto>}
  */
-const getRenameColumnScriptDtos = ddlProvider => collection => {
+const getRenameColumnScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);
 	const isContainerActivated = isParentContainerActivated(collection);
