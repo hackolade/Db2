@@ -38,11 +38,10 @@ const getRenameColumnScriptDtos = ddlProvider => collection => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
 	const schemaName = getSchemaNameFromCollection({ collection });
-	const schemaData = { schemaName };
 
 	return toPairs(collection.properties).map(([_, jsonSchema]) => {
 		if (!jsonSchema.compMod) {
-			return false;
+			return undefined;
 		}
 		const compMod = jsonSchema.compMod || {};
 		const { newField = {}, oldField = {} } = compMod;
