@@ -407,6 +407,22 @@ module.exports = (baseProvider, options, app) => {
 			});
 		},
 
+		dropTable({ tableName }) {
+			return assignTemplates({ template: templates.dropTable, templateData: { tableName } });
+		},
+
+		addColumn({ tableName, columnDefinition }) {
+			return assignTemplates({ template: templates.addColumn, templateData: { tableName, columnDefinition } });
+		},
+
+		dropColumn({ tableName, columnName }) {
+			return assignTemplates({ template: templates.dropColumn, templateData: { tableName, columnName } });
+		},
+
+		dropView({ viewName }) {
+			return assignTemplates({ template: templates.dropView, templateData: { viewName } });
+		},
+
 		hydrateIndex(indexData, tableData, schemaData) {
 			return { ...indexData, schemaName: schemaData.schemaName };
 		},

@@ -9,7 +9,7 @@ const {
 	getAddForeignKeyScriptDtos,
 	getModifyForeignKeyScriptDtos,
 } = require('./alterScriptHelpers/alterForeignKeyHelper');
-const { getModifyViewScriptDtos } = require('./alterScriptHelpers/alterViewHelper');
+const { getViewsScripts } = require('./alterScriptHelpers/alterViewHelper');
 
 const getItems = data => [data?.items].flat().filter(Boolean);
 
@@ -64,13 +64,34 @@ const getAlterCollectionScriptDtos = ({
 	);
 };
 
-const getAlterViewScriptDtos = collection => {
-	const modifyViewScriptDtos = getItems(collection.properties?.views?.properties?.modified)
-		.map(viewWrapper => Object.values(viewWrapper.properties)[0])
-		.map(view => ({ ...view, ...view.role }))
-		.flatMap(getModifyViewScriptDtos);
+/**
+ * @param {Object} collection
+ * @param {App} app
+ * @return {Array<AlterScriptDto>}
+ */
+const getAlterViewScriptDtos = (collection, app) => {
+	const { added, deleted, modified } = collection.properties?.views?.properties || {};
+	const { getAddViewScriptDto, getDeleteViewScriptDto, getModifyViewScriptDtos } = getViewsScripts(app);
 
-	return [...modifyViewScriptDtos].filter(Boolean);
+	const addedViews = getItems(added)
+		.map(item => Object.values(item.properties)[0])
+		.map(view => ({ ...view, ...view.role }))
+		.filter(view => view.compMod?.created);
+
+	const deletedViews = getItems(deleted)
+		.map(item => Object.values(item.properties)[0])
+		.map(view => ({ ...view, ...view.role }))
+		.filter(view => view.compMod?.deleted);
+
+	const modifiedViews = getItems(modified)
+		.map(item => Object.values(item.properties)[0])
+		.map(view => ({ ...view, ...view.role }));
+
+	const addedViewScriptDtos = addedViews.map(getAddViewScriptDto);
+	const deletedViewScriptDtos = deletedViews.map(getDeleteViewScriptDto);
+	const modifyViewScriptDtos = modifiedViews.flatMap(getModifyViewScriptDtos);
+
+	return [...deletedViewScriptDtos, ...addedViewScriptDtos, ...modifyViewScriptDtos].filter(Boolean);
 };
 
 const getAlterRelationshipsScriptDtos = ({ collection, app, ignoreRelationshipIDs = [] }) => {
@@ -169,7 +190,7 @@ const getAlterScriptDtos = (data, app) => {
 		externalDefinitions,
 	});
 
-	const viewScriptDtos = getAlterViewScriptDtos(collection);
+	const viewScriptDtos = getAlterViewScriptDtos(collection, app);
 
 	const relationshipScriptDtos = getAlterRelationshipsScriptDtos({
 		collection,
