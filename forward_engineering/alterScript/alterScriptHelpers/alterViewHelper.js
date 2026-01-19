@@ -2,6 +2,7 @@
  * @typedef {import('../../../shared/types').App} App
  */
 const { getModifyViewCommentsScriptDtos } = require('./viewHelpers/commentsHelper');
+const { getModifyViewNameScriptDtos, getRenameViewScriptDto } = require('./viewHelpers/nameHelper');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
 const { wrapInQuotes, getSchemaOfAlterView, getFullViewName } = require('../../utils/general');
 const { getKeys } = require('./viewHelpers/getKeys');
@@ -45,10 +46,11 @@ const getDeleteViewScriptDto = ddlProvider => view => {
 	return AlterScriptDto.getInstance([script], true, true);
 };
 
-const getModifyViewScriptDtos = view => {
+const getModifyViewScriptDtos = (ddlProvider, mapProperties) => view => {
+	const renameViewNameScriptDtos = getRenameViewScriptDto(view, ddlProvider, mapProperties);
 	const modifyCommentsScriptDtos = getModifyViewCommentsScriptDtos(view);
 
-	return [...modifyCommentsScriptDtos].filter(Boolean);
+	return [renameViewNameScriptDtos, ...modifyCommentsScriptDtos].filter(Boolean);
 };
 
 /**
@@ -61,7 +63,7 @@ const getViewsScripts = app => {
 	return {
 		getAddViewScriptDto: getAddViewScriptDto(ddlProvider, mapProperties),
 		getDeleteViewScriptDto: getDeleteViewScriptDto(ddlProvider),
-		getModifyViewScriptDtos,
+		getModifyViewScriptDtos: getModifyViewScriptDtos(ddlProvider, mapProperties),
 	};
 };
 

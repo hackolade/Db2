@@ -64,4 +64,6 @@ module.exports = {
 	renameColumn: 'ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};',
 
 	dropView: 'DROP VIEW ${viewName};',
+
+	renameView: 'RENAME VIEW ${oldViewName} TO ${newViewName};',
 };

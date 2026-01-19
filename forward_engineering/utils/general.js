@@ -142,7 +142,8 @@ const getSchemaOfAlterView = view => {
 
 const getFullViewName = viewSchema => {
 	const name = getEntityName(viewSchema);
-	const schemaName = viewSchema.schemaName || '';
+	const schemaName = viewSchema.compMod?.keyspaceName || '';
+
 	return getNamePrefixedWithSchemaName({ name, schemaName });
 };
 
