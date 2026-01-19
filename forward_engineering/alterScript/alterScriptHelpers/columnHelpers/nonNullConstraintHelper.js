@@ -14,7 +14,7 @@ const templates = require('../../../ddlProvider/templates');
  * @param tableName {string}
  * @param columnName {string}
  * @return string
- * */
+ */
 const setNotNullConstraint = (tableName, columnName) => {
 	return assignTemplates({
 		template: templates.alterNotNull,
@@ -29,7 +29,7 @@ const setNotNullConstraint = (tableName, columnName) => {
  * @param tableName {string}
  * @param columnName {string}
  * @return string
- * */
+ */
 const dropNotNullConstraint = (tableName, columnName) => {
 	return assignTemplates({
 		template: templates.dropNotNull,
@@ -43,7 +43,7 @@ const dropNotNullConstraint = (tableName, columnName) => {
 /**
  * @param {Object} collection
  * @return {AlterScriptDto[]}
- * */
+ */
 const getModifyNonNullColumnsScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);

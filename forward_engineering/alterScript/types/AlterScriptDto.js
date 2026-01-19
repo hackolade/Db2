@@ -1,24 +1,24 @@
 class ModificationScript {
 	/**
 	 * @type string
-	 * */
+	 */
 	script;
 
 	/**
 	 * @type boolean
-	 * */
+	 */
 	isDropScript;
 }
 
 class AlterScriptDto {
 	/**
 	 * @type {boolean | undefined}
-	 * */
+	 */
 	isActivated;
 
 	/**
 	 * @type {Array<ModificationScript>}
-	 * */
+	 */
 	scripts;
 
 	/**
@@ -26,7 +26,7 @@ class AlterScriptDto {
 	 * @param isActivated {boolean}
 	 * @param isDropScripts {boolean}
 	 * @return {Array<AlterScriptDto>}
-	 * */
+	 */
 	static getInstances(scripts, isActivated, isDropScripts) {
 		return (scripts || []).filter(Boolean).map(script => ({
 			isActivated,
@@ -44,7 +44,7 @@ class AlterScriptDto {
 	 * @param isActivated {boolean}
 	 * @param isDropScripts {boolean}
 	 * @return {AlterScriptDto | undefined}
-	 * */
+	 */
 	static getInstance(scripts, isActivated, isDropScripts) {
 		if (!scripts?.filter(Boolean)?.length) {
 			return undefined;
@@ -63,11 +63,11 @@ class AlterScriptDto {
 	 * @param createScript {string | undefined}
 	 * @param isActivated {boolean}
 	 * @return {AlterScriptDto | undefined}
-	 * */
+	 */
 	static getDropAndRecreateInstance(dropScript, createScript, isActivated) {
 		/**
 		 * @type {ModificationScript[]}
-		 * */
+		 */
 		const scriptModificationDtos = [];
 		if (dropScript) {
 			scriptModificationDtos.push({
