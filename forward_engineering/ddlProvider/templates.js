@@ -1,11 +1,17 @@
 module.exports = {
 	createSchema: 'CREATE SCHEMA ${schemaName}${authorization}${dataCapture};',
 
-	dropSchema: 'DROP SCHEMA ${schemaName} RESTRICT',
+	dropSchema: 'DROP SCHEMA ${schemaName} RESTRICT;',
 
 	alterSchema: 'ALTER SCHEMA ${schemaName}${dataCapture};',
 
 	createTable: 'CREATE${tableType} TABLE${ifNotExists} ${name}${tableProps}${tableOptions};',
+
+	dropTable: 'DROP TABLE ${tableName};',
+
+	addColumn: 'ALTER TABLE ${tableName} ADD COLUMN ${columnDefinition};',
+
+	dropColumn: 'ALTER TABLE ${tableName} DROP COLUMN ${columnName};',
 
 	createAuxiliaryTable: 'CREATE${tableType} TABLE ${name}${tableOptions};',
 
@@ -18,7 +24,7 @@ module.exports = {
 	createForeignKey:
 		'ALTER TABLE ${foreignTable} ADD CONSTRAINT ${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete};',
 
-	dropForeignKey: 'ALTER TABLE {$tableName} DROP FOREIGN KEY ${constraintName};',
+	dropForeignKey: 'ALTER TABLE ${tableName} DROP FOREIGN KEY ${constraintName};',
 
 	createForeignKeyConstraint:
 		'${name} FOREIGN KEY (${foreignKey}) REFERENCES ${primaryTable} (${primaryKey})${onDelete}',
@@ -48,6 +54,8 @@ module.exports = {
 	alterCheckConstraint: 'ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} CHECK (${expression});',
 
 	dropCheckConstraint: 'ALTER TABLE ${tableName} DROP CHECK ${constraintName};',
+
+	updateColumnType: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET DATA TYPE ${dataType};',
 
 	updateColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} SET DEFAULT ${defaultValue};',
 

@@ -77,11 +77,11 @@ const wasCompositePkChangedInTransitionFromCompositeToRegular = collection => {
 const wasCompositePkChangedInTransitionFromRegularToComposite = collection => {
 	/**
 	 * @type {AlterCollectionRoleCompModPrimaryKey}
-	 * */
+	 */
 	const pkDto = collection?.role?.compMod?.primaryKey || {};
 	/**
 	 * @type {AlterCollectionRoleCompModPKDto[]}
-	 * */
+	 */
 	const newPrimaryKeys = pkDto.new || [];
 	const idsOfColumns = newPrimaryKeys.flatMap(pk => pk.compositePrimaryKey?.map(dto => dto.keyId) || []);
 	if (idsOfColumns.length !== amountOfColumnsInRegularPk) {
@@ -142,7 +142,7 @@ const getCreateCompositePKDDLProviderConfig = (primaryKey, entityName, entity) =
 const getAddCompositePkScriptDtos = collection => {
 	/**
 	 * @type {AlterCollectionRoleCompModPrimaryKey}
-	 * */
+	 */
 	const pkDto = collection?.role?.compMod?.primaryKey || {};
 	const newPrimaryKeys = pkDto.new || [];
 	const oldPrimaryKeys = pkDto.old || [];

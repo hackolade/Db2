@@ -7,8 +7,7 @@ const { assignTemplates } = require('../../utils/assignTemplates');
 
 const getRelationshipName = relationship => {
 	const compMod = relationship.role.compMod;
-	const name = compMod.code?.new || compMod.name?.new || relationship.role.code || relationship.role.name;
-	return name;
+	return compMod.code?.new || compMod.name?.new || relationship.role.code || relationship.role.name;
 };
 
 const getFullChildTableName = relationship => {
@@ -24,7 +23,6 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 
 	const relationshipName = getRelationshipName(relationship);
 	const ddlProvider = require('../../ddlProvider/ddlProvider')();
-
 	const schemaData = {
 		schemaName: compMod.child.bucket.name,
 	};
@@ -41,7 +39,6 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 			primaryTable: compMod.parent.collection.name,
 			primarySchemaName: compMod.parent.bucket.name,
 			primaryTableActivated: compMod.parent.collection.isActivated,
-			isActivated: Boolean(relationship.role?.compMod?.isActivated?.new),
 		},
 		{},
 		schemaData,
@@ -76,16 +73,14 @@ const getAddForeignKeyScriptDtos = addedRelationships => {
 
 const getDeleteSingleForeignKeyStatementDto = relationship => {
 	const compMod = relationship.role.compMod;
-
 	const tableName = getFullChildTableName(relationship);
-
 	const relationshipName = getRelationshipName(relationship);
-	const fkConstraintName = wrapInQuotes(relationshipName);
+	const constraintName = wrapInQuotes(relationshipName);
 	const statement = assignTemplates({
 		template: templates.dropForeignKey,
 		templateData: {
 			tableName,
-			fkConstraintName,
+			constraintName,
 		},
 	});
 
@@ -102,7 +97,11 @@ const canRelationshipBeDeleted = relationship => {
 	if (!compMod) {
 		return false;
 	}
-	return [compMod.code?.old || compMod.name?.old, compMod.child?.bucket, compMod.child?.collection].every(Boolean);
+	return [
+		compMod.code?.old || compMod.name?.old || getRelationshipName(relationship),
+		compMod.child?.bucket,
+		compMod.child?.collection,
+	].every(Boolean);
 };
 
 const getDeleteForeignKeyScriptDtos = deletedRelationships => {

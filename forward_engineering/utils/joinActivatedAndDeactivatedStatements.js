@@ -8,7 +8,7 @@ const { INLINE_COMMENT } = require('../../constants/constants');
  * delimiter: string;
  * }}
  * @return {string}
- * */
+ */
 const getDelimiter = ({ index, numberOfStatements, lastIndexOfActivatedStatement, delimiter }) => {
 	const isLastStatement = index === numberOfStatements - 1;
 	const isLastActivatedStatement = index === lastIndexOfActivatedStatement;
@@ -31,7 +31,7 @@ const getDelimiter = ({ index, numberOfStatements, lastIndexOfActivatedStatement
  * indent?: string;
  * }}
  * @return {string}
- * */
+ */
 const joinActivatedAndDeactivatedStatements = ({ statements, delimiter = ',', indent = '\n' }) => {
 	const lastIndexOfActivatedStatement = statements.findLastIndex(statement => !statement.startsWith(INLINE_COMMENT));
 	const numberOfStatements = statements.length;
