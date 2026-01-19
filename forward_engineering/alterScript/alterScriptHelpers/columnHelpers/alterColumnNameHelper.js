@@ -37,7 +37,6 @@ const getRenameColumnScriptDtos = ddlProvider => collection => {
 	const fullTableName = getFullCollectionName(collectionSchema);
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
-	const schemaName = getSchemaNameFromCollection({ collection });
 
 	return toPairs(collection.properties).map(([_, jsonSchema]) => {
 		if (!jsonSchema.compMod) {
