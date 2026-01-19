@@ -18,8 +18,7 @@ const getItems = data => [data?.items].flat().filter(Boolean);
  *     collection: Object,
  *     app: App
  * }} param
- * @return {Array<AlterScriptDto>}
- * */
+ */
 const getAlterContainersScriptDtos = ({ collection, app }) => {
 	const { added, deleted, modified } = collection.properties?.containers?.properties || {};
 	const addedContainers = getItems(added);
@@ -41,6 +40,8 @@ const getAlterContainersScriptDtos = ({ collection, app }) => {
 		.map(containerWrapper => Object.values(containerWrapper.properties)[0])
 		.flatMap(getModifyContainerScriptDto);
 
+	// Schemas can only be dropped after all contained tables are removed,
+	// so container cleanup must happen last.
 	return {
 		deletedContainersScriptDtos,
 		upsertedContainersScriptDtos: [...addedContainersScriptDtos, ...modifiedContainersScriptDtos],

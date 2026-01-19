@@ -1,12 +1,12 @@
 class KeyTransitionDto {
 	/**
 	 * @type {boolean}
-	 * */
+	 */
 	didTransitionHappen;
 
 	/**
 	 * @return {KeyTransitionDto}
-	 * */
+	 */
 	static noTransition() {
 		return {
 			didTransitionHappen: false,
@@ -15,7 +15,7 @@ class KeyTransitionDto {
 
 	/**
 	 * @return {KeyTransitionDto}
-	 * */
+	 */
 	static transition() {
 		return {
 			didTransitionHappen: true,
@@ -26,13 +26,13 @@ class KeyTransitionDto {
 class PrimaryKeyTransitionDto extends KeyTransitionDto {
 	/**
 	 * @type {boolean | undefined}
-	 * */
+	 */
 	wasPkChangedInTransition;
 
 	/**
 	 * @param {boolean} wasPkChangedInTransition
 	 * @return {PrimaryKeyTransitionDto}
-	 * */
+	 */
 	static transition(wasPkChangedInTransition) {
 		return {
 			didTransitionHappen: true,
@@ -44,13 +44,13 @@ class PrimaryKeyTransitionDto extends KeyTransitionDto {
 class UniqueKeyTransitionDto extends KeyTransitionDto {
 	/**
 	 * @type {boolean | undefined}
-	 * */
+	 */
 	wasUniqueKeyChangedInTransition;
 
 	/**
 	 * @param {boolean} wasUniqueKeyChangedInTransition
 	 * @return {UniqueKeyTransitionDto}
-	 * */
+	 */
 	static transition(wasUniqueKeyChangedInTransition) {
 		return {
 			didTransitionHappen: true,
@@ -62,22 +62,22 @@ class UniqueKeyTransitionDto extends KeyTransitionDto {
 class KeyScriptModificationDto {
 	/**
 	 * @type {string}
-	 * */
+	 */
 	script;
 
 	/**
 	 * @type {boolean}
-	 * */
+	 */
 	isDropScript;
 
 	/**
 	 * @type {string}
-	 * */
+	 */
 	fullTableName;
 
 	/**
 	 * @type {boolean}
-	 * */
+	 */
 	isActivated;
 
 	/**
@@ -85,7 +85,7 @@ class KeyScriptModificationDto {
 	 * @param {string} script
 	 * @param {boolean} isDropScript
 	 * @param {boolean} isActivated
-	 * */
+	 */
 	constructor(script, fullTableName, isDropScript, isActivated) {
 		this.script = script;
 		this.isDropScript = isDropScript;

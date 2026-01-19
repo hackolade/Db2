@@ -19,7 +19,7 @@ const { getColumnType } = require('../../../ddlProvider/ddlHelpers/columnDefinit
  * @param {string} columnName
  * @param {string} dataType
  * @return string
- * */
+ */
 const alterColumnType = (tableName, columnName, dataType) => {
 	return assignTemplates({
 		template: templates.updateColumnType,
@@ -33,7 +33,7 @@ const alterColumnType = (tableName, columnName, dataType) => {
 
 /**
  * @return {boolean}
- * */
+ */
 const hasLengthChanged = (collection, oldFieldName, currentJsonSchema) => {
 	const oldProperty = collection.role.properties[oldFieldName];
 
@@ -44,7 +44,7 @@ const hasLengthChanged = (collection, oldFieldName, currentJsonSchema) => {
 
 /**
  * @return {boolean}
- * */
+ */
 const hasPrecisionOrScaleChanged = (collection, oldFieldName, currentJsonSchema) => {
 	const oldProperty = collection.role.properties[oldFieldName];
 
@@ -59,7 +59,7 @@ const hasPrecisionOrScaleChanged = (collection, oldFieldName, currentJsonSchema)
 /**
  * @param {Object} ddlProvider
  * @return {(collection: Object) => Array<AlterScriptDto>}
- * */
+ */
 const getUpdateTypesScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);

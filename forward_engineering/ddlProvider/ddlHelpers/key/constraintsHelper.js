@@ -70,7 +70,7 @@ const alterUkConstraint = (tableName, isParentActivated, keyData) => {
 /**
  * @param tableName {string}
  * @param constraintName {string}
- * */
+ */
 const dropUkConstraint = (tableName, constraintName) => {
 	const templateData = {
 		tableName,

@@ -16,7 +16,7 @@ const { assignTemplates } = require('../../../utils/assignTemplates');
  * @param {string} oldColumnName
  * @param {string} newColumnName
  * @return string
- * */
+ */
 const alterColumnName = (tableName, oldColumnName, newColumnName) => {
 	return assignTemplates({
 		template: templates.renameColumn,
@@ -31,7 +31,7 @@ const alterColumnName = (tableName, oldColumnName, newColumnName) => {
 /**
  * @param {Object} ddlProvider
  * @return {(collection: Object) => Array<AlterScriptDto>}
- * */
+ */
 const getRenameColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName(collectionSchema);

@@ -16,7 +16,7 @@ const templates = require('../../../ddlProvider/templates');
  * @param {string} props.columnName
  * @param {string} props.defaultValue
  * @return string
- * */
+ */
 const updateColumnDefaultValue = ({ tableName, columnName, defaultValue }) => {
 	const templateConfig = {
 		tableName,
@@ -30,7 +30,7 @@ const updateColumnDefaultValue = ({ tableName, columnName, defaultValue }) => {
  * @param {Object} props
  * @param {Object} props.collection
  * @returns { Array<AlterScriptDto> }
- * */
+ */
 const getUpdatedDefaultColumnValueScriptDtos = ({ collection }) => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
@@ -62,7 +62,7 @@ const getUpdatedDefaultColumnValueScriptDtos = ({ collection }) => {
  * @param {string} props.tableName
  * @param {string} props.columnName
  * @return string
- * */
+ */
 const dropColumnDefaultValue = ({ tableName, columnName }) => {
 	const templateConfig = {
 		tableName,
@@ -75,7 +75,7 @@ const dropColumnDefaultValue = ({ tableName, columnName }) => {
  * @param {Object} props
  * @param {Object} props.collection
  * @returns { Array<AlterScriptDto> }
- * */
+ */
 const getDeletedDefaultColumnValueScriptDtos = ({ collection }) => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
@@ -106,7 +106,7 @@ const getDeletedDefaultColumnValueScriptDtos = ({ collection }) => {
  * @param {Object} props
  * @param {Object} props.collection
  * @returns { Array<AlterScriptDto> }
- * */
+ */
 const getModifiedDefaultColumnValueScriptDtos = ({ collection }) => {
 	const updatedDefaultValuesScriptDtos = getUpdatedDefaultColumnValueScriptDtos({ collection });
 	const dropDefaultValuesScriptDtos = getDeletedDefaultColumnValueScriptDtos({ collection });
