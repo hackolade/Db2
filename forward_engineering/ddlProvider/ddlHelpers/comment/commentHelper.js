@@ -130,6 +130,31 @@ const dropSchemaCommentStatement = ({ schemaName }) => {
 	});
 };
 
+/**
+ * @param {{ tableName: string }}
+ * @returns {string}
+ */
+const dropTableCommentStatement = ({ tableName }) => {
+	return getCommentStatement({
+		objectName: tableName,
+		objectType: OBJECT_TYPE.table,
+		mode: COMMENT_MODE.remove,
+	});
+};
+
+/**
+ * @param {{ tableName: string, columnName: string }}
+ * @returns {string}
+ */
+const dropTableColumnCommentStatement = ({ tableName, columnName }) => {
+	const objectName = tableName + '.' + wrapInQuotes(columnName);
+	return getCommentStatement({
+		objectName,
+		objectType: OBJECT_TYPE.column,
+		mode: COMMENT_MODE.remove,
+	});
+};
+
 module.exports = {
 	getColumnCommentStatement,
 	getSchemaCommentStatement,
@@ -138,4 +163,6 @@ module.exports = {
 	getIndexCommentStatement,
 
 	dropSchemaCommentStatement,
+	dropTableCommentStatement,
+	dropTableColumnCommentStatement,
 };

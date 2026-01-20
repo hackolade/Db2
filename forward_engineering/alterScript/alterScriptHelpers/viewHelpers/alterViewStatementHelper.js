@@ -1,6 +1,10 @@
-const { getFullCollectionName, getSchemaOfAlterView, checkFieldPropertiesChanged } = require('../../../utils/general');
+const {
+	getFullCollectionName,
+	getSchemaOfAlterCollection,
+	checkFieldPropertiesChanged,
+} = require('../../../utils/general');
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
-const { createView } = require('./createView');
+const { createView, dropView } = require('./createDropViewHelper');
 
 /**
  * @param {Object} view
@@ -8,20 +12,24 @@ const { createView } = require('./createView');
  * @param {Function} mapProperties
  * @returns {AlterScriptDto | undefined}
  */
-const getModifySelectStatementScriptDto = (view, ddlProvider, mapProperties) => {
-	const viewSchema = getSchemaOfAlterView(view);
+const getModifySelectStatementScriptDtos = (view, ddlProvider, mapProperties) => {
+	const viewSchema = getSchemaOfAlterCollection(view);
 
-	if (!checkFieldPropertiesChanged(viewSchema?.compMod, ['selectStatement'])) {
-		return undefined;
+	const selectStatement = viewSchema?.compMod?.selectStatement || {};
+
+	if ((!selectStatement.new && !selectStatement.old) || selectStatement.new === selectStatement.old) {
+		return [undefined];
 	}
 
-	const fullViewName = getFullCollectionName(viewSchema);
-	const dropScript = ddlProvider.dropView({ viewName: fullViewName });
-	const createScript = createView(ddlProvider, mapProperties, view);
+	const dropScript = dropView({ viewSchema, ddlProvider });
+	const createScript = createView({ ddlProvider, mapProperties, view });
 
-	return AlterScriptDto.getInstance([dropScript, createScript], true, false);
+	return [
+		AlterScriptDto.getInstance([dropScript], true, true),
+		AlterScriptDto.getInstance([createScript], true, false),
+	];
 };
 
 module.exports = {
-	getModifySelectStatementScriptDto,
+	getModifySelectStatementScriptDtos,
 };

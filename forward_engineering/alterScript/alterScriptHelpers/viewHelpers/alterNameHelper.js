@@ -1,7 +1,6 @@
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
-const { getFullCollectionName, getSchemaOfAlterView } = require('../../../utils/general');
-const { getKeys } = require('./getKeys');
-const { createView } = require('./createView');
+const { getFullCollectionName, getSchemaOfAlterCollection } = require('../../../utils/general');
+const { createView, dropView } = require('./createDropViewHelper');
 
 /**
  * @param {Object} view
@@ -9,28 +8,32 @@ const { createView } = require('./createView');
  * @param {Function} mapProperties
  * @return {AlterScriptDto | undefined}
  */
-const getRenameViewScriptDto = (view, ddlProvider, mapProperties) => {
-	const viewSchema = getSchemaOfAlterView(view);
+const getRenameViewScriptDtos = (view, ddlProvider, mapProperties) => {
+	const viewSchema = getSchemaOfAlterCollection(view);
 	const viewName = viewSchema?.compMod?.name;
 
 	if (!viewName) {
-		return undefined;
+		return [undefined];
 	}
 
 	const { old: oldName, new: newName } = viewName;
 
 	if (!newName || newName === oldName) {
-		return undefined;
+		return [undefined];
 	}
 
-	const oldFullViewName = getFullCollectionName({ ...viewSchema, code: oldName, name: oldName });
-	const dropScript = ddlProvider.dropView({ viewName: oldFullViewName });
+	const dropScript = dropView({
+		ddlProvider,
+		viewSchema: { ...viewSchema, code: oldName, name: oldName },
+	});
+	const createScript = createView({ ddlProvider, mapProperties, view });
 
-	const createScript = createView(ddlProvider, mapProperties, view);
-
-	return AlterScriptDto.getInstance([dropScript, createScript], true, false);
+	return [
+		AlterScriptDto.getInstance([dropScript], true, true),
+		AlterScriptDto.getInstance([createScript], true, false),
+	];
 };
 
 module.exports = {
-	getRenameViewScriptDto,
+	getRenameViewScriptDtos,
 };

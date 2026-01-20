@@ -2,12 +2,11 @@
  * @typedef {import('../../../shared/types').App} App
  */
 const { getModifyViewCommentsScriptDtos } = require('./viewHelpers/commentsHelper');
-const { getModifyViewNameScriptDtos, getRenameViewScriptDto } = require('./viewHelpers/alterNameHelper');
+const { getRenameViewScriptDtos } = require('./viewHelpers/alterNameHelper');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
-const { wrapInQuotes, getSchemaOfAlterView, getFullCollectionName } = require('../../utils/general');
-const { getKeys } = require('./viewHelpers/getKeys');
-const { createView } = require('./viewHelpers/createView');
-const { getModifySelectStatementScriptDto } = require('./viewHelpers/alterViewStatementHelper');
+const { wrapInQuotes, getSchemaOfAlterCollection, getFullCollectionName } = require('../../utils/general');
+const { createView, dropView } = require('./viewHelpers/createDropViewHelper');
+const { getModifySelectStatementScriptDtos } = require('./viewHelpers/alterViewStatementHelper');
 
 /**
  * @param {Object} ddlProvider
@@ -15,7 +14,7 @@ const { getModifySelectStatementScriptDto } = require('./viewHelpers/alterViewSt
  * @returns {(view: Object) => AlterScriptDto}
  */
 const getAddViewScriptDto = (ddlProvider, mapProperties) => view => {
-	const script = createView(ddlProvider, mapProperties, view);
+	const script = createView({ ddlProvider, mapProperties, view });
 
 	return AlterScriptDto.getInstance([script], true, false);
 };
@@ -25,19 +24,20 @@ const getAddViewScriptDto = (ddlProvider, mapProperties) => view => {
  * @returns {(view: Object) => AlterScriptDto}
  */
 const getDeleteViewScriptDto = ddlProvider => view => {
-	const viewSchema = getSchemaOfAlterView(view);
-	const fullViewName = getFullCollectionName(viewSchema);
-	const script = ddlProvider.dropView({ viewName: fullViewName });
+	const viewSchema = getSchemaOfAlterCollection(view);
+	const script = dropView({ ddlProvider, viewSchema });
 
 	return AlterScriptDto.getInstance([script], true, true);
 };
 
 const getModifyViewScriptDtos = (ddlProvider, mapProperties) => view => {
-	const renameViewNameScriptDtos = getRenameViewScriptDto(view, ddlProvider, mapProperties);
+	const renameViewNameScriptDtos = getRenameViewScriptDtos(view, ddlProvider, mapProperties);
+	const modifySelectStatementScriptDtos = getModifySelectStatementScriptDtos(view, ddlProvider, mapProperties);
 	const modifyCommentsScriptDtos = getModifyViewCommentsScriptDtos(view);
-	const modifySelectStatementScriptDto = getModifySelectStatementScriptDto(view, ddlProvider, mapProperties);
 
-	return [renameViewNameScriptDtos, modifySelectStatementScriptDto, ...modifyCommentsScriptDtos].filter(Boolean);
+	return [...renameViewNameScriptDtos, ...modifySelectStatementScriptDtos, ...modifyCommentsScriptDtos].filter(
+		Boolean,
+	);
 };
 
 /**

@@ -5,7 +5,10 @@ const {
 	getFullCollectionName,
 	getSchemaOfAlterCollection,
 } = require('../../../utils/general');
-const { getTableCommentStatement } = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
+const {
+	getTableCommentStatement,
+	dropTableCommentStatement,
+} = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
 
 const extractDescription = view => {
 	return view?.role?.compMod?.description || {};
@@ -39,7 +42,7 @@ const getDropCommentsScriptDto = view => {
 		const isContainerActivated = isParentContainerActivated(view);
 		const isViewActivated = isContainerActivated && isObjectInDeltaModelActivated(view);
 
-		const script = getTableCommentStatement({ tableName: viewName, description: '' });
+		const script = dropTableCommentStatement({ tableName: viewName });
 		return AlterScriptDto.getInstance([script], isViewActivated, true);
 	}
 	return undefined;

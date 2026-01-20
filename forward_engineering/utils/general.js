@@ -136,10 +136,6 @@ const getSchemaOfAlterCollection = collection => {
 	return { ...collection, ...(omit(collection?.role, 'properties') || {}) };
 };
 
-const getSchemaOfAlterView = view => {
-	return { ...view, ...(omit(view?.role, 'properties') || {}) };
-};
-
 const isObjectInDeltaModelActivated = modelObject => {
 	return modelObject.compMod?.isActivated?.new ?? modelObject.role?.isActivated;
 };
@@ -197,7 +193,6 @@ module.exports = {
 	getFullCollectionName,
 	getEntityName,
 	getSchemaOfAlterCollection,
-	getSchemaOfAlterView,
 	isObjectInDeltaModelActivated,
 	isParentContainerActivated,
 	getSchemaNameFromCollection,
