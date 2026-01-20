@@ -2,10 +2,12 @@
  * @typedef {import('../../../shared/types').App} App
  */
 const { getModifyViewCommentsScriptDtos } = require('./viewHelpers/commentsHelper');
-const { getModifyViewNameScriptDtos, getRenameViewScriptDto } = require('./viewHelpers/nameHelper');
+const { getModifyViewNameScriptDtos, getRenameViewScriptDto } = require('./viewHelpers/alterNameHelper');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
-const { wrapInQuotes, getSchemaOfAlterView, getFullViewName } = require('../../utils/general');
+const { wrapInQuotes, getSchemaOfAlterView, getFullCollectionName } = require('../../utils/general');
 const { getKeys } = require('./viewHelpers/getKeys');
+const { createView } = require('./viewHelpers/createView');
+const { getModifySelectStatementScriptDto } = require('./viewHelpers/alterViewStatementHelper');
 
 /**
  * @param {Object} ddlProvider
@@ -13,23 +15,7 @@ const { getKeys } = require('./viewHelpers/getKeys');
  * @returns {(view: Object) => AlterScriptDto}
  */
 const getAddViewScriptDto = (ddlProvider, mapProperties) => view => {
-	const viewSchema = { ...view, ...(view.role || {}) };
-	const schemaName = viewSchema.schemaName || '';
-	const schemaData = { schemaName };
-
-	const viewData = {
-		name: viewSchema.code || viewSchema.name,
-		keys: getKeys({
-			viewSchema,
-			ddlProvider,
-			mapProperties,
-			collectionRefsDefinitionsMap: view.compMod?.collectionData?.collectionRefsDefinitionsMap ?? {},
-		}),
-		schemaData,
-	};
-
-	const hydratedView = ddlProvider.hydrateView({ viewData, entityData: [viewSchema] });
-	const script = ddlProvider.createView(hydratedView, {}, viewSchema.isActivated);
+	const script = createView(ddlProvider, mapProperties, view);
 
 	return AlterScriptDto.getInstance([script], true, false);
 };
@@ -40,7 +26,7 @@ const getAddViewScriptDto = (ddlProvider, mapProperties) => view => {
  */
 const getDeleteViewScriptDto = ddlProvider => view => {
 	const viewSchema = getSchemaOfAlterView(view);
-	const fullViewName = getFullViewName(viewSchema);
+	const fullViewName = getFullCollectionName(viewSchema);
 	const script = ddlProvider.dropView({ viewName: fullViewName });
 
 	return AlterScriptDto.getInstance([script], true, true);
@@ -49,8 +35,9 @@ const getDeleteViewScriptDto = ddlProvider => view => {
 const getModifyViewScriptDtos = (ddlProvider, mapProperties) => view => {
 	const renameViewNameScriptDtos = getRenameViewScriptDto(view, ddlProvider, mapProperties);
 	const modifyCommentsScriptDtos = getModifyViewCommentsScriptDtos(view);
+	const modifySelectStatementScriptDto = getModifySelectStatementScriptDto(view, ddlProvider, mapProperties);
 
-	return [renameViewNameScriptDtos, ...modifyCommentsScriptDtos].filter(Boolean);
+	return [renameViewNameScriptDtos, modifySelectStatementScriptDto, ...modifyCommentsScriptDtos].filter(Boolean);
 };
 
 /**
