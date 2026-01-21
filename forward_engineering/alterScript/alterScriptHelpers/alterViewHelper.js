@@ -4,7 +4,7 @@
 const { getModifyViewCommentsScriptDtos } = require('./viewHelpers/commentsHelper');
 const { getRenameViewScriptDtos } = require('./viewHelpers/alterNameHelper');
 const { AlterScriptDto } = require('../types/AlterScriptDto');
-const { wrapInQuotes, getSchemaOfAlterCollection, getFullCollectionName } = require('../../utils/general');
+const { getSchemaOfAlterCollection } = require('../../utils/general');
 const { createView, dropView } = require('./viewHelpers/createDropViewHelper');
 const { getModifySelectStatementScriptDtos } = require('./viewHelpers/alterViewStatementHelper');
 
@@ -30,6 +30,11 @@ const getDeleteViewScriptDto = ddlProvider => view => {
 	return AlterScriptDto.getInstance([script], true, true);
 };
 
+/**
+ * @param {Object} ddlProvider
+ * @param {Function} mapProperties
+ * @returns {(view: Object) => Array<AlterScriptDto>}
+ */
 const getModifyViewScriptDtos = (ddlProvider, mapProperties) => view => {
 	const renameViewNameScriptDtos = getRenameViewScriptDtos(view, ddlProvider, mapProperties);
 	const modifySelectStatementScriptDtos = getModifySelectStatementScriptDtos(view, ddlProvider, mapProperties);

@@ -1,8 +1,4 @@
-const {
-	getFullCollectionName,
-	getSchemaOfAlterCollection,
-	checkFieldPropertiesChanged,
-} = require('../../../utils/general');
+const { getSchemaOfAlterCollection } = require('../../../utils/general');
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
 const { createView, dropView } = require('./createDropViewHelper');
 
@@ -14,7 +10,6 @@ const { createView, dropView } = require('./createDropViewHelper');
  */
 const getModifySelectStatementScriptDtos = (view, ddlProvider, mapProperties) => {
 	const viewSchema = getSchemaOfAlterCollection(view);
-
 	const selectStatement = viewSchema?.compMod?.selectStatement || {};
 
 	if ((!selectStatement.new && !selectStatement.old) || selectStatement.new === selectStatement.old) {

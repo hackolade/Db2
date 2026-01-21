@@ -1,5 +1,5 @@
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
-const { getFullCollectionName, getSchemaOfAlterCollection } = require('../../../utils/general');
+const { getSchemaOfAlterCollection } = require('../../../utils/general');
 const { createView, dropView } = require('./createDropViewHelper');
 
 /**
