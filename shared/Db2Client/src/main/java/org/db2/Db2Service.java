@@ -78,7 +78,7 @@ public class Db2Service {
 	}
 
 	private String[] splitStatements(String query) {
-		String[] parts = query.split(";");
+		String[] parts = query.trim().split(";\\s+", -1);
 		java.util.ArrayList<String> statements = new java.util.ArrayList<>();
 		for (String part : parts) {
 			part = part.trim();
