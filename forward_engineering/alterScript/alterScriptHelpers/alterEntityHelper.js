@@ -11,6 +11,7 @@ const { getRenameColumnScriptDtos } = require('./columnHelpers/alterColumnNameHe
 const { getModifyEntityCommentsScriptDtos } = require('./entityHelpers/commentsHelper');
 const { getModifyPkConstraintsScriptDtos } = require('./entityHelpers/primaryKeyHelper');
 const { getModifyUkConstraintsScriptDtos } = require('./entityHelpers/uniqueKeyHelper');
+const { getModifyIndexesScriptDtos } = require('./entityHelpers/indexesHelper');
 const { getModifiedDefaultColumnValueScriptDtos } = require('./columnHelpers/defaultValueHelper');
 const {
 	getEntityName,
@@ -109,13 +110,14 @@ const getModifyCollectionScriptDtos = collection => {
 };
 
 /**
- * @param {Object} collection
- * @returns {Array<AlterScriptDto>}
+ * @param {Object} ddlProvider
+ * @returns {(collection: Object) => Array<AlterScriptDto>}
  */
-const getModifyCollectionKeysScriptDtos = collection => {
+const getModifyCollectionKeysScriptDtos = ddlProvider => collection => {
 	const modifyPkConstraintDtos = getModifyPkConstraintsScriptDtos(collection);
 	const modifyUkConstraintDtos = getModifyUkConstraintsScriptDtos(collection);
-	return [...modifyPkConstraintDtos, ...modifyUkConstraintDtos].filter(Boolean);
+	const modifyIndexesScriptDtos = getModifyIndexesScriptDtos({ ddlProvider, collection });
+	return [...modifyPkConstraintDtos, ...modifyUkConstraintDtos, ...modifyIndexesScriptDtos].filter(Boolean);
 };
 
 /**
@@ -197,7 +199,7 @@ const getEntitiesScripts = (app, inlineDeltaRelationships) => {
 		getDeleteCollectionScriptDto: getDeleteCollectionScriptDto(ddlProvider),
 		getModifyCollectionScriptDtos,
 		getModifyColumnScriptDtos: getModifyColumnScriptDtos(ddlProvider),
-		getModifyCollectionKeysScriptDtos,
+		getModifyCollectionKeysScriptDtos: getModifyCollectionKeysScriptDtos(ddlProvider),
 		getAddColumnScriptDtos: getAddColumnScriptDtos(ddlProvider),
 		getDeleteColumnScriptDtos: getDeleteColumnScriptDtos(ddlProvider),
 	};

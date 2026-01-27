@@ -449,6 +449,10 @@ module.exports = (baseProvider, options, app) => {
 			});
 		},
 
+		dropIndex(name) {
+			return assignTemplates({ template: templates.dropIndex, templateData: { name } });
+		},
+
 		hydrateViewColumn(data) {
 			return {
 				name: data.name,
