@@ -21,6 +21,7 @@ const {
 } = require('../../utils/general');
 const { getRelationshipName } = require('./alterForeignKeyHelper');
 const { createColumnDefinitionBySchema } = require('./createColumnDefinition');
+const { getRenameTableScriptDtos } = require('./entityHelpers/alterTableNameHelper');
 
 /**
  * @param {Object} ddlProvider
@@ -99,9 +100,12 @@ const getDeleteCollectionScriptDto = ddlProvider => collection => {
  * @returns {Array<AlterScriptDto>}
  */
 const getModifyCollectionScriptDtos = collection => {
+	const modifyCollectionNameScriptDtos = getRenameTableScriptDtos(collection);
 	const modifyCheckConstraintScriptDtos = getModifyCheckConstraintScriptDtos(collection);
 	const modifyCommentScriptDtos = getModifyEntityCommentsScriptDtos(collection);
-	return [...modifyCheckConstraintScriptDtos, ...modifyCommentScriptDtos].filter(Boolean);
+	return [...modifyCollectionNameScriptDtos, ...modifyCheckConstraintScriptDtos, ...modifyCommentScriptDtos].filter(
+		Boolean,
+	);
 };
 
 /**

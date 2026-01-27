@@ -419,6 +419,10 @@ module.exports = (baseProvider, options, app) => {
 			return assignTemplates({ template: templates.dropColumn, templateData: { tableName, columnName } });
 		},
 
+		dropView({ viewName }) {
+			return assignTemplates({ template: templates.dropView, templateData: { viewName } });
+		},
+
 		hydrateIndex(indexData, tableData, schemaData) {
 			return { ...indexData, schemaName: schemaData.schemaName };
 		},

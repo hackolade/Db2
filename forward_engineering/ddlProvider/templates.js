@@ -62,4 +62,8 @@ module.exports = {
 	dropColumnDefaultValue: 'ALTER TABLE ${tableName} ALTER COLUMN ${columnName} DROP DEFAULT;',
 
 	renameColumn: 'ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};',
+
+	dropView: 'DROP VIEW ${viewName};',
+
+	renameTable: 'RENAME TABLE ${oldTableName} TO ${newTableName};',
 };

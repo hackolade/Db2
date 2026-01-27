@@ -6,7 +6,10 @@ const {
 	getSchemaOfAlterCollection,
 	getFullCollectionName,
 } = require('../../../utils/general');
-const { getTableCommentStatement } = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
+const {
+	getTableCommentStatement,
+	dropTableCommentStatement,
+} = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
 
 const getUpdatedCommentOnCollectionScriptDto = collection => {
 	const descriptionInfo = collection?.role.compMod?.description;
@@ -46,7 +49,7 @@ const getDeletedCommentOnCollectionScriptDto = collection => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isContainerActivated && isObjectInDeltaModelActivated(collection);
 
-	const script = getTableCommentStatement({ tableName, description: '' });
+	const script = dropTableCommentStatement({ tableName });
 	return AlterScriptDto.getInstance([script], isCollectionActivated, true);
 };
 

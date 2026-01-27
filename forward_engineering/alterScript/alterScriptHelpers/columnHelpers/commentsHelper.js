@@ -6,7 +6,10 @@ const {
 	getSchemaOfAlterCollection,
 	getFullCollectionName,
 } = require('../../../utils/general');
-const { getColumnCommentStatement } = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
+const {
+	getColumnCommentStatement,
+	dropTableColumnCommentStatement,
+} = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
 
 const getUpdatedCommentOnColumnScriptDtos = collection => {
 	const isContainerActivated = isParentContainerActivated(collection);
@@ -46,7 +49,7 @@ const getDeletedCommentOnColumnScriptDtos = collection => {
 		})
 		.map(([columnName, jsonSchema]) => {
 			const isActivated = isContainerActivated && isCollectionActivated && jsonSchema.isActivated;
-			const script = getColumnCommentStatement({ tableName, columnName, description: '' });
+			const script = dropTableColumnCommentStatement({ tableName, columnName });
 
 			return { script, isActivated };
 		})
