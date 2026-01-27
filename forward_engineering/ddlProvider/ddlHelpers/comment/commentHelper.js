@@ -155,6 +155,18 @@ const dropTableColumnCommentStatement = ({ tableName, columnName }) => {
 	});
 };
 
+/**
+ * @param {{ indexName: string }}
+ * @returns {string}
+ */
+const dropIndexCommentStatement = ({ indexName }) => {
+	return getCommentStatement({
+		objectName: indexName,
+		objectType: OBJECT_TYPE.index,
+		mode: COMMENT_MODE.remove,
+	});
+};
+
 module.exports = {
 	getColumnCommentStatement,
 	getSchemaCommentStatement,
@@ -165,4 +177,5 @@ module.exports = {
 	dropSchemaCommentStatement,
 	dropTableCommentStatement,
 	dropTableColumnCommentStatement,
+	dropIndexCommentStatement,
 };
