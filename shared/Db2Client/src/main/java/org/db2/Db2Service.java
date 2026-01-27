@@ -32,7 +32,8 @@ public class Db2Service {
 	}
 
 	public int applyScript(String script) throws SQLException {
-		String[] statements = splitStatements(script);
+		String cleanedScript = removeComments(script);
+		String[] statements = splitStatements(cleanedScript);
 		int totalUpdateCount = 0;
 
 		for (String statement : statements) {
@@ -70,6 +71,10 @@ public class Db2Service {
 		}
 
 		return totalUpdateCount;
+	}
+
+	private String removeComments(String script) {
+		return script.replaceAll("(?s)(?m)(?<=\\n)(?:/\\*.*?\\*/|--.*?$)(?=\\n)", "");
 	}
 
 	private String[] splitStatements(String query) {
