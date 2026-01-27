@@ -94,6 +94,31 @@ const areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex = ({ oldIndex, new
 };
 
 /**
+ * @param {string} schemaName
+ * @param {string} oldIndexName
+ * @param {string} newIndexName
+ * @param {boolean} isActivated
+ * @return {string}
+ * */
+const alterIndexRenameSto = ({ schemaName, oldIndexName, newIndexName, isActivated }) => {
+	const ddlOldIndexName = getNamePrefixedWithSchemaName({
+		name: oldIndexName,
+		schemaName,
+	});
+	const ddlNewIndexName = wrapInQuotes(newIndexName);
+
+	const script = assignTemplates({
+		template: templates.renameIndex,
+		templateData: {
+			oldIndexName: ddlOldIndexName,
+			newIndexName: ddlNewIndexName,
+		},
+	});
+
+	return AlterScriptDto.getInstance([script], isActivated, false);
+};
+
+/**
  * @param {AlterIndexDto} index
  * @param {Object} collection
  * @param {Object} additionalDataForDdlProvider
@@ -183,6 +208,7 @@ const getDeletedIndexesScriptDtos =
 
 const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }) => {
 	const scripts = [];
+
 	const shouldDropAndRecreate = shouldDropAndRecreateIndex({ newIndex, oldIndex });
 	if (shouldDropAndRecreate) {
 		const deleteIndexScriptDto = getDeleteIndexScriptDto({
@@ -196,7 +222,18 @@ const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }
 			ddlProvider,
 		});
 		scripts.push(deleteIndexScriptDto, createIndexScriptDto);
+	} else if (oldIndex.indxName !== newIndex.indxName) {
+		const schemaName = getSchemaNameFromCollection({ collection });
+		const renameScript = alterIndexRenameSto({
+			schemaName,
+			oldIndexName: oldIndex.indxName,
+			newIndexName: newIndex.indxName,
+			isActivated: isEntityActivated(collection) && newIndex.isActivated,
+		});
+
+		scripts.push(renameScript);
 	}
+
 	const commentDtos = getModifyIndexCommentsScriptDtos({ newIndex, oldIndex, collection });
 
 	if (commentDtos) {
