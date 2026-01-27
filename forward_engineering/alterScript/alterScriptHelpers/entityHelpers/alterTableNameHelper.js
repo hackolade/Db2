@@ -5,6 +5,7 @@ const {
 	getSchemaOfAlterCollection,
 	getSchemaNameFromCollection,
 	getNamePrefixedWithSchemaName,
+	wrapInQuotes,
 } = require('../../../utils/general');
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const templates = require('../../../ddlProvider/templates');
@@ -40,10 +41,7 @@ const getRenameTableScriptDtos = collection => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isContainerActivated && isObjectInDeltaModelActivated(collection);
 
-	const script = alterTableName(
-		getNamePrefixedWithSchemaName({ name: oldName, schemaName }),
-		getNamePrefixedWithSchemaName({ name: newName, schemaName }),
-	);
+	const script = alterTableName(getNamePrefixedWithSchemaName({ name: oldName, schemaName }), wrapInQuotes(newName));
 
 	return [AlterScriptDto.getInstance([script], isCollectionActivated, false)];
 };
