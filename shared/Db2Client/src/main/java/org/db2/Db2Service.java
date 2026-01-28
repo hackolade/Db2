@@ -74,7 +74,7 @@ public class Db2Service {
 	}
 
 	private String removeComments(String script) {
-		return script.replaceAll("(?s)(?m)(?<=\\n)(?:/\\*.*?\\*/|--.*?$)(?=\\n)", "");
+		return script.replaceAll("(?s)(?m)(?:^|(?<=\\n))(?:/\\*.*?\\*/|--.*?)(?=\\n|$)", "");
 	}
 
 	private String[] splitStatements(String query) {
