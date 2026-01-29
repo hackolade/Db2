@@ -1,4 +1,4 @@
-const { wrapInQuotes } = require('../../../utils/general');
+const { wrapInQuotes, getNamePrefixedWithSchemaName } = require('../../../utils/general');
 
 /**
  * @param {{ key?: object }}
@@ -37,7 +37,10 @@ const getViewData = ({ keys }) => {
 				return result;
 			}
 
-			const tableName = `${wrapInQuotes(key.dbName)}.${wrapInQuotes(key.tableName)}`;
+			const tableName = getNamePrefixedWithSchemaName({
+				name: key.tableName,
+				schemaName: key.dbName,
+			});
 
 			if (!result.tables.includes(tableName)) {
 				result.tables.push(tableName);
