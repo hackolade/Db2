@@ -151,16 +151,6 @@ const checkFieldPropertiesChanged = (compMod, propertiesToCheck) => {
 };
 
 /**
- * @param {object} collection
- * @returns {boolean}
- */
-const isEntityActivated = collection => {
-	const isContainerActivated = isParentContainerActivated(collection);
-	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
-	return isContainerActivated && isCollectionActivated;
-};
-
-/**
  *
  * @template {object} T
  * @param {{ new: T, old: T }}
@@ -208,5 +198,4 @@ module.exports = {
 	getSchemaNameFromCollection,
 	getUpdatedProperties,
 	checkFieldPropertiesChanged,
-	isEntityActivated,
 };

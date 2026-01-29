@@ -3,7 +3,7 @@ const {
 	getSchemaNameFromCollection,
 	getNamePrefixedWithSchemaName,
 	wrapInQuotes,
-	isEntityActivated,
+	isObjectInDeltaModelActivated,
 } = require('../../../utils/general');
 const {
 	getIndexCommentStatement,
@@ -11,10 +11,12 @@ const {
 } = require('../../../ddlProvider/ddlHelpers/comment/commentHelper');
 
 /**
- * @param {Object} newIndex
- * @param {Object} oldIndex
- * @param {Object} collection
- * @return {AlterScriptDto | undefined}
+ * @param {{
+ *  newIndex: Object,
+ *  oldIndex: Object,
+ *  collection: Object
+ * }} param
+ * @returns {AlterScriptDto|undefined}
  */
 const getModifyIndexCommentsScriptDtos = ({ newIndex, oldIndex, collection }) => {
 	const newDescription = newIndex.indxDescription;
@@ -25,7 +27,7 @@ const getModifyIndexCommentsScriptDtos = ({ newIndex, oldIndex, collection }) =>
 		schemaName,
 	});
 
-	const isActivated = isEntityActivated(collection) && newIndex.isActivated;
+	const isActivated = isObjectInDeltaModelActivated(collection) && newIndex.isActivated;
 
 	if (newDescription && newDescription !== oldDescription) {
 		const script = getIndexCommentStatement({

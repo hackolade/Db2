@@ -10,7 +10,6 @@ const {
 	toArray,
 	hasType,
 	setTab,
-	isEntityActivated,
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/key/keyHelper.js');

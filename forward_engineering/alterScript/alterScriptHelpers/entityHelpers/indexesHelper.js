@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { isEqual } = require('lodash');
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
 const {
 	getSchemaNameFromCollection,
@@ -7,94 +7,55 @@ const {
 	getSchemaOfAlterCollection,
 	getFullCollectionName,
 	getEntityName,
-	isEntityActivated,
+	isObjectInDeltaModelActivated,
 } = require('../../../utils/general');
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const templates = require('../../../ddlProvider/templates');
 const { getIndexCommentsScriptDtos, getModifyIndexCommentsScriptDtos } = require('../indexHelpers/commentsHelper');
+const { addNameToIndexKey } = require('../indexHelpers/addNameToIndexKey');
 
-/**
- * @param {string} columnId
- * @param {Object} collection
- * @return {string | undefined}
- * */
-const getColumnNameById = ({ columnId, collection }) => {
-	const collectionProperties = _.toPairs(collection?.role?.properties || collection?.properties || {}).map(
-		([name, value]) => ({ ...value, name }),
-	);
-	const oldProperties = (collection?.role?.compMod?.oldProperties || []).map(property => ({
-		...property,
-		GUID: property.id,
-	}));
-	const properties = collectionProperties.length > 0 ? collectionProperties : oldProperties;
-	const propertySchema = properties.find(fieldJsonSchema => fieldJsonSchema.GUID === columnId);
-
-	if (propertySchema) {
-		return propertySchema.name;
-	}
-
-	return undefined;
-};
-
-/**
- * @param {AlterIndexDto} index
- * @param {Object} collection
- * @return {Object}
- * */
-const addNameToIndexKey = ({ index, collection }) => {
-	if (!index?.indxKey?.length) {
-		return index;
-	}
-
-	const schemaName = getSchemaNameFromCollection({ collection });
-
-	const columnsWithNames = index.indxKey
-		.map(column => {
-			return {
-				...column,
-				name: getColumnNameById({ columnId: column.keyId, collection }),
-			};
-		})
-		.filter(column => Boolean(column.name));
-
-	return {
-		...index,
-		schemaName,
-		indxKey: columnsWithNames,
-	};
-};
-
-const alterIndexRebuildProperties = ['indxCompress'];
+const alterIndexProperties = ['indxCompress'];
 const columnProperties = ['indxKey', 'indxIncludeKey'];
 // Temporary always drop and recreate index if any of these properties changed
 const dropAndRecreateIndexProperties = [
 	'indxType',
 	'indxTablespace',
 	'indxNullKeys',
-	...alterIndexRebuildProperties,
+	...alterIndexProperties,
 	...columnProperties,
 ];
 
+/**
+ * @param {{
+ *  oldIndex: Object,
+ *  newIndex: Object
+ * }} param
+ * @return {boolean}
+ */
 const shouldDropAndRecreateIndex = ({ oldIndex, newIndex }) => {
-	return dropAndRecreateIndexProperties.some(property => !_.isEqual(oldIndex[property], newIndex[property]));
+	return dropAndRecreateIndexProperties.some(property => !isEqual(oldIndex[property], newIndex[property]));
 };
 
 /**
- * @param {AlterIndexDto} oldIndex
- * @param {AlterIndexDto} newIndex
+ * @param {{
+ *  oldIndex: Object,
+ *  newIndex: Object
+ * }} param
  * @return {boolean}
- * */
+ */
 const areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex = ({ oldIndex, newIndex }) => {
 	return oldIndex.id === newIndex.id || oldIndex.indxName === newIndex.indxName;
 };
 
 /**
- * @param {string} schemaName
- * @param {string} oldIndexName
- * @param {string} newIndexName
- * @param {boolean} isActivated
- * @return {string}
- * */
+ * @param {{
+ *  schemaName: string,
+ *  oldIndexName: string,
+ *  newIndexName: string,
+ *  isActivated: boolean
+ * }} param
+ * @return {AlterScriptDto}
+ */
 const alterIndexRenameDto = ({ schemaName, oldIndexName, newIndexName, isActivated }) => {
 	const ddlOldIndexName = getNamePrefixedWithSchemaName({
 		name: oldIndexName,
@@ -114,11 +75,13 @@ const alterIndexRenameDto = ({ schemaName, oldIndexName, newIndexName, isActivat
 };
 
 /**
- * @param {AlterIndexDto} index
- * @param {Object} collection
- * @param {Object} additionalDataForDdlProvider
+ * @param {{
+ *  index: Object,
+ *  collection: Object,
+ *  ddlProvider: Object
+ * }} param
  * @return {AlterScriptDto | undefined}
- * */
+ */
 const getCreateIndexScriptDto = ({ index, collection, ddlProvider }) => {
 	const indexWithAddedKeyNames = addNameToIndexKey({ index, collection });
 	const collectionSchema = getSchemaOfAlterCollection(collection);
@@ -129,76 +92,90 @@ const getCreateIndexScriptDto = ({ index, collection, ddlProvider }) => {
 };
 
 /**
- * @param {Object} collection
- * @param {Object} additionalDataForDdlProvider
+ * @param {{
+ *  collection: Object,
+ *  ddlProvider: Object
+ * }} param
  * @return {Array<AlterScriptDto>}
- * */
-const getAddedIndexesScriptDtos =
-	ddlProvider =>
-	({ collection }) => {
-		const newIndexes = collection?.role?.Indxs || [];
-		const oldIndexes = collection?.role?.compMod?.Indxs?.old || [];
+ */
+const getAddedIndexesScriptDtos = ({ collection, ddlProvider }) => {
+	const newIndexes = collection?.role?.Indxs || [];
+	const oldIndexes = collection?.role?.compMod?.Indxs?.old || [];
 
-		return newIndexes
-			.filter(newIndex => {
-				const correspondingOldIndex = oldIndexes.find(oldIndex =>
-					areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex({
-						oldIndex,
-						newIndex,
-					}),
-				);
-				return !correspondingOldIndex;
-			})
-			.map(newIndex => {
-				return getCreateIndexScriptDto({
-					index: newIndex,
-					collection,
-					ddlProvider,
-				});
-			})
-			.filter(Boolean);
-	};
+	return newIndexes
+		.filter(newIndex => {
+			const correspondingOldIndex = oldIndexes.find(oldIndex =>
+				areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex({
+					oldIndex,
+					newIndex,
+				}),
+			);
+			return !correspondingOldIndex;
+		})
+		.map(newIndex => {
+			return getCreateIndexScriptDto({
+				index: newIndex,
+				collection,
+				ddlProvider,
+			});
+		})
+		.filter(Boolean);
+};
 
+/**
+ * @param {{
+ *  index: Object,
+ *  collection: Object,
+ *  ddlProvider: Object
+ * }} param
+ * @return {AlterScriptDto | undefined}
+ */
 const getDeleteIndexScriptDto = ({ index, collection, ddlProvider }) => {
 	const schemaName = getSchemaNameFromCollection({ collection });
-	const isParentActivated = isEntityActivated(collection);
-
 	const fullIndexName = getNamePrefixedWithSchemaName({
 		name: index.indxName,
 		schemaName,
 	});
 	const script = ddlProvider.dropIndex(fullIndexName);
-	const isIndexActivated = index.isActivated && isParentActivated;
-	return AlterScriptDto.getInstance([script], isIndexActivated, true);
+	return AlterScriptDto.getInstance([script], index.isActivated && isObjectInDeltaModelActivated(collection), true);
 };
 
 /**
- * @param {Object} collection
- * @param {Object} additionalDataForDdlProvider
+ * @param {{
+ *  collection: Object,
+ *  ddlProvider: Object
+ * }} param
  * @return {Array<AlterScriptDto>}
- * */
-const getDeletedIndexesScriptDtos =
-	ddlProvider =>
-	({ collection }) => {
-		const newIndexes = collection?.role?.compMod?.Indxs?.new || [];
-		const oldIndexes = collection?.role?.compMod?.Indxs?.old || [];
+ */
+const getDeletedIndexesScriptDtos = ({ collection, ddlProvider }) => {
+	const newIndexes = collection?.role?.compMod?.Indxs?.new || [];
+	const oldIndexes = collection?.role?.compMod?.Indxs?.old || [];
 
-		return oldIndexes
-			.filter(oldIndex => {
-				const correspondingNewIndex = newIndexes.find(newIndex =>
-					areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex({
-						oldIndex,
-						newIndex,
-					}),
-				);
-				return !correspondingNewIndex;
-			})
-			.map(oldIndex => {
-				return getDeleteIndexScriptDto({ index: oldIndex, collection, ddlProvider });
-			})
-			.filter(Boolean);
-	};
+	return oldIndexes
+		.filter(oldIndex => {
+			const correspondingNewIndex = newIndexes.find(newIndex =>
+				areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex({
+					oldIndex,
+					newIndex,
+				}),
+			);
+			return !correspondingNewIndex;
+		})
+		.map(oldIndex => {
+			return getDeleteIndexScriptDto({ index: oldIndex, collection, ddlProvider });
+		})
+		.filter(Boolean);
+};
 
+/**
+ * @param {{
+ *  newIndex: Object,
+ *  oldIndex: Object,
+ *  collection: Object,
+ *  ddlProvider: Object
+ * }} param
+ * @return {Array<AlterScriptDto>}
+ */
 const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }) => {
 	const scripts = [];
 
@@ -214,6 +191,8 @@ const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }
 			collection,
 			ddlProvider,
 		});
+		// if an index was recreated, and comment was removed,
+		// no need to generate separate script to drop comment
 		scripts.push(deleteIndexScriptDto, createIndexScriptDto);
 
 		if (newIndex.indxDescription) {
@@ -233,7 +212,7 @@ const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }
 			schemaName,
 			oldIndexName: oldIndex.indxName,
 			newIndexName: newIndex.indxName,
-			isActivated: isEntityActivated(collection) && newIndex.isActivated,
+			isActivated: isObjectInDeltaModelActivated(collection) && newIndex.isActivated,
 		});
 
 		scripts.push(renameScript);
@@ -249,10 +228,12 @@ const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }
 };
 
 /**
- * @param {Object} collection
- * @param {Object} additionalDataForDdlProvider
+ * @param {{
+ *  collection: Object,
+ *  ddlProvider: Object
+ * }} param
  * @return {Array<AlterScriptDto>}
- * */
+ */
 const getModifiedIndexesScriptDtos = ({ collection, ddlProvider }) => {
 	const newIndexes = collection?.role?.compMod?.Indxs?.new || [];
 	const oldIndexes = collection?.role?.compMod?.Indxs?.old || [];
@@ -286,15 +267,20 @@ const getModifiedIndexesScriptDtos = ({ collection, ddlProvider }) => {
 };
 
 /**
- * @param {Object} collection
+ * @param {{
+ *  ddlProvider: Object,
+ *  collection: Object
+ * }} param
  * @return {Array<AlterScriptDto>}
- * */
+ */
 const getModifyIndexesScriptDtos = ({ ddlProvider, collection }) => {
-	const deletedIndexesScriptDtos = getDeletedIndexesScriptDtos(ddlProvider)({
+	const deletedIndexesScriptDtos = getDeletedIndexesScriptDtos({
 		collection,
+		ddlProvider,
 	});
-	const addedIndexesScriptDtos = getAddedIndexesScriptDtos(ddlProvider)({
+	const addedIndexesScriptDtos = getAddedIndexesScriptDtos({
 		collection,
+		ddlProvider,
 	});
 	const modifiedIndexesScriptDtos = getModifiedIndexesScriptDtos({
 		collection,
