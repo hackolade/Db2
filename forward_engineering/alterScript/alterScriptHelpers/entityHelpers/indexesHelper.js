@@ -65,23 +65,18 @@ const addNameToIndexKey = ({ index, collection }) => {
 };
 
 const alterIndexRebuildProperties = ['indxCompress'];
-const dropAndRecreateIndexProperties = ['indxType', 'indxTablespace', 'indxNullKeys'];
-// need to recreate if key is removed, but can alter if added
-const customLogicProperties = ['indxKey', 'indxIncludeKey'];
-
-const hasRemovedIndexKeys = ({ oldIndex, newIndex, property }) => {
-	const oldKeys = oldIndex[property] || [];
-	const newKeys = newIndex[property] || [];
-
-	return oldKeys.some(oldKey => !newKeys.find(newKey => newKey.keyId === oldKey.keyId));
-};
+const columnProperties = ['indxKey', 'indxIncludeKey'];
+// Temporary always drop and recreate index if any of these properties changed
+const dropAndRecreateIndexProperties = [
+	'indxType',
+	'indxTablespace',
+	'indxNullKeys',
+	...alterIndexRebuildProperties,
+	...columnProperties,
+];
 
 const shouldDropAndRecreateIndex = ({ oldIndex, newIndex }) => {
-	return (
-		dropAndRecreateIndexProperties.some(property => !_.isEqual(oldIndex[property], newIndex[property])) ||
-		hasRemovedIndexKeys({ oldIndex, newIndex, property: 'indxKey' }) ||
-		hasRemovedIndexKeys({ oldIndex, newIndex, property: 'indxIncludeKey' })
-	);
+	return dropAndRecreateIndexProperties.some(property => !_.isEqual(oldIndex[property], newIndex[property]));
 };
 
 /**
@@ -100,7 +95,7 @@ const areOldIndexDtoAndNewIndexDtoDescribingSameDatabaseIndex = ({ oldIndex, new
  * @param {boolean} isActivated
  * @return {string}
  * */
-const alterIndexRenameSto = ({ schemaName, oldIndexName, newIndexName, isActivated }) => {
+const alterIndexRenameDto = ({ schemaName, oldIndexName, newIndexName, isActivated }) => {
 	const ddlOldIndexName = getNamePrefixedWithSchemaName({
 		name: oldIndexName,
 		schemaName,
@@ -128,11 +123,9 @@ const getCreateIndexScriptDto = ({ index, collection, ddlProvider }) => {
 	const indexWithAddedKeyNames = addNameToIndexKey({ index, collection });
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const tableName = getEntityName(collectionSchema);
-	const isParentActivated = isEntityActivated(collection);
 
 	const script = ddlProvider.createIndex(tableName, indexWithAddedKeyNames);
-	const isIndexActivated = indexWithAddedKeyNames.isActivated && isParentActivated;
-	return AlterScriptDto.getInstance([script], isIndexActivated, false);
+	return AlterScriptDto.getInstance([script], true, false);
 };
 
 /**
@@ -222,9 +215,21 @@ const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }
 			ddlProvider,
 		});
 		scripts.push(deleteIndexScriptDto, createIndexScriptDto);
-	} else if (oldIndex.indxName !== newIndex.indxName) {
+
+		if (newIndex.indxDescription) {
+			const commentDtos = getIndexCommentsScriptDtos({
+				index: newIndex,
+				collection,
+			});
+			scripts.push(...commentDtos);
+		}
+
+		return scripts;
+	}
+
+	if (oldIndex.indxName !== newIndex.indxName) {
 		const schemaName = getSchemaNameFromCollection({ collection });
-		const renameScript = alterIndexRenameSto({
+		const renameScript = alterIndexRenameDto({
 			schemaName,
 			oldIndexName: oldIndex.indxName,
 			newIndexName: newIndex.indxName,
