@@ -44,6 +44,15 @@ const mapCoreDataForContainerLevelScripts = data => {
 	};
 };
 
+const buildEntityLevelAlterScript = (data, app) => {
+	const alterScriptDtos = getAlterScriptDtos(data, app);
+	const shouldApplyDropStatements = data.options?.additionalOptions?.some(
+		option => option.id === 'applyDropStatements' && option.value,
+	);
+
+	return joinAlterScriptDtosIntoScript(alterScriptDtos, shouldApplyDropStatements);
+};
+
 const buildContainerLevelAlterScript = (data, app) => {
 	const preparedData = mapCoreDataForContainerLevelScripts(data);
 	const alterScriptDtos = getAlterScriptDtos(preparedData, app);
@@ -66,6 +75,7 @@ const doesContainerLevelAlterScriptContainDropStatements = (data, app) => {
 
 module.exports = {
 	doesEntityLevelAlterScriptContainDropStatements,
+	buildEntityLevelAlterScript,
 	buildContainerLevelAlterScript,
 	doesContainerLevelAlterScriptContainDropStatements,
 };

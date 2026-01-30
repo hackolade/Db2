@@ -66,4 +66,8 @@ module.exports = {
 	dropView: 'DROP VIEW ${viewName};',
 
 	renameTable: 'RENAME TABLE ${oldTableName} TO ${newTableName};',
+
+	renameIndex: 'RENAME INDEX ${oldIndexName} TO ${newIndexName};',
+
+	dropIndex: 'DROP INDEX ${name};',
 };

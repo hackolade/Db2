@@ -1,4 +1,4 @@
-const { toUpper, isEmpty, trim } = require('lodash');
+const { toUpper, isEmpty, trim, get } = require('lodash');
 const templates = require('./templates');
 const defaultTypes = require('../configs/defaultTypes.js');
 const descriptors = require('../configs/descriptors.js');
@@ -424,7 +424,8 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateIndex(indexData, tableData, schemaData) {
-			return { ...indexData, schemaName: schemaData.schemaName };
+			const isParentActivated = get(tableData, '[0].isActivated', true);
+			return { ...indexData, schemaName: schemaData.schemaName, isParentActivated };
 		},
 
 		createIndex(tableName, index) {
@@ -442,11 +443,26 @@ module.exports = (baseProvider, options, app) => {
 				templateData: { indexType, indexName, indexOptions, indexTableName },
 			});
 			const commentStatement = getIndexCommentStatement({ indexName, description: index.indxDescription });
-			const createIndexStatement = statement + commentStatement;
 
-			return commentIfDeactivated(createIndexStatement, {
-				isActivated: index.isActivated,
+			let finalStatement = commentIfDeactivated(statement, {
+				isActivated: index.isActivated && index.isParentActivated,
 			});
+
+			if (commentStatement) {
+				finalStatement +=
+					'\n' +
+					commentIfDeactivated(commentStatement, {
+						isPartOfLine: true,
+						isActivated: index.isActivated && index.isParentActivated,
+					}) +
+					'\n';
+			}
+
+			return finalStatement;
+		},
+
+		dropIndex(name) {
+			return assignTemplates({ template: templates.dropIndex, templateData: { name } });
 		},
 
 		hydrateViewColumn(data) {
