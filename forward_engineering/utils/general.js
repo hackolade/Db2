@@ -118,6 +118,10 @@ const getColumnsList = (columns, isAllColumnsDeactivated, isParentActivated, map
  */
 const toArray = ({ value }) => (Array.isArray(value) ? value : [value]);
 
+const getAlterEntityName = entityData => {
+	return entityData?.compMod?.collectionName?.new;
+};
+
 const getEntityName = entityData => {
 	return entityData?.code || entityData?.collectionName || entityData?.name || '';
 };
@@ -127,7 +131,7 @@ const getSchemaNameFromCollection = ({ collection }) => {
 };
 
 const getFullCollectionName = collectionSchema => {
-	const name = getEntityName(collectionSchema);
+	const name = getAlterEntityName(collectionSchema) || getEntityName(collectionSchema);
 	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
 	return getNamePrefixedWithSchemaName({ name, schemaName });
 };

@@ -100,8 +100,8 @@ const getAlterCollectionScriptDtos = ({
 	return [
 		...deletedCollectionScriptDtos,
 		...addedCollectionScriptDtos,
-		...deletedColumnScriptDtos,
 		...modifyCollectionScriptDtos,
+		...deletedColumnScriptDtos,
 		...addedColumnScriptDtos,
 		...modifyColumnScriptDtos,
 		...modifyCollectionKeysScriptDtos,
