@@ -100,8 +100,8 @@ const getAlterCollectionScriptDtos = ({
 	return [
 		...deletedCollectionScriptDtos,
 		...addedCollectionScriptDtos,
-		...modifyCollectionScriptDtos,
 		...deletedColumnScriptDtos,
+		...modifyCollectionScriptDtos,
 		...addedColumnScriptDtos,
 		...modifyColumnScriptDtos,
 		...modifyCollectionKeysScriptDtos,
@@ -266,9 +266,9 @@ const getAlterScriptDtos = (data, app) => {
 	return [
 		...upsertedContainersScriptDtos,
 		...collectionsScriptDtos,
-		...viewScriptDtos,
 		...relationshipScriptDtos,
 		...deletedContainersScriptDtos,
+		...viewScriptDtos,
 	]
 		.filter(Boolean)
 		.map(dto => dto && prettifyAlterScriptDto(dto))

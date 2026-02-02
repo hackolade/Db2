@@ -130,8 +130,15 @@ const getSchemaNameFromCollection = ({ collection }) => {
 	return collection.compMod?.keyspaceName;
 };
 
-const getFullCollectionName = collectionSchema => {
-	const name = getAlterEntityName(collectionSchema) || getEntityName(collectionSchema);
+const getFullCollectionName = (collectionSchema, preferAlterName = true) => {
+	let name = '';
+
+	if (preferAlterName) {
+		name = getAlterEntityName(collectionSchema);
+	}
+
+	name = name || getEntityName(collectionSchema);
+
 	const schemaName = getSchemaNameFromCollection({ collection: collectionSchema });
 	return getNamePrefixedWithSchemaName({ name, schemaName });
 };

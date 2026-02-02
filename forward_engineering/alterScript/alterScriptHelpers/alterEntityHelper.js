@@ -155,7 +155,7 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
  */
 const getDeleteColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName(collectionSchema, false);
 
 	return toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => !jsonSchema.compMod)
