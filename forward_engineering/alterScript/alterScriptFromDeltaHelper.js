@@ -267,8 +267,8 @@ const getAlterScriptDtos = (data, app) => {
 		...upsertedContainersScriptDtos,
 		...collectionsScriptDtos,
 		...relationshipScriptDtos,
-		...deletedContainersScriptDtos,
 		...viewScriptDtos,
+		...deletedContainersScriptDtos,
 	]
 		.filter(Boolean)
 		.map(dto => dto && prettifyAlterScriptDto(dto))
