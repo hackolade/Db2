@@ -266,8 +266,8 @@ const getAlterScriptDtos = (data, app) => {
 	return [
 		...upsertedContainersScriptDtos,
 		...collectionsScriptDtos,
-		...viewScriptDtos,
 		...relationshipScriptDtos,
+		...viewScriptDtos,
 		...deletedContainersScriptDtos,
 	]
 		.filter(Boolean)

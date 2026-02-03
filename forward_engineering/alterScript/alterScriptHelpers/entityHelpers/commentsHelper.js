@@ -23,7 +23,7 @@ const getUpdatedCommentOnCollectionScriptDto = collection => {
 	}
 
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const tableName = getFullCollectionName(collectionSchema);
+	const tableName = getFullCollectionName({ collectionSchema });
 
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isContainerActivated && isObjectInDeltaModelActivated(collection);
@@ -44,7 +44,7 @@ const getDeletedCommentOnCollectionScriptDto = collection => {
 	}
 
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const tableName = getFullCollectionName(collectionSchema);
+	const tableName = getFullCollectionName({ collectionSchema });
 
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isContainerActivated && isObjectInDeltaModelActivated(collection);

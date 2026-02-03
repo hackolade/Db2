@@ -154,7 +154,7 @@ const getAddCompositeUniqueKeyScriptDtos = collection => {
 	}
 
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const entityName = getEntityName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);
@@ -191,7 +191,7 @@ const getDropCompositeUniqueKeyScriptDtos = collection => {
 	}
 
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const entityName = getEntityName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);
@@ -373,7 +373,7 @@ const wasRegularUniqueKeyModified = (columnJsonSchema, collection) => {
 
 const getAddUniqueKeyScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const entityName = getEntityName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);
@@ -403,7 +403,7 @@ const getAddUniqueKeyScriptDtos = collection => {
 
 const getDropUniqueKeyScriptDto = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const entityName = getEntityName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);

@@ -20,7 +20,9 @@ const getUpsertCommentsScriptDto = view => {
 		const comment = description.new;
 
 		const viewSchema = getSchemaOfAlterCollection(view);
-		const viewName = getFullCollectionName(viewSchema);
+		const viewName = getFullCollectionName({
+			collectionSchema: viewSchema,
+		});
 
 		const isContainerActivated = isParentContainerActivated(view);
 		const isViewActivated = isContainerActivated && isObjectInDeltaModelActivated(view);
@@ -37,7 +39,9 @@ const getDropCommentsScriptDto = view => {
 
 	if (description.old && !description.new) {
 		const viewSchema = getSchemaOfAlterCollection(view);
-		const viewName = getFullCollectionName(viewSchema);
+		const viewName = getFullCollectionName({
+			collectionSchema: viewSchema,
+		});
 
 		const isContainerActivated = isParentContainerActivated(view);
 		const isViewActivated = isContainerActivated && isObjectInDeltaModelActivated(view);

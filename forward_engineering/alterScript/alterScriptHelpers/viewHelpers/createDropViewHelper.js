@@ -92,7 +92,9 @@ const createView = ({ ddlProvider, mapProperties, view }) => {
  * @returns {string}
  */
 const dropView = ({ ddlProvider, viewSchema }) => {
-	const viewName = getFullCollectionName(viewSchema);
+	const viewName = getFullCollectionName({
+		collectionSchema: viewSchema,
+	});
 
 	return ddlProvider.dropView({ viewName });
 };

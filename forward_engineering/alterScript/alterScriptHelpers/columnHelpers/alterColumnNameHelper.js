@@ -33,7 +33,7 @@ const alterColumnName = (tableName, oldColumnName, newColumnName) => {
  */
 const getRenameColumnScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
 

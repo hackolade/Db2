@@ -62,7 +62,7 @@ const hasPrecisionOrScaleChanged = (collection, oldFieldName, currentJsonSchema)
  */
 const getUpdateTypesScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
 	const schemaName = getSchemaNameFromCollection({ collection });

@@ -161,7 +161,7 @@ const getAddCompositePkScriptDtos = collection => {
 	}
 
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const entityName = getEntityName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);
@@ -198,7 +198,7 @@ const getDropCompositePkScriptDtos = collection => {
 	}
 
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isContainerActivated && isObjectInDeltaModelActivated(collection);
@@ -367,7 +367,7 @@ const wasRegularPkModified = (columnJsonSchema, collection) => {
 
 const getAddPkScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const entityName = getEntityName(collectionSchema);
 
 	const isContainerActivated = isParentContainerActivated(collection);
@@ -397,7 +397,7 @@ const getAddPkScriptDtos = collection => {
 
 const getDropPkScriptDto = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isContainerActivated && isObjectInDeltaModelActivated(collection);
