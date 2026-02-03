@@ -130,7 +130,7 @@ const getSchemaNameFromCollection = ({ collection }) => {
 	return collection.compMod?.keyspaceName;
 };
 
-const getFullCollectionName = (collectionSchema, preferAlterName = true) => {
+const getFullCollectionName = ({ collectionSchema, preferAlterName = true }) => {
 	let name = '';
 
 	if (preferAlterName) {

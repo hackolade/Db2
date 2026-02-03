@@ -90,7 +90,7 @@ const getAddCollectionScriptDto = (ddlProvider, inlineDeltaRelationships) => col
  */
 const getDeleteCollectionScriptDto = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const script = ddlProvider.dropTable({ tableName: fullTableName });
 
 	return AlterScriptDto.getInstance([script], true, true);
@@ -126,7 +126,7 @@ const getModifyCollectionKeysScriptDtos = ddlProvider => collection => {
  */
 const getAddColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const schemaName = getSchemaNameFromCollection({ collection });
 	const schemaData = { schemaName };
 
@@ -155,7 +155,7 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
  */
 const getDeleteColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema, false);
+	const fullTableName = getFullCollectionName({ collectionSchema, preferAlterName: false });
 
 	return toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => !jsonSchema.compMod)

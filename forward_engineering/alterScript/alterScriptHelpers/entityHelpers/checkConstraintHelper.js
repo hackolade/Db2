@@ -101,7 +101,7 @@ const getUpdateCheckConstraintScriptDtos = (constraintHistory, fullTableName) =>
 
 const getModifyCheckConstraintScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const fullTableName = getFullCollectionName(collectionSchema);
+	const fullTableName = getFullCollectionName({ collectionSchema });
 	const constraintHistory = mapCheckConstraintNamesToChangeHistory(collection);
 
 	const isContainerActivated = isParentContainerActivated(collection);

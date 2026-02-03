@@ -5,7 +5,6 @@ const {
 	getNamePrefixedWithSchemaName,
 	wrapInQuotes,
 	getSchemaOfAlterCollection,
-	getFullCollectionName,
 	getEntityName,
 	isObjectInDeltaModelActivated,
 } = require('../../../utils/general');

@@ -15,7 +15,7 @@ const getUpdatedCommentOnColumnScriptDtos = collection => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const tableName = getFullCollectionName(collectionSchema);
+	const tableName = getFullCollectionName({ collectionSchema });
 
 	return _.toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => {
@@ -38,7 +38,7 @@ const getDeletedCommentOnColumnScriptDtos = collection => {
 	const isContainerActivated = isParentContainerActivated(collection);
 	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
 	const collectionSchema = getSchemaOfAlterCollection(collection);
-	const tableName = getFullCollectionName(collectionSchema);
+	const tableName = getFullCollectionName({ collectionSchema });
 
 	return _.toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => {

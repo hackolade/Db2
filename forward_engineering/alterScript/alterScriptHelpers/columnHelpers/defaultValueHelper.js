@@ -46,7 +46,7 @@ const getUpdatedDefaultColumnValueScriptDtos = ({ collection }) => {
 		.map(([columnName, jsonSchema]) => {
 			const newDefaultValue = jsonSchema.default;
 			const scriptGenerationConfig = {
-				tableName: getFullCollectionName(collectionSchema),
+				tableName: getFullCollectionName({ collectionSchema }),
 				columnName: wrapInQuotes(columnName),
 				defaultValue: newDefaultValue,
 			};
@@ -92,7 +92,7 @@ const getDeletedDefaultColumnValueScriptDtos = ({ collection }) => {
 		})
 		.map(([columnName, jsonSchema]) => {
 			const scriptGenerationConfig = {
-				tableName: getFullCollectionName(collectionSchema),
+				tableName: getFullCollectionName({ collectionSchema }),
 				columnName: wrapInQuotes(columnName),
 			};
 			const isActivated = isContainerActivated && isCollectionActivated && jsonSchema.isActivated;
