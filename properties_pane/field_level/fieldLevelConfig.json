@@ -1016,7 +1016,6 @@ making sure that you maintain a proper JSON format.
 					"value": "decimal"
 				}
 			},
-
 			{
 				"propertyName": "Default",
 				"propertyKeyword": "default",
@@ -1221,6 +1220,65 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "numeric",
 						"valueType": "number",
 						"step": 1,
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					},
+					{
+						"propertyName": "Cache",
+						"propertyKeyword": "cache",
+						"propertyTooltip": "Specify how many values of the sequence the database preallocates and keeps in memory for faster access. Specify NOCACHE to indicate that values of the sequence are not preallocated. If you omit both CACHE and NOCACHE, then the database caches 20 sequence numbers by default.",
+						"propertyType": "select",
+						"options": ["", "CACHE", "NO CACHE"],
+						"dependency": {
+							"type": "not",
+							"values": {
+								"type": "or",
+								"values": [
+									{
+										"key": "generated",
+										"exist": false
+									},
+									{
+										"key": "generated",
+										"value": ""
+									}
+								]
+							}
+						}
+					},
+					{
+						"propertyName": "Cache value",
+						"propertyKeyword": "cacheValue",
+						"propertyType": "numeric",
+						"valueType": "number",
+						"propertyTooltip": "This integer value can have 28 or fewer digits. The minimum value for this parameter is 2.",
+						"minValue": 2,
+						"defaultValue": 20,
+						"dependency": {
+							"key": "cache",
+							"value": "CACHE"
+						}
+					},
+					{
+						"propertyName": "Order",
+						"propertyKeyword": "order",
+						"propertyTooltip": "Specify ORDER to guarantee that sequence numbers are generated in order of request. Specify NOORDER if you do not want to guarantee sequence numbers are generated in order of request. This is the default.",
+						"propertyType": "select",
+						"options": ["", "ORDER", "NO ORDER"],
 						"dependency": {
 							"type": "not",
 							"values": {
