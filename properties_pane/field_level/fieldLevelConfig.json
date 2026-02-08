@@ -1276,7 +1276,7 @@ making sure that you maintain a proper JSON format.
 					{
 						"propertyName": "Order",
 						"propertyKeyword": "order",
-						"propertyTooltip": "Specify ORDER to guarantee that sequence numbers are generated in order of request. Specify NOORDER if you do not want to guarantee sequence numbers are generated in order of request. This is the default.",
+						"propertyTooltip": "Specify ORDER to guarantee that sequence numbers are generated in order of request. Specify NO ORDER if you do not want to guarantee sequence numbers are generated in order of request.",
 						"propertyType": "select",
 						"options": ["", "ORDER", "NO ORDER"],
 						"dependency": {

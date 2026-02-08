@@ -34,7 +34,7 @@ const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle, cache
 	const cache = cacheValue ? `CACHE ${cacheValue}` : 'NO CACHE';
 	const orderValue = order ? 'ORDER' : 'NO ORDER';
 
-	return [startWith, incrementBy, cycle, minimumValue, maximumValue, cache, orderValue].filter(Boolean).join(' ');
+	return [startWith, incrementBy, cycle, minimumValue, maximumValue, cache, orderValue].filter(Boolean).join(', ');
 };
 
 /**
