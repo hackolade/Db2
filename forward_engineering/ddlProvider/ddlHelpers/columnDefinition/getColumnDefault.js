@@ -26,13 +26,14 @@ const isGeneratedAsIdentity = ({ identity, type }) => {
  * @param {{ start?: number, increment?: number, minValue?: number, maxValue?: number, cycle?: string }} param0
  * @returns {string}
  */
-const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle }) => {
+const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle, cache, cacheValue, order }) => {
 	const startWith = start ? `START WITH ${start}` : '';
 	const incrementBy = increment ? `INCREMENT BY ${increment}` : '';
 	const minimumValue = minValue ? `MINVALUE ${minValue}` : '';
 	const maximumValue = maxValue ? `MAXVALUE ${maxValue}` : '';
+	const cacheOption = cacheValue ? `CACHE ${cacheValue}` : cache;
 
-	return [startWith, incrementBy, cycle, minimumValue, maximumValue].filter(Boolean).join(', ');
+	return [startWith, incrementBy, cycle, minimumValue, maximumValue, cacheOption, order].filter(Boolean).join(', ');
 };
 
 /**
