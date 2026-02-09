@@ -11,7 +11,7 @@ const { mapSeries } = require('async');
 const { connectionHelper } = require('../shared/helpers/connectionHelper');
 const { instanceHelper } = require('../shared/helpers/instanceHelper');
 const { logHelper } = require('../shared/helpers/logHelper');
-const { TABLE_TYPE } = require('../constants/constants');
+const { OBJECT_TYPE } = require('../constants/constants');
 const { nameHelper } = require('../shared/helpers/nameHelper');
 const { testConnection } = require('../shared/api/testConnection');
 
@@ -83,7 +83,7 @@ const getDbCollectionsNames = async (connectionInfo, appLogger, callback, app) =
 
 		const tableNames = await instanceHelper.getDatabasesWithTableNames({
 			connection,
-			tableType: TABLE_TYPE.table,
+			objectType: OBJECT_TYPE.table,
 			includeSystemCollection: connectionInfo.includeSystemCollection,
 			tableNameModifier: identity,
 		});
@@ -92,7 +92,7 @@ const getDbCollectionsNames = async (connectionInfo, appLogger, callback, app) =
 
 		const viewNames = await instanceHelper.getDatabasesWithTableNames({
 			connection,
-			tableType: TABLE_TYPE.view,
+			objectType: OBJECT_TYPE.view,
 			includeSystemCollection: connectionInfo.includeSystemCollection,
 			tableNameModifier: nameHelper.setViewSign,
 		});
@@ -153,7 +153,7 @@ const getDbCollectionsData = async (connectionInfo, appLogger, callback, app) =>
 					connection,
 					schemaName,
 					tableName,
-					tableType: TABLE_TYPE.table,
+					objectType: OBJECT_TYPE.table,
 					logger,
 				});
 
@@ -185,7 +185,7 @@ const getDbCollectionsData = async (connectionInfo, appLogger, callback, app) =>
 					connection,
 					schemaName,
 					tableName: viewName,
-					tableType: TABLE_TYPE.view,
+					objectType: OBJECT_TYPE.view,
 					logger,
 				});
 

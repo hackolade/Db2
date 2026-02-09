@@ -1,13 +1,13 @@
-const { TABLE_TYPE } = require('../../constants/constants');
+const { OBJECT_TYPE } = require('../../constants/constants');
 
 /**
- * @param {{ query: string }}
+ * @param {{ query: string }} params
  * @returns {string}
  */
 const cleanUpQuery = ({ query = '' }) => query.replaceAll(/\s+/g, ' ');
 
 /**
- * @param {{ query: string, schemaNameKeyword: string }}
+ * @param {{ query: string, schemaNameKeyword: string }} params
  * @returns {string}
  */
 const getNonSystemSchemaWhereClause = ({ query, schemaNameKeyword }) => {
@@ -43,7 +43,7 @@ const getSchemasQuery = () => {
 };
 
 /**
- * @param {{ schemaName: string }}
+ * @param {{ schemaName: string }} params
  * @returns {string}
  */
 const getSchemaQuery = ({ schemaName }) => {
@@ -51,11 +51,11 @@ const getSchemaQuery = ({ schemaName }) => {
 };
 
 /**
- * @param {{ tableType: string, includeSystemCollection: boolean }}
+ * @param {{ objectType: string, includeSystemCollection: boolean }} params
  * @returns {string}
  */
-const getTableNamesQuery = ({ tableType, includeSystemCollection }) => {
-	const baseQuery = `SELECT TABLE_SCHEM AS SCHEMANAME, TABLE_NAME AS TABLENAME FROM SYSIBM.SQLTABLES WHERE TABLE_TYPE = '${tableType}'`;
+const getTableNamesQuery = ({ objectType, includeSystemCollection }) => {
+	const baseQuery = `SELECT TABLE_SCHEM AS SCHEMANAME, TABLE_NAME AS TABLENAME FROM SYSIBM.SQLTABLES WHERE TABLE_TYPE = '${objectType}'`;
 
 	if (includeSystemCollection) {
 		return baseQuery;
@@ -67,27 +67,37 @@ const getTableNamesQuery = ({ tableType, includeSystemCollection }) => {
 };
 
 /**
- * @param {{ schemaName: string, tableName: string, tableType: string }}
+ * @param {{ schemaName: string, tableName: string, objectType: string }} params
  * @returns {string};
  */
-const getGenerateTableDdlQuery = ({ schemaName, tableName, tableType }) => {
-	const tableArgument = tableType === TABLE_TYPE.table ? '-t' : '-v';
+const getGenerateTableDdlQuery = ({ schemaName, tableName, objectType }) => {
+	const objectArgument = objectType === OBJECT_TYPE.table ? '-t' : '-v';
 
-	return `CALL SYSPROC.DB2LK_GENERATE_DDL('-a -e -z "${schemaName}" ${tableArgument} "${tableName}"', ?);`;
+	return `CALL SYSPROC.DB2LK_GENERATE_DDL('-a -e -z "${schemaName}" ${objectArgument} "${tableName}"', ?);`;
 };
 
 /**
- * @param {{ opToken: number, tableType: string }}
+ * @param {{ opToken: number, schemaName: string, objectName: string, objectType: string }} params
  * @returns {string}
  */
-const getSelectTableDdlQuery = ({ opToken, tableType }) => {
-	const objectTypeOperator = tableType === TABLE_TYPE.table ? '!=' : '=';
+const getSelectTableDdlQuery = ({ opToken, schemaName, objectName, objectType }) => {
+	const predicate =
+		objectType === OBJECT_TYPE.view
+			? `
+			   SQL_STMT LIKE '%CREATE%VIEW%"${schemaName}"."${objectName}"%'
+			OR SQL_STMT LIKE '%COMMENT ON TABLE%"${schemaName}"."${objectName}"%'
+			  `
+			: `
+			   SQL_STMT LIKE '%"${schemaName}"."${objectName}"%'
+			  `;
+
 	const query = `
-	SELECT SQL_STMT
-	FROM SYSTOOLS.DB2LOOK_INFO
-	WHERE OP_TOKEN= ${opToken}
-	AND OBJ_TYPE ${objectTypeOperator} '${TABLE_TYPE.view}'
-	ORDER BY CREATION_TIME, OP_SEQUENCE;`;
+		SELECT SQL_STMT
+		FROM SYSTOOLS.DB2LOOK_INFO
+		WHERE OP_TOKEN = ${opToken}
+		  AND ( ${predicate} )
+		ORDER BY CREATION_TIME, OP_SEQUENCE
+	`;
 
 	return cleanUpQuery({ query });
 };
