@@ -91,7 +91,7 @@ const getTableDdl = async ({ connection, schemaName, tableName, objectType, logg
 
 		await connection.execute({ query: clearQuery, callable: true, inparam: opToken });
 
-		return ddlResult.map(row => row.SQL_STMT + ';').join('\n');
+		return ddlResult.map(row => queryHelper.ensureTerminator({ query: row.SQL_STMT })).join('\n');
 	} catch (error) {
 		logger.error(error);
 
