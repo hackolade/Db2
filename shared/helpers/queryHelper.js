@@ -6,6 +6,8 @@ const { OBJECT_TYPE } = require('../../constants/constants');
  */
 const cleanUpQuery = ({ query = '' }) => query.replaceAll(/\s+/g, ' ');
 
+const ensureTerminator = ({ query = '' }) => (query.trimEnd().endsWith(';') ? query : `${query};`);
+
 /**
  * @param {{ query: string, schemaNameKeyword: string }} params
  * @returns {string}
@@ -83,9 +85,9 @@ const getGenerateTableDdlQuery = ({ schemaName, tableName, objectType }) => {
 const getSelectTableDdlQuery = ({ opToken, schemaName, objectName, objectType }) => {
 	const predicate =
 		objectType === OBJECT_TYPE.view
-			? `SQL_STMT LIKE 'CREATE%VIEW ${objectName}%'
-				OR SQL_STMT LIKE 'COMMENT ON TABLE ${objectName}%'`
-			: `SQL_STMT LIKE '%"${schemaName}"."${objectName}"%'`;
+			? `SQL_STMT LIKE 'CREATE%VIEW %"${schemaName}%"."${objectName}"%'
+				OR SQL_STMT LIKE 'COMMENT ON TABLE %"${schemaName}%"."${objectName}"%'`
+			: `SQL_STMT LIKE '%"${schemaName}%"."${objectName}"%'`;
 
 	const query = `
 		SELECT SQL_STMT
@@ -114,6 +116,7 @@ const queryHelper = {
 	getGenerateTableDdlQuery,
 	getSelectTableDdlQuery,
 	getClearTableDdlQuery,
+	ensureTerminator,
 };
 
 module.exports = {
