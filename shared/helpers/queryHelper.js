@@ -85,9 +85,9 @@ const getGenerateTableDdlQuery = ({ schemaName, tableName, objectType }) => {
 const getSelectTableDdlQuery = ({ opToken, schemaName, objectName, objectType }) => {
 	const predicate =
 		objectType === OBJECT_TYPE.view
-			? `SQL_STMT LIKE 'CREATE%VIEW %"${schemaName}"."${objectName}"%'
-				OR SQL_STMT LIKE 'COMMENT ON TABLE %"${schemaName}"."${objectName}"%'`
-			: `SQL_STMT LIKE '%"${schemaName}"."${objectName}"%'`;
+			? `SQL_STMT LIKE 'CREATE%VIEW %"${schemaName}%"."${objectName}"%'
+				OR SQL_STMT LIKE 'COMMENT ON TABLE %"${schemaName}%"."${objectName}"%'`
+			: `SQL_STMT LIKE '%"${schemaName}%"."${objectName}"%'`;
 
 	const query = `
 		SELECT SQL_STMT
