@@ -4,7 +4,6 @@
  * @typedef {import("../types").Logger} Logger
  */
 
-const { TABLE_TYPE } = require('../../constants/constants');
 const { queryHelper } = require('./queryHelper');
 
 /**
@@ -32,11 +31,11 @@ const getSchemaNames = async ({ connection }) => {
 };
 
 /**
- * @param {{ connection: Connection, tableType: string, includeSystemCollection: boolean, tableNameModifier: (name: string) => string }}
+ * @param {{ connection: Connection, objectType: string, includeSystemCollection: boolean, tableNameModifier: (name: string) => string }}
  * @returns {Promise<NameMap>}
  */
-const getDatabasesWithTableNames = async ({ connection, tableType, includeSystemCollection, tableNameModifier }) => {
-	const query = queryHelper.getTableNamesQuery({ tableType, includeSystemCollection });
+const getDatabasesWithTableNames = async ({ connection, objectType, includeSystemCollection, tableNameModifier }) => {
+	const query = queryHelper.getTableNamesQuery({ objectType, includeSystemCollection });
 	const result = await connection.execute({ query });
 
 	return result.reduce((result, { SCHEMANAME, TABLENAME }) => {
@@ -73,17 +72,26 @@ const getSchemaProperties = async ({ connection, schemaName, logger }) => {
  * @param {{ connection: Connection, schemaName: string, tableName: string, tableName: string, logger: Logger}}
  * @returns {Promise<string>}
  */
-const getTableDdl = async ({ connection, schemaName, tableName, tableType, logger }) => {
+const getTableDdl = async ({ connection, schemaName, tableName, objectType, logger }) => {
 	try {
-		const generateQuery = queryHelper.getGenerateTableDdlQuery({ schemaName, tableName, tableType });
+		const generateQuery = queryHelper.getGenerateTableDdlQuery({ schemaName, tableName, objectType });
+
 		const opToken = await connection.execute({ query: generateQuery, callable: true });
-		const selectQuery = queryHelper.getSelectTableDdlQuery({ opToken, tableType });
+
+		const selectQuery = queryHelper.getSelectTableDdlQuery({
+			opToken,
+			schemaName,
+			objectName: tableName,
+			objectType,
+		});
+
 		const ddlResult = await connection.execute({ query: selectQuery });
+
 		const clearQuery = queryHelper.getClearTableDdlQuery();
 
 		await connection.execute({ query: clearQuery, callable: true, inparam: opToken });
 
-		return ddlResult.map(row => row.SQL_STMT + ';').join('\n');
+		return ddlResult.map(row => queryHelper.ensureTerminator({ query: row.SQL_STMT })).join('\n');
 	} catch (error) {
 		logger.error(error);
 
