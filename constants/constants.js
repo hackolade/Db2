@@ -6,7 +6,7 @@ const ERROR_MESSAGE = {
 /**
  * @enum {string}
  */
-const TABLE_TYPE = {
+const OBJECT_TYPE = {
 	table: 'TABLE',
 	view: 'VIEW',
 };
@@ -24,7 +24,7 @@ const CONSTRAINT_POSTFIX = {
 
 module.exports = {
 	ERROR_MESSAGE,
-	TABLE_TYPE,
+	OBJECT_TYPE,
 	INLINE_COMMENT,
 	CONSTRAINT_POSTFIX,
 };
