@@ -9,6 +9,15 @@ const cleanUpQuery = ({ query = '' }) => query.replaceAll(/\s+/g, ' ');
 const ensureTerminator = ({ query = '' }) => (query.trimEnd().endsWith(';') ? query : `${query};`);
 
 /**
+ * finds every quoted identifier and removes *only* trailing whitespace
+ * @param {{ query: string }} params
+ * @returns {string}
+ */
+const normalizeDb2Identifiers = ({ query = '' }) => {
+	return query.replaceAll(/"([^"]*)"/g, (_, name) => `"${name.trimEnd()}"`);
+};
+
+/**
  * @param {{ query: string, schemaNameKeyword: string }} params
  * @returns {string}
  */
@@ -109,6 +118,16 @@ const getClearTableDdlQuery = () => {
 	return 'CALL SYSPROC.DB2LK_CLEAN_TABLE(?);';
 };
 
+/**
+ * @param {{ SQL_STMT: string}} row - select query ddl result
+ * @returns {string}
+ */
+const postProcessDdlStatement = row => {
+	let statement = queryHelper.ensureTerminator({ query: row.SQL_STMT });
+	statement = queryHelper.normalizeDb2Identifiers({ query: statement });
+	return statement;
+};
+
 const queryHelper = {
 	cleanUpQuery,
 	getDbVersionQuery,
@@ -119,6 +138,8 @@ const queryHelper = {
 	getSelectTableDdlQuery,
 	getClearTableDdlQuery,
 	ensureTerminator,
+	normalizeDb2Identifiers,
+	postProcessDdlStatement,
 };
 
 module.exports = {
