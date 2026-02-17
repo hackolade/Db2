@@ -10,6 +10,11 @@ const getRelationshipName = relationship => {
 	return compMod.code?.new || compMod.name?.new || relationship.role.code || relationship.role.name;
 };
 
+const getOldRelationshipName = relationship => {
+	const compMod = relationship.role.compMod;
+	return compMod.code?.old || compMod.name?.old || relationship.role.code || relationship.role.name;
+};
+
 const getFullChildTableName = relationship => {
 	const compMod = relationship.role.compMod;
 
@@ -74,7 +79,7 @@ const getAddForeignKeyScriptDtos = addedRelationships => {
 const getDeleteSingleForeignKeyStatementDto = relationship => {
 	const compMod = relationship.role.compMod;
 	const tableName = getFullChildTableName(relationship);
-	const relationshipName = getRelationshipName(relationship);
+	const relationshipName = getOldRelationshipName(relationship);
 	const constraintName = wrapInQuotes(relationshipName);
 	const statement = assignTemplates({
 		template: templates.dropForeignKey,
