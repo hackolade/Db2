@@ -90,5 +90,8 @@
     "dependencies": {
         "async": "3.2.5",
         "lodash": "^4.17.23"
+    },
+    "overrides": {
+        "minimatch": "10.2.1"
     }
 }
