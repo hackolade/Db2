@@ -28,6 +28,8 @@
 		"node_modules",
 		"out/**/*",
 		"release",
-		"reverse_engineering/node_modules"
+		"reverse_engineering/node_modules",
+		"shared/addons",
+		"shared/Db2Client"
 	]
 }
