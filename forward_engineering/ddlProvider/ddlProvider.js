@@ -531,5 +531,13 @@ module.exports = (baseProvider, options, app) => {
 		commentIfDeactivated(statement, data, isPartOfLine) {
 			return statement;
 		},
+
+		commentStatement(statement) {
+			return commentIfDeactivated(statement, { isActivated: false });
+		},
+
+		prepareName(name) {
+			return wrapInQuotes(name);
+		},
 	};
 };
