@@ -49,9 +49,7 @@ const getColumnDefault = ({ default: defaultValue, identity, type }) => {
 		return ` GENERATED ${identity.generated} AS IDENTITY (${identityOptions})`;
 	}
 
-	const hasDefault = defaultValue !== undefined && defaultValue !== null && defaultValue !== '';
-
-	if (hasDefault) {
+	if (defaultValue === false || defaultValue === true || defaultValue || defaultValue === 0) {
 		return ` WITH DEFAULT ${defaultValue}`;
 	}
 	return '';
