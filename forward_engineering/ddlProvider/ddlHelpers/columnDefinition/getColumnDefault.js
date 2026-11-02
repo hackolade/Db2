@@ -3,7 +3,7 @@ const { wrapInSingleQuotes } = require('../../../utils/general');
 const { DATA_TYPES_WITH_IDENTITY, STRING_DATA_TYPES } = require('../../../../constants/types');
 
 /**
- * @typedef {string | number} DefaultValue
+ * @typedef {string | number | boolean} DefaultValue
  */
 
 /**
@@ -37,7 +37,7 @@ const getIdentityOptions = ({ start, increment, minValue, maxValue, cycle, cache
 };
 
 /**
- * @param {{ default?: DefaultValue, identity?: object }}
+ * @param {{ default?: DefaultValue, identity?: object, type: string }}
  * @returns {string}
  */
 const getColumnDefault = ({ default: defaultValue, identity, type }) => {
@@ -49,7 +49,7 @@ const getColumnDefault = ({ default: defaultValue, identity, type }) => {
 		return ` GENERATED ${identity.generated} AS IDENTITY (${identityOptions})`;
 	}
 
-	if (defaultValue || defaultValue === 0) {
+	if (defaultValue != null) {
 		return ` WITH DEFAULT ${defaultValue}`;
 	}
 	return '';
