@@ -63,6 +63,7 @@ const getAddCollectionScriptDto = (ddlProvider, inlineDeltaRelationships) => col
 					foreignTableActivated: compMod.child.collection.isActivated,
 					primarySchemaName: compMod.parent.bucket.name,
 					customProperties: compMod.customProperties?.new,
+					isActivated: compMod.isActivated?.new,
 				},
 				{},
 				schemaData,
