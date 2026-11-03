@@ -194,6 +194,7 @@ module.exports = (baseProvider, options, app) => {
 				foreignTableActivated,
 				primarySchemaName,
 				customProperties,
+				isActivated: isRelationshipActivated,
 			},
 			dbData,
 			schemaData,
@@ -235,7 +236,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: trim(foreignKeyStatement),
-				isActivated,
+				isActivated: isActivated && isRelationshipActivated !== false,
 			};
 		},
 
@@ -251,6 +252,7 @@ module.exports = (baseProvider, options, app) => {
 				foreignSchemaName,
 				primarySchemaName,
 				customProperties,
+				isActivated: isRelationshipActivated,
 			},
 			dbData,
 			schemaData,
@@ -297,7 +299,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: trim(foreignKeyStatement) + '\n',
-				isActivated,
+				isActivated: isActivated && isRelationshipActivated !== false,
 			};
 		},
 
