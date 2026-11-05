@@ -51,27 +51,27 @@ const mapCheckConstraintNamesToChangeHistory = collection => {
 	});
 };
 
-const getDropCheckConstraintScriptDtos = (constraintHistory, fullTableName) => {
+const getDropCheckConstraintScriptDtos = (constraintHistory, fullTableName, isActivated) => {
 	return constraintHistory
 		.filter(historyEntry => historyEntry.old?.constrExpression && !historyEntry.new?.constrExpression)
 		.map(historyEntry => {
 			const wrappedConstraintName = wrapInQuotes(historyEntry.old.chkConstrName);
 			return dropConstraint(fullTableName, wrappedConstraintName);
 		})
-		.map(script => AlterScriptDto.getInstance([script], true, true));
+		.map(script => AlterScriptDto.getInstance([script], isActivated, true));
 };
 
-const getAddCheckConstraintScriptDtos = (constraintHistory, fullTableName) => {
+const getAddCheckConstraintScriptDtos = (constraintHistory, fullTableName, isActivated) => {
 	return constraintHistory
 		.filter(historyEntry => historyEntry.new?.constrExpression && !historyEntry.old?.constrExpression)
 		.map(historyEntry => {
 			const { chkConstrName, constrExpression } = historyEntry.new;
 			return addCheckConstraint(fullTableName, wrapInQuotes(chkConstrName), constrExpression);
 		})
-		.map(script => AlterScriptDto.getInstance([script], true, false));
+		.map(script => AlterScriptDto.getInstance([script], isActivated, false));
 };
 
-const getUpdateCheckConstraintScriptDtos = (constraintHistory, fullTableName) => {
+const getUpdateCheckConstraintScriptDtos = (constraintHistory, fullTableName, isActivated) => {
 	return constraintHistory
 		.filter(historyEntry => {
 			if (historyEntry.old?.constrExpression && historyEntry.new?.constrExpression) {
@@ -93,8 +93,8 @@ const getUpdateCheckConstraintScriptDtos = (constraintHistory, fullTableName) =>
 			);
 
 			return [
-				AlterScriptDto.getInstance([dropConstraintScript], true, true),
-				AlterScriptDto.getInstance([addConstraintScript], true, false),
+				AlterScriptDto.getInstance([dropConstraintScript], isActivated, true),
+				AlterScriptDto.getInstance([addConstraintScript], isActivated, false),
 			];
 		});
 };
@@ -103,18 +103,18 @@ const getModifyCheckConstraintScriptDtos = collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName({ collectionSchema });
 	const constraintHistory = mapCheckConstraintNamesToChangeHistory(collection);
+	const isActivated =
+		isParentContainerActivated(collection) !== false && isObjectInDeltaModelActivated(collection) !== false;
 
-	const isContainerActivated = isParentContainerActivated(collection);
-	const isCollectionActivated = isObjectInDeltaModelActivated(collection);
+	const addCheckConstraintScripts = getAddCheckConstraintScriptDtos(constraintHistory, fullTableName, isActivated);
+	const dropCheckConstraintScripts = getDropCheckConstraintScriptDtos(constraintHistory, fullTableName, isActivated);
+	const updateCheckConstraintScripts = getUpdateCheckConstraintScriptDtos(
+		constraintHistory,
+		fullTableName,
+		isActivated,
+	);
 
-	const addCheckConstraintScripts = getAddCheckConstraintScriptDtos(constraintHistory, fullTableName);
-	const dropCheckConstraintScripts = getDropCheckConstraintScriptDtos(constraintHistory, fullTableName);
-	const updateCheckConstraintScripts = getUpdateCheckConstraintScriptDtos(constraintHistory, fullTableName);
-
-	return [...addCheckConstraintScripts, ...dropCheckConstraintScripts, ...updateCheckConstraintScripts].map(dto => ({
-		...dto,
-		isActivated: isContainerActivated && isCollectionActivated,
-	}));
+	return [...addCheckConstraintScripts, ...dropCheckConstraintScripts, ...updateCheckConstraintScripts];
 };
 
 module.exports = {
