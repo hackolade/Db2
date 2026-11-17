@@ -5,7 +5,12 @@ const {
 	getSchemaCommentStatement,
 	getDeleteCommentStatement,
 } = require('../../ddlProvider/ddlHelpers/comment/commentHelper');
-const { wrapInQuotes, getIsChangeProperties, getUpdatedProperties } = require('../../utils/general');
+const {
+	wrapInQuotes,
+	getIsChangeProperties,
+	getUpdatedProperties,
+	isObjectInDeltaModelActivated,
+} = require('../../utils/general');
 const { getModifiedCommentOnSchemaScriptDtos } = require('./containerHelpers/commentsHelper');
 
 const extractSchemaName = containerData => containerData.role.name;
@@ -14,6 +19,7 @@ const getAddContainerScriptDto = ddlProvider => containerData => {
 	const schemaData = {
 		...containerData.role,
 		schemaName: extractSchemaName(containerData),
+		isActivated: isObjectInDeltaModelActivated(containerData),
 	};
 	const script = ddlProvider.createSchema(schemaData);
 
@@ -23,7 +29,7 @@ const getAddContainerScriptDto = ddlProvider => containerData => {
 const getDeleteContainerScriptDto = ddlProvider => containerData => {
 	const script = ddlProvider.dropSchema({ name: extractSchemaName(containerData) });
 
-	return AlterScriptDto.getInstance([script], true, true);
+	return AlterScriptDto.getInstance([script], isObjectInDeltaModelActivated(containerData), true);
 };
 
 const getModifyContainerScriptDto = ddlProvider => containerData => {
@@ -31,7 +37,7 @@ const getModifyContainerScriptDto = ddlProvider => containerData => {
 	const compMod = containerData.role?.compMod || {};
 	const schemaName = extractSchemaName(containerData);
 	const wrappedSchemaName = wrapInQuotes(schemaName);
-	const isActivated = containerData.isActivated !== false;
+	const isActivated = containerData.isActivated !== false && isObjectInDeltaModelActivated(containerData) !== false;
 	const updatedProperties = getUpdatedProperties(compMod, ['dataCapture']);
 
 	if (!isEmpty(updatedProperties)) {

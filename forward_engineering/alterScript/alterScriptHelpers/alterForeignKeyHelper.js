@@ -15,6 +15,14 @@ const getOldRelationshipName = relationship => {
 	return compMod.code?.old || compMod.name?.old || relationship.role.code || relationship.role.name;
 };
 
+const isRelationshipActivated = relationship => {
+	return (relationship.role?.compMod?.isActivated?.new ?? relationship.role?.isActivated) !== false;
+};
+
+const isRelatedTableActivated = ({ bucket, collection } = {}) => {
+	return bucket?.isActivated !== false && collection?.isActivated !== false;
+};
+
 const getFullChildTableName = relationship => {
 	const compMod = relationship.role.compMod;
 
@@ -40,11 +48,11 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 			customProperties: compMod.customProperties?.new,
 			foreignTable: compMod.child.collection.name,
 			foreignSchemaName: compMod.child.bucket.name,
-			foreignTableActivated: compMod.child.collection.isActivated,
+			foreignTableActivated: isRelatedTableActivated(compMod.child),
 			primaryTable: compMod.parent.collection.name,
 			primarySchemaName: compMod.parent.bucket.name,
-			primaryTableActivated: compMod.parent.collection.isActivated,
-			isActivated: compMod.isActivated?.new,
+			primaryTableActivated: isRelatedTableActivated(compMod.parent),
+			isActivated: isRelationshipActivated(relationship),
 		},
 		{},
 		schemaData,
@@ -90,11 +98,9 @@ const getDeleteSingleForeignKeyStatementDto = relationship => {
 		},
 	});
 
-	const isRelationshipActivated = Boolean(relationship.role?.compMod?.isActivated?.new);
-	const isChildTableActivated = compMod.child.collection.isActivated;
 	return {
 		statement,
-		isActivated: isRelationshipActivated && isChildTableActivated,
+		isActivated: isRelationshipActivated(relationship) && isRelatedTableActivated(compMod.child),
 	};
 };
 
@@ -140,4 +146,6 @@ module.exports = {
 	getDeleteForeignKeyScriptDtos,
 	getModifyForeignKeyScriptDtos,
 	getAddForeignKeyScriptDtos,
+	getRelationshipName,
+	isRelatedTableActivated,
 };

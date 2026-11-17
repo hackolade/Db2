@@ -1,6 +1,6 @@
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
 const { getSchemaOfAlterCollection } = require('../../../utils/general');
-const { createView, dropView } = require('./createDropViewHelper');
+const { createView, dropView, isViewActivated } = require('./createDropViewHelper');
 
 /**
  * @param {Object} view
@@ -29,8 +29,8 @@ const getRenameViewScriptDtos = (view, ddlProvider, mapProperties) => {
 	const createScript = createView({ ddlProvider, mapProperties, view });
 
 	return [
-		AlterScriptDto.getInstance([dropScript], true, true),
-		AlterScriptDto.getInstance([createScript], true, false),
+		AlterScriptDto.getInstance([dropScript], isViewActivated(view), true),
+		AlterScriptDto.getInstance([createScript], isViewActivated(view), false),
 	];
 };
 

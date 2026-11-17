@@ -7,6 +7,7 @@ const {
 	getSchemaOfAlterCollection,
 	getEntityName,
 	isObjectInDeltaModelActivated,
+	isParentContainerActivated,
 } = require('../../../utils/general');
 const { assignTemplates } = require('../../../utils/assignTemplates');
 const templates = require('../../../ddlProvider/templates');
@@ -31,6 +32,9 @@ const dropAndRecreateIndexProperties = [
  * }} param
  * @return {boolean}
  */
+const isCollectionActivated = collection =>
+	isParentContainerActivated(collection) && isObjectInDeltaModelActivated(collection);
+
 const shouldDropAndRecreateIndex = ({ oldIndex, newIndex }) => {
 	return dropAndRecreateIndexProperties.some(property => !isEqual(oldIndex[property], newIndex[property]));
 };
@@ -86,7 +90,10 @@ const getCreateIndexScriptDto = ({ index, collection, ddlProvider }) => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const tableName = getEntityName(collectionSchema);
 
-	const script = ddlProvider.createIndex(tableName, indexWithAddedKeyNames);
+	const script = ddlProvider.createIndex(tableName, {
+		...indexWithAddedKeyNames,
+		isParentActivated: isCollectionActivated(collection),
+	});
 	return AlterScriptDto.getInstance([script], true, false);
 };
 
@@ -136,7 +143,7 @@ const getDeleteIndexScriptDto = ({ index, collection, ddlProvider }) => {
 		schemaName,
 	});
 	const script = ddlProvider.dropIndex(fullIndexName);
-	return AlterScriptDto.getInstance([script], index.isActivated && isObjectInDeltaModelActivated(collection), true);
+	return AlterScriptDto.getInstance([script], index.isActivated && isCollectionActivated(collection), true);
 };
 
 /**
@@ -211,7 +218,7 @@ const getModifyIndexScriptDto = ({ newIndex, oldIndex, collection, ddlProvider }
 			schemaName,
 			oldIndexName: oldIndex.indxName,
 			newIndexName: newIndex.indxName,
-			isActivated: isObjectInDeltaModelActivated(collection) && newIndex.isActivated,
+			isActivated: isCollectionActivated(collection) && newIndex.isActivated,
 		});
 
 		scripts.push(renameScript);

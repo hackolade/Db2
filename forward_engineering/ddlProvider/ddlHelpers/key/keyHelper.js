@@ -194,7 +194,7 @@ const foreignKeysToString = ({ keys }) => {
  * @returns {string}
  */
 const foreignActiveKeysToString = ({ keys }) => {
-	return keys.map(key => trim(key.name)).join(', ');
+	return keys.map(key => wrapInQuotes(trim(key.name))).join(', ');
 };
 
 /**
