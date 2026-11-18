@@ -23,6 +23,28 @@ const isRelatedTableActivated = ({ bucket, collection } = {}) => {
 	return bucket?.isActivated !== false && collection?.isActivated !== false;
 };
 
+const areFkFieldsActivated = fields => (fields || []).every(field => field?.isActivated !== false);
+
+const getFkFieldsForStatement = fields => {
+	if (areFkFieldsActivated(fields)) {
+		return fields;
+	}
+
+	return (fields || []).map(field => ({ ...field, isActivated: true }));
+};
+
+const isForeignKeyConstraintActivated = (relationship, isActivated) => {
+	const compMod = relationship.role?.compMod;
+
+	return (
+		isActivated &&
+		isRelatedTableActivated(compMod?.parent) &&
+		isRelatedTableActivated(compMod?.child) &&
+		areFkFieldsActivated(compMod?.parent?.collection?.fkFields) &&
+		areFkFieldsActivated(compMod?.child?.collection?.fkFields)
+	);
+};
+
 const getFullChildTableName = relationship => {
 	const compMod = relationship.role.compMod;
 
@@ -40,11 +62,11 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 		schemaName: compMod.child.bucket.name,
 	};
 
-	return ddlProvider.createForeignKey(
+	const statementDto = ddlProvider.createForeignKey(
 		{
 			name: relationshipName,
-			foreignKey: compMod.child.collection.fkFields,
-			primaryKey: compMod.parent.collection.fkFields,
+			foreignKey: getFkFieldsForStatement(compMod.child.collection.fkFields),
+			primaryKey: getFkFieldsForStatement(compMod.parent.collection.fkFields),
 			customProperties: compMod.customProperties?.new,
 			foreignTable: compMod.child.collection.name,
 			foreignSchemaName: compMod.child.bucket.name,
@@ -57,6 +79,11 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 		{},
 		schemaData,
 	);
+
+	return {
+		...statementDto,
+		isActivated: isForeignKeyConstraintActivated(relationship, statementDto.isActivated),
+	};
 };
 
 const canRelationshipBeAdded = relationship => {
@@ -100,7 +127,10 @@ const getDeleteSingleForeignKeyStatementDto = relationship => {
 
 	return {
 		statement,
-		isActivated: isRelationshipActivated(relationship) && isRelatedTableActivated(compMod.child),
+		isActivated: isForeignKeyConstraintActivated(
+			relationship,
+			isRelationshipActivated(relationship) && isRelatedTableActivated(compMod.child),
+		),
 	};
 };
 
