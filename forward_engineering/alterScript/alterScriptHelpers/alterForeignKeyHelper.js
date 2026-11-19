@@ -15,6 +15,36 @@ const getOldRelationshipName = relationship => {
 	return compMod.code?.old || compMod.name?.old || relationship.role.code || relationship.role.name;
 };
 
+const isRelationshipActivated = relationship => {
+	return (relationship.role?.compMod?.isActivated?.new ?? relationship.role?.isActivated) !== false;
+};
+
+const isRelatedTableActivated = ({ bucket, collection } = {}) => {
+	return bucket?.isActivated !== false && collection?.isActivated !== false;
+};
+
+const areFkFieldsActivated = fields => (fields || []).every(field => field?.isActivated !== false);
+
+const getFkFieldsForStatement = fields => {
+	if (areFkFieldsActivated(fields)) {
+		return fields;
+	}
+
+	return (fields || []).map(field => ({ ...field, isActivated: true }));
+};
+
+const isForeignKeyConstraintActivated = (relationship, isActivated) => {
+	const compMod = relationship.role?.compMod;
+
+	return (
+		isActivated &&
+		isRelatedTableActivated(compMod?.parent) &&
+		isRelatedTableActivated(compMod?.child) &&
+		areFkFieldsActivated(compMod?.parent?.collection?.fkFields) &&
+		areFkFieldsActivated(compMod?.child?.collection?.fkFields)
+	);
+};
+
 const getFullChildTableName = relationship => {
 	const compMod = relationship.role.compMod;
 
@@ -32,23 +62,28 @@ const getAddSingleForeignKeyStatementDto = relationship => {
 		schemaName: compMod.child.bucket.name,
 	};
 
-	return ddlProvider.createForeignKey(
+	const statementDto = ddlProvider.createForeignKey(
 		{
 			name: relationshipName,
-			foreignKey: compMod.child.collection.fkFields,
-			primaryKey: compMod.parent.collection.fkFields,
+			foreignKey: getFkFieldsForStatement(compMod.child.collection.fkFields),
+			primaryKey: getFkFieldsForStatement(compMod.parent.collection.fkFields),
 			customProperties: compMod.customProperties?.new,
 			foreignTable: compMod.child.collection.name,
 			foreignSchemaName: compMod.child.bucket.name,
-			foreignTableActivated: compMod.child.collection.isActivated,
+			foreignTableActivated: isRelatedTableActivated(compMod.child),
 			primaryTable: compMod.parent.collection.name,
 			primarySchemaName: compMod.parent.bucket.name,
-			primaryTableActivated: compMod.parent.collection.isActivated,
-			isActivated: compMod.isActivated?.new,
+			primaryTableActivated: isRelatedTableActivated(compMod.parent),
+			isActivated: isRelationshipActivated(relationship),
 		},
 		{},
 		schemaData,
 	);
+
+	return {
+		...statementDto,
+		isActivated: isForeignKeyConstraintActivated(relationship, statementDto.isActivated),
+	};
 };
 
 const canRelationshipBeAdded = relationship => {
@@ -90,11 +125,12 @@ const getDeleteSingleForeignKeyStatementDto = relationship => {
 		},
 	});
 
-	const isRelationshipActivated = Boolean(relationship.role?.compMod?.isActivated?.new);
-	const isChildTableActivated = compMod.child.collection.isActivated;
 	return {
 		statement,
-		isActivated: isRelationshipActivated && isChildTableActivated,
+		isActivated: isForeignKeyConstraintActivated(
+			relationship,
+			isRelationshipActivated(relationship) && isRelatedTableActivated(compMod.child),
+		),
 	};
 };
 
@@ -140,4 +176,6 @@ module.exports = {
 	getDeleteForeignKeyScriptDtos,
 	getModifyForeignKeyScriptDtos,
 	getAddForeignKeyScriptDtos,
+	getRelationshipName,
+	isRelatedTableActivated,
 };

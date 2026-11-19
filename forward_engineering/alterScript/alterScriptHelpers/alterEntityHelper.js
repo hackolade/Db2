@@ -19,10 +19,19 @@ const {
 	getSchemaOfAlterCollection,
 	getFullCollectionName,
 	wrapInQuotes,
+	isParentContainerActivated,
+	isObjectInDeltaModelActivated,
 } = require('../../utils/general');
-const { getRelationshipName } = require('./alterForeignKeyHelper');
+const { getRelationshipName, isRelatedTableActivated } = require('./alterForeignKeyHelper');
 const { createColumnDefinitionBySchema } = require('./createColumnDefinition');
 const { getRenameTableScriptDtos } = require('./entityHelpers/alterTableNameHelper');
+
+/**
+ * @param {Object} collection
+ * @returns {boolean}
+ */
+const isCollectionActivated = collection =>
+	isParentContainerActivated(collection) !== false && isObjectInDeltaModelActivated(collection) !== false;
 
 /**
  * @param {Object} ddlProvider
@@ -59,8 +68,8 @@ const getAddCollectionScriptDto = (ddlProvider, inlineDeltaRelationships) => col
 					foreignKey: compMod.child.collection.fkFields,
 					primaryTable: compMod.parent.collection.name,
 					primaryKey: compMod.parent.collection.fkFields,
-					primaryTableActivated: compMod.parent.collection.isActivated,
-					foreignTableActivated: compMod.child.collection.isActivated,
+					primaryTableActivated: isRelatedTableActivated(compMod.parent),
+					foreignTableActivated: isRelatedTableActivated(compMod.child),
 					primarySchemaName: compMod.parent.bucket.name,
 					customProperties: compMod.customProperties?.new,
 					isActivated: compMod.isActivated?.new,
@@ -80,7 +89,8 @@ const getAddCollectionScriptDto = (ddlProvider, inlineDeltaRelationships) => col
 	};
 
 	const hydratedTable = ddlProvider.hydrateTable({ tableData, entityData: [jsonSchema], jsonSchema });
-	const script = ddlProvider.createTable(hydratedTable, jsonSchema.isActivated);
+	const isActivated = isCollectionActivated(collection);
+	const script = ddlProvider.createTable(hydratedTable, isActivated);
 
 	return AlterScriptDto.getInstance([script], true, false);
 };
@@ -94,7 +104,7 @@ const getDeleteCollectionScriptDto = ddlProvider => collection => {
 	const fullTableName = getFullCollectionName({ collectionSchema });
 	const script = ddlProvider.dropTable({ tableName: fullTableName });
 
-	return AlterScriptDto.getInstance([script], true, true);
+	return AlterScriptDto.getInstance([script], isCollectionActivated(collection), true);
 };
 
 /**
@@ -130,6 +140,7 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
 	const fullTableName = getFullCollectionName({ collectionSchema });
 	const schemaName = getSchemaNameFromCollection({ collection });
 	const schemaData = { schemaName };
+	const isTableActivated = isCollectionActivated(collection);
 
 	return toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => !jsonSchema.compMod)
@@ -143,9 +154,11 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
 			});
 			const script = ddlProvider.addColumn({
 				tableName: fullTableName,
-				columnDefinition: ddlProvider.convertColumnDefinition(columnDefinition),
+				columnDefinition: ddlProvider.convertColumnDefinition({ ...columnDefinition, isActivated: true }),
 			});
-			return AlterScriptDto.getInstance([script], true, false);
+			const isActivated = isTableActivated && jsonSchema.isActivated !== false;
+
+			return AlterScriptDto.getInstance([script], isActivated, false);
 		})
 		.filter(Boolean);
 };
@@ -157,13 +170,16 @@ const getAddColumnScriptDtos = ddlProvider => collection => {
 const getDeleteColumnScriptDtos = ddlProvider => collection => {
 	const collectionSchema = getSchemaOfAlterCollection(collection);
 	const fullTableName = getFullCollectionName({ collectionSchema, preferAlterName: false });
+	const isTableActivated = isCollectionActivated(collection);
 
 	return toPairs(collection.properties)
 		.filter(([name, jsonSchema]) => !jsonSchema.compMod)
-		.map(([name]) => {
+		.map(([name, jsonSchema]) => {
 			const columnName = wrapInQuotes(name);
 			const script = ddlProvider.dropColumn({ tableName: fullTableName, columnName });
-			return AlterScriptDto.getInstance([script], true, true);
+			const isActivated = isTableActivated && jsonSchema.isActivated !== false;
+
+			return AlterScriptDto.getInstance([script], isActivated, true);
 		})
 		.filter(Boolean);
 };

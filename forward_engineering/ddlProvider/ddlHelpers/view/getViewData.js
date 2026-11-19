@@ -18,8 +18,9 @@ const getKeyWithAlias = ({ key }) => {
 
 /**
  * @typedef {{ statement: string, isActivated: boolean }} Column
+ * @typedef {{ statement: string, isActivated: boolean }} Table
  * @param {{ keys?: object[] }}
- * @returns {{ tables: string[], columns: Column[] }}
+ * @returns {{ tables: Table[], columns: Column[] }}
  */
 const getViewData = ({ keys }) => {
 	if (!Array.isArray(keys)) {
@@ -42,8 +43,15 @@ const getViewData = ({ keys }) => {
 				schemaName: key.dbName,
 			});
 
-			if (!result.tables.includes(tableName)) {
-				result.tables.push(tableName);
+			const addedTable = result.tables.find(table => table.statement === tableName);
+
+			if (addedTable) {
+				addedTable.isActivated = addedTable.isActivated || key.isActivated !== false;
+			} else {
+				result.tables.push({
+					statement: tableName,
+					isActivated: key.isActivated !== false,
+				});
 			}
 
 			result.columns.push({

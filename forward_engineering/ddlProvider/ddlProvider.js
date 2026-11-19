@@ -7,6 +7,7 @@ const {
 	wrapInQuotes,
 	getNamePrefixedWithSchemaName,
 	checkAllKeysDeactivated,
+	divideIntoActivatedAndDeactivated,
 	toArray,
 	hasType,
 	setTab,
@@ -44,6 +45,26 @@ const getViewColumnsAsString = ({ columns }) => {
 	});
 
 	return indent + joinActivatedAndDeactivatedStatements({ statements, delimiter: ',', indent });
+};
+
+/**
+ * @param {{ tables: object[], isViewActivated: boolean }}
+ * @returns {string}
+ */
+const getViewTablesAsString = ({ tables, isViewActivated }) => {
+	if (!isViewActivated) {
+		return tables.map(({ statement }) => statement).join(', ');
+	}
+
+	const { activatedItems, deactivatedItems } = divideIntoActivatedAndDeactivated({
+		items: tables,
+		mapFunction: ({ statement }) => statement,
+	});
+	const deactivatedTablesAsString = deactivatedItems.length
+		? commentIfDeactivated(deactivatedItems.join(', '), { isActivated: false, isPartOfLine: true })
+		: '';
+
+	return activatedItems.join(', ') + deactivatedTablesAsString;
 };
 
 module.exports = (baseProvider, options, app) => {
@@ -205,7 +226,8 @@ module.exports = (baseProvider, options, app) => {
 				!isAllPrimaryKeysDeactivated &&
 				!isAllForeignKeysDeactivated &&
 				primaryTableActivated &&
-				foreignTableActivated;
+				foreignTableActivated &&
+				isRelationshipActivated !== false;
 
 			const foreignKeys = toArray({ value: foreignKey });
 			const primaryKeys = toArray({ value: primaryKey });
@@ -236,7 +258,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: trim(foreignKeyStatement),
-				isActivated: isActivated && isRelationshipActivated !== false,
+				isActivated,
 			};
 		},
 
@@ -263,7 +285,8 @@ module.exports = (baseProvider, options, app) => {
 				!isAllPrimaryKeysDeactivated &&
 				!isAllForeignKeysDeactivated &&
 				primaryTableActivated &&
-				foreignTableActivated;
+				foreignTableActivated &&
+				isRelationshipActivated !== false;
 
 			const foreignKeys = toArray({ value: foreignKey });
 			const primaryKeys = toArray({ value: primaryKey });
@@ -299,7 +322,7 @@ module.exports = (baseProvider, options, app) => {
 
 			return {
 				statement: trim(foreignKeyStatement) + '\n',
-				isActivated: isActivated && isRelationshipActivated !== false,
+				isActivated,
 			};
 		},
 
@@ -445,17 +468,17 @@ module.exports = (baseProvider, options, app) => {
 				templateData: { indexType, indexName, indexOptions, indexTableName },
 			});
 			const commentStatement = getIndexCommentStatement({ indexName, description: index.indxDescription });
+			const hasActiveColumns = !checkAllKeysDeactivated({ keys: index.indxKey || [] });
+			const isActivated = index.isActivated !== false && index.isParentActivated !== false && hasActiveColumns;
 
-			let finalStatement = commentIfDeactivated(statement, {
-				isActivated: index.isActivated && index.isParentActivated,
-			});
+			let finalStatement = commentIfDeactivated(statement, { isActivated });
 
 			if (commentStatement) {
 				finalStatement +=
 					'\n' +
 					commentIfDeactivated(commentStatement, {
 						isPartOfLine: true,
-						isActivated: index.isActivated && index.isParentActivated,
+						isActivated,
 					}) +
 					'\n';
 			}
@@ -468,11 +491,14 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateViewColumn(data) {
+			const isSourceTableActivated = get(data, 'entityData[0].isActivated') !== false;
+			const isSourceSchemaActivated = get(data, 'containerData[0].isActivated') !== false;
+
 			return {
 				name: data.name,
 				tableName: data.entityName,
 				alias: data.alias,
-				isActivated: data.isActivated,
+				isActivated: data.isActivated !== false && isSourceTableActivated && isSourceSchemaActivated,
 				dbName: data.dbName,
 			};
 		},
@@ -499,7 +525,11 @@ module.exports = (baseProvider, options, app) => {
 			const orReplace = viewData.orReplace ? ' OR REPLACE' : '';
 
 			const { columns, tables } = getViewData({ keys: viewData.keys });
+			const hasCustomSelectStatement = Boolean(trim(viewData.selectStatement));
+			const hasActiveColumns = columns.some(column => column.isActivated !== false);
+			const isViewActivated = isActivated !== false && (hasCustomSelectStatement || hasActiveColumns);
 			const columnsAsString = getViewColumnsAsString({ columns });
+			const tablesAsString = getViewTablesAsString({ tables, isViewActivated });
 			const commentStatement = getTableCommentStatement({
 				tableName: viewName,
 				description: viewData.description,
@@ -507,12 +537,12 @@ module.exports = (baseProvider, options, app) => {
 			const comment = commentStatement ? '\n' + commentStatement + `\n` : '\n';
 			const viewProperties = viewData.viewProperties ? ' \n' + setTab({ text: viewData.viewProperties }) : '';
 
-			const selectStatement = trim(viewData.selectStatement)
+			const selectStatement = hasCustomSelectStatement
 				? trim(setTab({ text: viewData.selectStatement }))
 				: assignTemplates({
 						template: templates.viewSelectStatement,
 						templateData: {
-							tableName: tables.join(', '),
+							tableName: tablesAsString,
 							keys: columnsAsString,
 						},
 					});
@@ -527,7 +557,7 @@ module.exports = (baseProvider, options, app) => {
 				},
 			});
 
-			return commentIfDeactivated(statement + comment, { isActivated });
+			return commentIfDeactivated(statement + comment, { isActivated: isViewActivated });
 		},
 
 		commentIfDeactivated(statement, data, isPartOfLine) {

@@ -1,22 +1,36 @@
 const { toUpper } = require('lodash');
 const { getBasicValue, getOptionsByConfigs } = require('../options/getOptionsByConfigs');
-const { wrapInQuotes } = require('../../../utils/general');
+const { wrapInQuotes, checkAllKeysDeactivated, commentIfDeactivated } = require('../../../utils/general');
+
+const getIndexKeyStatement = ({ name, type }) => {
+	const keyType = getBasicValue({ prefix: ' ', modifier: toUpper })(type);
+
+	return wrapInQuotes(name) + keyType;
+};
 
 /**
  * @param {object[]} keys
+ * @param {object} [index]
  * @returns {string}
  */
-const getIndexKeys = (keys = []) => {
+const getIndexKeys = (keys = [], index = {}) => {
 	if (!keys.length) {
 		return '';
 	}
 
+	const isWholeIndexCommented =
+		index.isActivated === false ||
+		index.isParentActivated === false ||
+		checkAllKeysDeactivated({ keys: index.indxKey || keys });
 	const keysClause = keys
-		.map(({ name, type }) => {
-			const keyType = getBasicValue({ prefix: ' ', modifier: toUpper })(type);
-			const keyName = wrapInQuotes(name);
+		.map(key => {
+			const statement = getIndexKeyStatement(key);
 
-			return keyName + keyType;
+			if (isWholeIndexCommented) {
+				return statement;
+			}
+
+			return commentIfDeactivated(statement, { isActivated: key.isActivated !== false, isPartOfLine: true });
 		})
 		.join(', ');
 
@@ -33,7 +47,7 @@ const getIncludeIndexKeys = (keys, index) => {
 		return '';
 	}
 
-	const includeIndexKeys = getIndexKeys(keys);
+	const includeIndexKeys = getIndexKeys(keys, index);
 
 	return getBasicValue({ prefix: 'INCLUDE' })(includeIndexKeys);
 };

@@ -148,12 +148,14 @@ const getSchemaOfAlterCollection = collection => {
 };
 
 const isObjectInDeltaModelActivated = modelObject => {
-	return modelObject.compMod?.isActivated?.new ?? modelObject.role?.isActivated;
+	return modelObject.compMod?.isActivated?.new ?? modelObject.role?.isActivated ?? true;
 };
 
 const isParentContainerActivated = collection => {
 	return (
-		collection?.compMod?.bucketProperties?.isActivated ?? collection?.role?.compMod?.bucketProperties?.isActivated
+		collection?.compMod?.bucketProperties?.isActivated ??
+		collection?.role?.compMod?.bucketProperties?.isActivated ??
+		true
 	);
 };
 

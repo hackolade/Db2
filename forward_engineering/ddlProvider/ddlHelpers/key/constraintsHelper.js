@@ -10,7 +10,7 @@ const templates = require('../../templates');
 
 const getKeyOptions = (keyData, isParentActivated) => {
 	const constraintName = wrapInQuotes(keyData.name.trim());
-	const isAllColumnsDeactivated = checkAllKeysDeactivated(keyData.columns || []);
+	const isAllColumnsDeactivated = checkAllKeysDeactivated({ keys: keyData.columns || [] });
 	const columns = _.isEmpty(keyData.columns)
 		? ''
 		: getColumnsList(keyData.columns, isAllColumnsDeactivated, isParentActivated);

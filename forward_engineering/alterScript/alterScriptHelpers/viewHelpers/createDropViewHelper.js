@@ -3,6 +3,8 @@ const {
 	getSchemaOfAlterCollection,
 	getSchemaNameFromCollection,
 	getFullCollectionName,
+	isParentContainerActivated,
+	isObjectInDeltaModelActivated,
 } = require('../../../utils/general');
 
 /**
@@ -79,10 +81,17 @@ const createView = ({ ddlProvider, mapProperties, view }) => {
 	};
 
 	const hydratedView = ddlProvider.hydrateView({ viewData, entityData: [viewSchema] });
-	const script = ddlProvider.createView(hydratedView, {}, viewSchema.isActivated);
+	const script = ddlProvider.createView(hydratedView, {}, isViewActivated(view));
 
 	return script;
 };
+
+/**
+ * @param {Object} view
+ * @returns {boolean}
+ */
+const isViewActivated = view =>
+	isParentContainerActivated(view) !== false && isObjectInDeltaModelActivated(view) !== false;
 
 /**
  * @param {{
@@ -102,4 +111,5 @@ const dropView = ({ ddlProvider, viewSchema }) => {
 module.exports = {
 	createView,
 	dropView,
+	isViewActivated,
 };

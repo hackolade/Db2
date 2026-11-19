@@ -4,6 +4,7 @@ const {
 	getNamePrefixedWithSchemaName,
 	wrapInQuotes,
 	isObjectInDeltaModelActivated,
+	isParentContainerActivated,
 } = require('../../../utils/general');
 const {
 	getIndexCommentStatement,
@@ -27,7 +28,8 @@ const getModifyIndexCommentsScriptDtos = ({ newIndex, oldIndex, collection }) =>
 		schemaName,
 	});
 
-	const isActivated = isObjectInDeltaModelActivated(collection) && newIndex.isActivated;
+	const isActivated =
+		isParentContainerActivated(collection) && isObjectInDeltaModelActivated(collection) && newIndex.isActivated;
 
 	if (newDescription && newDescription !== oldDescription) {
 		const script = getIndexCommentStatement({
