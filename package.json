@@ -11,8 +11,8 @@
             "applicationTarget": "Db2",
             "title": "Db2",
             "versions": [
-                "v11.7",
                 "v11.5",
+                "v11.7",
                 "v12.x"
             ]
         },
