@@ -11,6 +11,8 @@ const {
 	toArray,
 	hasType,
 	setTab,
+	isViewColumnSourceActivated,
+	isViewActivated,
 } = require('../utils/general.js');
 const { assignTemplates } = require('../utils/assignTemplates');
 const keyHelper = require('./ddlHelpers/key/keyHelper.js');
@@ -491,14 +493,11 @@ module.exports = (baseProvider, options, app) => {
 		},
 
 		hydrateViewColumn(data) {
-			const isSourceTableActivated = get(data, 'entityData[0].isActivated') !== false;
-			const isSourceSchemaActivated = get(data, 'containerData[0].isActivated') !== false;
-
 			return {
 				name: data.name,
 				tableName: data.entityName,
 				alias: data.alias,
-				isActivated: data.isActivated !== false && isSourceTableActivated && isSourceSchemaActivated,
+				isActivated: data.isActivated !== false && isViewColumnSourceActivated(data),
 				dbName: data.dbName,
 			};
 		},
@@ -520,16 +519,15 @@ module.exports = (baseProvider, options, app) => {
 			};
 		},
 
-		createView(viewData, dbData, isActivated) {
+		createView(viewData, dbData, viewIsActivated) {
 			const viewName = getNamePrefixedWithSchemaName({ name: viewData.name, schemaName: viewData.schemaName });
 			const orReplace = viewData.orReplace ? ' OR REPLACE' : '';
 
 			const { columns, tables } = getViewData({ keys: viewData.keys });
 			const hasCustomSelectStatement = Boolean(trim(viewData.selectStatement));
-			const hasActiveColumns = columns.some(column => column.isActivated !== false);
-			const isViewActivated = isActivated !== false && (hasCustomSelectStatement || hasActiveColumns);
+			const viewActivated = isViewActivated(viewData, { isActivated: viewIsActivated });
 			const columnsAsString = getViewColumnsAsString({ columns });
-			const tablesAsString = getViewTablesAsString({ tables, isViewActivated });
+			const tablesAsString = getViewTablesAsString({ tables, isViewActivated: viewActivated });
 			const commentStatement = getTableCommentStatement({
 				tableName: viewName,
 				description: viewData.description,
@@ -557,7 +555,7 @@ module.exports = (baseProvider, options, app) => {
 				},
 			});
 
-			return commentIfDeactivated(statement + comment, { isActivated: isViewActivated });
+			return commentIfDeactivated(statement + comment, { isActivated: viewActivated });
 		},
 
 		commentIfDeactivated(statement, data, isPartOfLine) {
