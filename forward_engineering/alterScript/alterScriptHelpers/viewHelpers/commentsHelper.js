@@ -1,10 +1,5 @@
 const { AlterScriptDto } = require('../../types/AlterScriptDto');
-const {
-	isObjectInDeltaModelActivated,
-	isParentContainerActivated,
-	getFullCollectionName,
-	getSchemaOfAlterCollection,
-} = require('../../../utils/general');
+const { getFullCollectionName, getSchemaOfAlterCollection, isViewActivated } = require('../../../utils/general');
 const {
 	getTableCommentStatement,
 	dropTableCommentStatement,
@@ -24,12 +19,9 @@ const getUpsertCommentsScriptDto = view => {
 			collectionSchema: viewSchema,
 		});
 
-		const isContainerActivated = isParentContainerActivated(view);
-		const isViewActivated = isContainerActivated && isObjectInDeltaModelActivated(view);
-
 		const script = getTableCommentStatement({ tableName: viewName, description: comment });
 
-		return AlterScriptDto.getInstance([script], isViewActivated, false);
+		return AlterScriptDto.getInstance([script], isViewActivated(view), false);
 	}
 	return undefined;
 };
@@ -43,11 +35,8 @@ const getDropCommentsScriptDto = view => {
 			collectionSchema: viewSchema,
 		});
 
-		const isContainerActivated = isParentContainerActivated(view);
-		const isViewActivated = isContainerActivated && isObjectInDeltaModelActivated(view);
-
 		const script = dropTableCommentStatement({ tableName: viewName });
-		return AlterScriptDto.getInstance([script], isViewActivated, true);
+		return AlterScriptDto.getInstance([script], isViewActivated(view), true);
 	}
 	return undefined;
 };

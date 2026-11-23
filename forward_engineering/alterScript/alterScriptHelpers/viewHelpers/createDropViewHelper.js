@@ -3,8 +3,7 @@ const {
 	getSchemaOfAlterCollection,
 	getSchemaNameFromCollection,
 	getFullCollectionName,
-	isParentContainerActivated,
-	isObjectInDeltaModelActivated,
+	isViewActivated,
 } = require('../../../utils/general');
 
 /**
@@ -85,13 +84,6 @@ const createView = ({ ddlProvider, mapProperties, view }) => {
 
 	return script;
 };
-
-/**
- * @param {Object} view
- * @returns {boolean}
- */
-const isViewActivated = view =>
-	isParentContainerActivated(view) !== false && isObjectInDeltaModelActivated(view) !== false;
 
 /**
  * @param {{
