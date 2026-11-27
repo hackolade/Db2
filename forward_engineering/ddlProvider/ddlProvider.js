@@ -555,15 +555,7 @@ module.exports = (baseProvider, options, app) => {
 				},
 			});
 
-			const fullStatement = statement + comment;
-
-			// Only self-comment when the caller thinks the view is active but columns/sources
-			// make it inactive. When viewIsActivated is false, the caller comments the statement.
-			if (viewIsActivated && !viewActivated) {
-				return commentIfDeactivated(fullStatement, { isActivated: false });
-			}
-
-			return fullStatement;
+			return commentIfDeactivated(statement + comment, { isActivated: viewActivated });
 		},
 
 		commentIfDeactivated(statement, data, isPartOfLine) {

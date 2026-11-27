@@ -30,7 +30,8 @@ const getRenameViewScriptDtos = (view, ddlProvider, mapProperties) => {
 
 	return [
 		AlterScriptDto.getInstance([dropScript], isViewActivated(view), true),
-		AlterScriptDto.getInstance([createScript], isViewActivated(view), false),
+		// createView already comments out a deactivated view
+		AlterScriptDto.getInstance([createScript], true, false),
 	];
 };
 
